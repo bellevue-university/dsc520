@@ -1,0 +1,302 @@
+[1] "/home/jdoe/Workspaces/dsc520"
+[1] "content"                 "data"                   
+[3] "dsc520.Rproj" "LICENSE"
+[5] "README.md"
+'data.frame':	5 obs. of  3 variables:
+ $ person_id    : Factor w/ 5 levels "danforth","dyer",..: 2 4 3 5 1
+ $ personal_name: Factor w/ 4 levels "Anderson","Frank",..: 4 2 1 3 2
+ $ family_name  : Factor w/ 5 levels "Danforth","Dyer",..: 2 4 3 5 1
+'data.frame':	5 obs. of  3 variables:
+ $ person_id    : chr  "dyer" "pb" "lake" "roe" ...
+ $ personal_name: chr  "William" "Frank" "Anderson" "Valentina" ...
+ $ family_name  : chr  "Dyer" "Pabodie" "Lake" "Roerich" ...
+     Count           Score          Section  
+ Min.   :10.00   Min.   :200.0   Regular:19  
+ 1st Qu.:10.00   1st Qu.:300.0   Sports :19  
+ Median :10.00   Median :322.5               
+ Mean   :14.47   Mean   :317.5               
+ 3rd Qu.:20.00   3rd Qu.:357.5               
+ Max.   :30.00   Max.   :395.0               
+ [1] "Instructions"          "Voter Turnout"         "President"            
+ [4] "House of Rep"          "Co Clerk"              "Co Reg Deeds"         
+ [7] "Co Public Defender"    "Co Comm 1"             "Co Comm 3"            
+[10] "Co Comm 5"             "Co Comm 7"             "St Bd of Ed 2"        
+[13] "St Bd of Ed 4"         "Legislature 5"         "Legislature 7"        
+[16] "Legislature 9"         "Legislature 11"        "Legislature 13"       
+[19] "Legislature 23"        "Legislature 31"        "Legislature 39"       
+[22] "MCC 1"                 "MCC 2"                 "MCC 3"                
+[25] "MCC 4"                 "OPPD"                  "MUD"                  
+[28] "NRD 3"                 "NRD 5"                 "NRD 7"                
+[31] "NRD 9"                 "OPS 2"                 "OPS 4"                
+[34] "OPS 6"                 "OPS 8"                 "OPS 10"               
+[37] "OPS 11"                "OPS 12"                "ESU 2"                
+[40] "ESU 3"                 "Arlington Sch 24"      "Bennington Sch 59"    
+[43] "Elkhorn Sch 10"        "Fremont Sch 1"         "Ft Calhoun Sch 3"     
+[46] "Gretna Sch 37"         "Millard Sch 17"        "Ralston Sch 54"       
+[49] "Valley Sch 33"         "Waterloo Sch 11"       "Bennington Mayor"     
+[52] "Elkhorn Mayor"         "Valley Mayor"          "Ralston Mayor"        
+[55] "Ralston Library Bd"    "Bennington City Cnc 1" "Bennington City Cnc 2"
+[58] "Elkhorn City Cnc A"    "Elkhorn City Cnc B"    "Elkhorn City Cnc C"   
+[61] "Ralston City Cnc 1"    "Ralston City Cnc 2"    "Ralston City Cnc 6"   
+[64] "Waterloo Bd Trustees"  "Valley City Cnc"       "Amendment 1"          
+[67] "Amendment 2"           "Amendment 3"           "Amendment 4"          
+[70] "Initiative 417"        "Initiative 418"        "Initiative 419"       
+[73] "Initiative 420"       
+tibble [342 × 4] (S3: tbl_df/tbl/data.frame)
+ $ Ward Precinct    : chr [1:342] "01-01" "01-02" "01-03" "01-04" ...
+ $ Ballots Cast     : num [1:342] 421 443 705 827 527 323 358 410 440 500 ...
+ $ Registered Voters: num [1:342] 678 691 1148 1308 978 ...
+ $ Voter Turnout    : num [1:342] 0.621 0.641 0.614 0.632 0.539 ...
+tibble [342 × 4] (S3: tbl_df/tbl/data.frame)
+ $ ward_precint     : chr [1:342] "01-01" "01-02" "01-03" "01-04" ...
+ $ ballots_cast     : num [1:342] 421 443 705 827 527 323 358 410 440 500 ...
+ $ registered_voters: num [1:342] 678 691 1148 1308 978 ...
+ $ voter_turnout    : num [1:342] 0.621 0.641 0.614 0.632 0.539 ...
+  person_id personal_name family_name
+1      dyer       William        Dyer
+2        pb         Frank     Pabodie
+3      lake      Anderson        Lake
+4       roe     Valentina     Roerich
+5  danforth         Frank    Danforth
+[[1]]
+   visit_id person_id quantity reading
+1       619      dyer      rad    9.82
+2       619      dyer      sal    0.13
+3       622      dyer      rad    7.80
+4       622      dyer      sal    0.09
+5       734        pb      rad    8.41
+6       734      lake      sal    0.05
+7       734        pb     temp  -21.50
+8       735        pb      rad    7.22
+9       735      <NA>      sal    0.06
+10      735      <NA>     temp  -26.00
+11      751        pb      rad    4.35
+12      751        pb     temp  -18.50
+13      751      lake      sal    0.00
+14      752      lake      rad    2.19
+15      752      lake      sal    0.09
+16      752      lake     temp  -16.00
+17      752       roe      sal   41.60
+18      837      lake      rad    1.46
+19      837      lake      sal    0.21
+20      837       roe      sal   22.50
+21      844       roe      rad   11.25
+
+[[2]]
+  person_id personal_name family_name
+1      dyer       William        Dyer
+2        pb         Frank     Pabodie
+3      lake      Anderson        Lake
+4       roe     Valentina     Roerich
+5  danforth         Frank    Danforth
+
+[[3]]
+  site_id latitude longitude
+1    DR-1   -49.85   -128.57
+2    DR-3   -47.15   -126.72
+3   MSK-4   -48.87   -123.40
+
+[[4]]
+  visit_id site_id visit_date
+1      619    DR-1 1927-02-08
+2      622    DR-1 1927-02-10
+3      734    DR-3 1930-01-07
+4      735    DR-3 1930-01-12
+5      751    DR-3 1930-02-26
+6      752    DR-3       <NA>
+7      837   MSK-4 1932-01-14
+8      844    DR-1 1932-03-22
+
+[{"Count":10,"Score":200,"Section":"Sports"},{"Count":10,"Score":205,"Section":"Sports"},{"Count":20,"Score":235,"Section":"Sports"},{"Count":10,"Score":240,"Section":"Sports"},{"Count":10,"Score":250,"Section":"Sports"},{"Count":10,"Score":265,"Section":"Regular"},{"Count":10,"Score":275,"Section":"Regular"},{"Count":30,"Score":285,"Section":"Sports"},{"Count":10,"Score":295,"Section":"Regular"},{"Count":10,"Score":300,"Section":"Regular"},{"Count":20,"Score":300,"Section":"Sports"},{"Count":10,"Score":305,"Section":"Sports"},{"Count":10,"Score":305,"Section":"Regular"},{"Count":10,"Score":310,"Section":"Regular"},{"Count":10,"Score":310,"Section":"Sports"},{"Count":20,"Score":320,"Section":"Regular"},{"Count":10,"Score":305,"Section":"Regular"},{"Count":10,"Score":315,"Section":"Sports"},{"Count":20,"Score":320,"Section":"Regular"},{"Count":10,"Score":325,"Section":"Regular"},{"Count":10,"Score":325,"Section":"Sports"},{"Count":20,"Score":330,"Section":"Regular"},{"Count":10,"Score":330,"Section":"Sports"},{"Count":30,"Score":335,"Section":"Sports"},{"Count":10,"Score":335,"Section":"Regular"},{"Count":20,"Score":340,"Section":"Regular"},{"Count":10,"Score":340,"Section":"Sports"},{"Count":30,"Score":350,"Section":"Regular"},{"Count":20,"Score":360,"Section":"Regular"},{"Count":10,"Score":360,"Section":"Sports"},{"Count":20,"Score":365,"Section":"Regular"},{"Count":20,"Score":365,"Section":"Sports"},{"Count":10,"Score":370,"Section":"Sports"},{"Count":10,"Score":370,"Section":"Regular"},{"Count":20,"Score":375,"Section":"Regular"},{"Count":10,"Score":375,"Section":"Sports"},{"Count":20,"Score":380,"Section":"Regular"},{"Count":10,"Score":395,"Section":"Sports"}] 
+[
+  {
+    "Count": 10,
+    "Score": 200,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 205,
+    "Section": "Sports"
+  },
+  {
+    "Count": 20,
+    "Score": 235,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 240,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 250,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 265,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 275,
+    "Section": "Regular"
+  },
+  {
+    "Count": 30,
+    "Score": 285,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 295,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 300,
+    "Section": "Regular"
+  },
+  {
+    "Count": 20,
+    "Score": 300,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 305,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 305,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 310,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 310,
+    "Section": "Sports"
+  },
+  {
+    "Count": 20,
+    "Score": 320,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 305,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 315,
+    "Section": "Sports"
+  },
+  {
+    "Count": 20,
+    "Score": 320,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 325,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 325,
+    "Section": "Sports"
+  },
+  {
+    "Count": 20,
+    "Score": 330,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 330,
+    "Section": "Sports"
+  },
+  {
+    "Count": 30,
+    "Score": 335,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 335,
+    "Section": "Regular"
+  },
+  {
+    "Count": 20,
+    "Score": 340,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 340,
+    "Section": "Sports"
+  },
+  {
+    "Count": 30,
+    "Score": 350,
+    "Section": "Regular"
+  },
+  {
+    "Count": 20,
+    "Score": 360,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 360,
+    "Section": "Sports"
+  },
+  {
+    "Count": 20,
+    "Score": 365,
+    "Section": "Regular"
+  },
+  {
+    "Count": 20,
+    "Score": 365,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 370,
+    "Section": "Sports"
+  },
+  {
+    "Count": 10,
+    "Score": 370,
+    "Section": "Regular"
+  },
+  {
+    "Count": 20,
+    "Score": 375,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 375,
+    "Section": "Sports"
+  },
+  {
+    "Count": 20,
+    "Score": 380,
+    "Section": "Regular"
+  },
+  {
+    "Count": 10,
+    "Score": 395,
+    "Section": "Sports"
+  }
+] 
