@@ -1,0 +1,25 @@
+
+Call:
+lm(formula = earn ~ ed + race + height + age + sex, data = heights_df)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-39423  -9827  -2208   6157 158723 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  -41478.4    12409.4  -3.342 0.000856 ***
+ed             2768.4      209.9  13.190  < 2e-16 ***
+racehispanic  -1414.3     2685.2  -0.527 0.598507    
+raceother       371.0     3837.0   0.097 0.922983    
+racewhite      2432.5     1723.9   1.411 0.158489    
+height          202.5      185.6   1.091 0.275420    
+age             178.3       32.2   5.537 3.78e-08 ***
+sexmale       10325.6     1424.5   7.249 7.57e-13 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17250 on 1184 degrees of freedom
+Multiple R-squared:  0.2199,	Adjusted R-squared:  0.2153 
+F-statistic: 47.68 on 7 and 1184 DF,  p-value: < 2.2e-16
+
