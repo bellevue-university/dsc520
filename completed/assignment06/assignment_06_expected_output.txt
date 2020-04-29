@@ -1,0 +1,19 @@
+
+Call:
+lm(formula = earn ~ age, data = heights_df)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-25098 -12622  -3667   6883 177579 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 19041.53    1571.26  12.119  < 2e-16 ***
+age            99.41      35.46   2.804  0.00514 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 19420 on 1190 degrees of freedom
+Multiple R-squared:  0.006561,	Adjusted R-squared:  0.005727 
+F-statistic:  7.86 on 1 and 1190 DF,  p-value: 0.005137
+
