@@ -1,6 +1,6 @@
 # Assignment: ASSIGNMENT 0
 # Name: Kudaimi, Bilal
-# Date: 2020-09-01
+# Date: 2020-08-29
 
 # Basics
 
@@ -36,7 +36,7 @@ z
 
 ## Assign the string value "DSC520" to the variable class_name
 ## Print the value of class_name
-class_name <- "DSC520"
+class_name <- 'DSC520'
 class_name
 
 ## Assign the string value of TRUE to the variable is_good
@@ -52,3 +52,4 @@ class(z)
 
 ## Check the class of the variable class_name using the class() function
 class(class_name)
+
