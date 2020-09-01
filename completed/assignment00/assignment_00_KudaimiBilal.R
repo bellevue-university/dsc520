@@ -1,6 +1,6 @@
 # Assignment: ASSIGNMENT 0
 # Name: Kudaimi, Bilal
-# Date: 2020-08-29
+# Date: 2020-09-01
 
 # Basics
 
