@@ -1,5 +1,5 @@
 # Assignment: ASSIGNMENT 0
-# Name: Lastname, Firstname
+# Name: Anderson, Firstname
 # Date: 2010-02-14
 
 # Basics
