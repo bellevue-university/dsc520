@@ -1,4 +1,4 @@
-# Assignment: ASSIGNMENT 3
+# ASSIGNMENT 3
 # Name: Butt, Jolene
 # Date: 2020-09-20
 
