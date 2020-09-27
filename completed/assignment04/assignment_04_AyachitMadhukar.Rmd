@@ -35,8 +35,8 @@ This is a footnote from assigbnment 4 Markdown
 
 ## Add Citations  
 
-* R for Everyone
-* Discovering Statistics Using R
+* R for Everyone [@lander2014r]
+* Discovering Statistics Using R [@field2012discovering]
 
 # Inline Code  
 
