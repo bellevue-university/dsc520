@@ -15,7 +15,7 @@ bibliography: bibliography.bib
 
 ## Favorite Foods
 ```
-1. Paste
+1. Pasta
 2. Noodles
 3. Pizza
 ```
