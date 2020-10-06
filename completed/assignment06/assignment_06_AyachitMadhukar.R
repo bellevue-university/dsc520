@@ -30,6 +30,8 @@ ggplot(data = heights_df, aes(y = earn, x = age)) +
   geom_point(color='blue') +
   geom_line(color='red',data = age_predict_df, aes(y=earn.fit, x=age))
 
+mean_earn <- mean(heights_df$earn)
+
 ggsave("RegressionPlot.pdf")
 
 ## Corrected Sum of Squares Total
