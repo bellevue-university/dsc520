@@ -30,7 +30,7 @@ Coefficients:
 (Intercept)    19041.53    1571.26  12.119  < 2e-16 ***
 heights_df$age    99.41      35.46   2.804  0.00514 ** 
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Residual standard error: 19420 on 1190 degrees of freedom
 Multiple R-squared:  0.006561,	Adjusted R-squared:  0.005727 
@@ -39,19 +39,20 @@ F-statistic:  7.86 on 1 and 1190 DF,  p-value: 0.005137
 > 
 > ## Creating predictions using `predict()`
 > 
-> age_predict_df <- data.frame(earn = predict(age_lm, data.frame("heights_df$age"=40),interval = "prediction"), age=heights_df$age)
-Warning message:
-'newdata' had 1 row but variables found have 1192 rows 
+> #age_predict_df <- data.frame(earn = predict(age_lm, data.frame("heights_df$age"=40),interval = "prediction"), age=heights_df$age)
+> age_predict_df <- data.frame(earn = predict(age_lm, heights_df), age=heights_df$age)
 > #plot(heights_df$earn~heights_df$age,heights_df)
 > #cor(heights_df$earn,heights_df$age)
 > #mean(heights_df$age)
 > ## Plot the predictions against the original data
 > ggplot(data = heights_df, aes(y = earn, x = age)) +
 +   geom_point(color='blue') +
-+   geom_line(color='red',data = age_predict_df, aes(y=earn.fit, x=age))
++   geom_line(color='red',data = age_predict_df, aes(y=earn, x=age))
 > 
 > ggsave("RegressionPlot.pdf")
-Saving 6.39 x 5.31 in image
+Saving 7 x 7 in image
+> 
+> mean_earn <- mean(heights_df$earn)
 > 
 > ## Corrected Sum of Squares Total
 > sst <- sum((mean_earn - heights_df$earn)^2)
