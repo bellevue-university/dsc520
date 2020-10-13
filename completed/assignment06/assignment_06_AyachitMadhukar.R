@@ -21,18 +21,19 @@ summary(age_lm)
 
 ## Creating predictions using `predict()`
 
-age_predict_df <- data.frame(earn = predict(age_lm, data.frame("heights_df$age"=40),interval = "prediction"), age=heights_df$age)
+#age_predict_df <- data.frame(earn = predict(age_lm, data.frame("heights_df$age"=40),interval = "prediction"), age=heights_df$age)
+age_predict_df <- data.frame(earn = predict(age_lm, heights_df), age=heights_df$age)
 #plot(heights_df$earn~heights_df$age,heights_df)
 #cor(heights_df$earn,heights_df$age)
 #mean(heights_df$age)
 ## Plot the predictions against the original data
 ggplot(data = heights_df, aes(y = earn, x = age)) +
   geom_point(color='blue') +
-  geom_line(color='red',data = age_predict_df, aes(y=earn.fit, x=age))
-
-mean_earn <- mean(heights_df$earn)
+  geom_line(color='red',data = age_predict_df, aes(y=earn, x=age))
 
 ggsave("RegressionPlot.pdf")
+
+mean_earn <- mean(heights_df$earn)
 
 ## Corrected Sum of Squares Total
 sst <- sum((mean_earn - heights_df$earn)^2)
