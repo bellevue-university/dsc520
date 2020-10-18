@@ -1,0 +1,187 @@
+---
+title: "Exerise12_AyachitMadhukar"
+output:
+  pdf_document: default
+  html_document.pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise #12
+
+a. Explain why you chose to remove data points from your ‘clean’ dataset.
+
+> **There are charater fieldds like address and city etc. Property type is the only meaningful categorical variable  but it is "R" throughout the ditribution, Hence to make multiple regression keeping all the number fields to calculate sale price. After ovserving data using "head" and "str" , I have decided to create a clener dataset with all numeric variables. ** 
+
+```{r echo=TRUE}
+
+setwd("~/MadR/Workspaces/dsc520")
+library("readxl")
+housing_df <- read_excel("data/week-7-housing.xlsx")
+
+head(housing_df)
+str(housing_df)
+
+names(housing_df) <- make.names(names(housing_df))
+
+Additional_Predicator<-(housing_df[c("Sale.Price",
+                                     "sale_reason",
+                                     "zip5",
+                                     "lon",
+                                     "building_grade",
+                                     "square_feet_total_living",
+                                     "bedrooms",
+                                     "bath_3qtr_count",
+                                     "year_built",
+                                     "year_renovated",
+                                     "sq_ft_lot")])
+
+
+
+```
+
+b. Create two variables; one that will contain the variables Sale Price and Square Foot of Lot (same variables used from previous assignment on simple regression) and one that will contain Sale Price and several additional predictors of your choice. Explain the basis for your additional predictor selections. 
+
+> *Keeping only significant variabls in the dataset after observing summary of multiple regression outout* 
+
+```{r}
+
+
+s1<-lm(Sale.Price~sq_ft_lot, data=housing_df)
+m1<-lm(Sale.Price~bath_3qtr_count+bedrooms+building_grade+lon+sale_reason+sq_ft_lot+square_feet_total_living+year_built+year_renovated+zip5,
+   data=Additional_Predicator)
+
+summary(s1)
+summary(m1)
+
+```
+
+c. Execute a summary() function on two variables defined in the previous step to compare the model results. What are the R2 and Adjusted R2 statistics? Explain what these results tell you about the overall model. Did the inclusion of the additional predictors help explain any large variations found in Sale Price?  
+
+```{r}
+
+sales_lm<-  lm(Sale.Price~bath_3qtr_count+bedrooms+building_grade+lon+sale_reason+sq_ft_lot+square_feet_total_living+year_built+year_renovated+zip5,
+   data=Additional_Predicator)
+summary(sales_lm)
+
+```
+
+
+>**refer  anser "b" for summary output  R2 and Adjusted R were 0.01435 and 0.01428 respectively**
+>**for simple regression vs it got shifted significantly after adding additional predicators  to R-squared:  0.233 & Adjusted R-squared:  0.2324 ** 
+  
+>*"R-squared (R2) is a statistical measure that represents the proportion of the variance for a dependent variable that's explained by an independent variable or variables in a regression model".*  
+
+>*"With a multiple regression made up of several independent variables, the R-Squared must be adjusted. The adjusted R-squared compares the descriptive power of regression models that include diverse numbers of predictors. Every predictor added to a model increases R-squared and never decreases it"*  
+
+>**Addional predicator bring significcatio variation 0.2324 - 0.01428 = 0.21812**  
+
+d. Considering the parameters of the multiple regression model you have created. What are the standardized betas for each parameter and what do the values indicate? 
+
+```{r}
+library("lm.beta")
+lm.beta(sales_lm)
+```
+
+e. Calculate the confidence intervals for the parameters in your model and explain what the results indicate. 
+```{r}
+library("gmodels")
+ci(sales_lm)
+
+```
+
+f. Assess the improvement of the new model compared to your original model (simple regression model) by testing whether this change is significant by performing an analysis of variance.
+
+```{r}
+anova(s1, sales_lm)
+
+```
+
+g. Perform casewise diagnostics to identify outliers and/or influential cases, storing each function's output in a dataframe assigned to a unique variable name. 
+
+```{r}
+Additional_Predicator$standardized.residuals<- rstandard(sales_lm) 
+Additional_Predicator$studentized.residuals<-rstudent(sales_lm) 
+Additional_Predicator$cooks.distance<-cooks.distance(sales_lm) 
+Additional_Predicator$dfbeta<-dfbeta(sales_lm) 
+Additional_Predicator$dffit<-dffits(sales_lm) 
+Additional_Predicator$leverage<-hatvalues(sales_lm) 
+Additional_Predicator$covariance.ratios<-covratio(sales_lm)
+
+```
+
+h. Calculate the standardized residuals using the appropriate command, specifying those that are +-2, storing the results of large residuals in a variable you create. 
+
+```{r eval=FALSE}
+
+Additional_Predicator$standardized.residuals > 2 | Additional_Predicator$standardized.residuals < -2
+
+```
+
+i. Use the appropriate function to show the sum of large residuals. 
+
+```{r}
+Additional_Predicator$large.residual <- Additional_Predicator$standardized.residuals > 2 | Additional_Predicator$standardized.residuals < -2
+sum(Additional_Predicator$large.residual)
+
+```
+
+j. Which specific variables have large residuals (only cases that evaluate as TRUE)? 
+
+```{r}
+
+Additional_Predicator[  Additional_Predicator$large.residual ==TRUE, ]
+```
+
+k. Investigate further by calculating the leverage, cooks distance, and covariance rations. Comment on all cases that are problematics. 
+
+```{r}
+
+Additional_Predicator[Additional_Predicator$large.residual, c("cooks.distance", "leverage", "covariance.ratios")]
+
+```
+
+l. Perform the necessary calculations to assess the assumption of independence and state if the condition is met or not.
+Perform the necessary calculations to assess the assumption of no multicollinearity and state if the condition is met or not. 
+
+```{r}
+library("car")
+durbinWatsonTest(sales_lm)
+vif(sales_lm)
+
+```
+
+m. Visually check the assumptions related to the residuals using the plot() and hist() functions. Summarize what each graph is informing you of and if any anomalies are present. 
+
+```{r}
+
+
+histogram<-ggplot(Additional_Predicator, aes(studentized.residuals))  + geom_histogram(aes(y = ..density..), colour = "black", fill = "white") + labs(x = "Studentized Residual", y = "Density")
+histogram + stat_function(fun = dnorm, args = list(mean = mean(Additional_Predicator$studentized.residuals, na.rm = TRUE), sd = sd(Additional_Predicator$studentized.residuals, na.rm = TRUE)), colour = "red", size = 1)
+
+
+Additional_Predicator$fitted <- sales_lm$fitted.values
+
+library("ggplot2")
+qqplot.resid <- qplot(sample = Additional_Predicator$studentized.residuals) 
+qqplot.resid                 + labs(x = "Theoretical Values", y = "Observed Values")
+
+
+
+scatter <- ggplot(Additional_Predicator, aes(fitted, studentized.residuals)) 
+scatter + geom_point() 
+scatter + geom_smooth(method = "lm", colour = "Blue")
+
+hist(Additional_Predicator$studentized.residuals)
+
+```
+
+n. Overall, is this regression model unbiased? If an unbiased regression model, what does this tell us about the sample vs. the entire population model? 
+
+```{r}
+
+
+```
+
