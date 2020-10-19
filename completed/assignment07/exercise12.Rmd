@@ -157,14 +157,15 @@ m. Visually check the assumptions related to the residuals using the plot() and 
 
 ```{r}
 
+library("ggplot2")
 
-histogram<-ggplot(Additional_Predicator, aes(studentized.residuals))  + geom_histogram(aes(y = ..density..), colour = "black", fill = "white") + labs(x = "Studentized Residual", y = "Density")
-histogram + stat_function(fun = dnorm, args = list(mean = mean(Additional_Predicator$studentized.residuals, na.rm = TRUE), sd = sd(Additional_Predicator$studentized.residuals, na.rm = TRUE)), colour = "red", size = 1)
+histogram<-ggplot(Additional_Predicator, aes(studentized.residuals))  + geom_histogram(aes(y = ..density..), colour = "black", fill = "white") + labs(x = "Studentized Residual", y = "Density") 
+histogram + stat_function(fun = dnorm, args = list(mean = mean(Additional_Predicator$studentized.residuals, na.rm = TRUE), sd = sd(Additional_Predicator$studentized.residuals, na.rm = TRUE)), colour = "red", size = 1) 
 
 
 Additional_Predicator$fitted <- sales_lm$fitted.values
 
-library("ggplot2")
+
 qqplot.resid <- qplot(sample = Additional_Predicator$studentized.residuals) 
 qqplot.resid                 + labs(x = "Theoretical Values", y = "Observed Values")
 
@@ -180,8 +181,32 @@ hist(Additional_Predicator$studentized.residuals)
 
 n. Overall, is this regression model unbiased? If an unbiased regression model, what does this tell us about the sample vs. the entire population model? 
 
+> **vif** is not at all greater than 10 , so no caus of concern 
 ```{r}
+vif(sales_lm)
+
 
 
 ```
+
+> **Tolerance** is greater than .2 indicates "there is no issue"
+
+```{r}
+
+1/vif(sales_lm)
+
+
+
+```
+
+>**Average VIF**  is substantially gerater than 1 indicated regression may be biased
+
+```{r}
+
+mean(vif(sales_lm)) 
+
+
+```
+
+
 
