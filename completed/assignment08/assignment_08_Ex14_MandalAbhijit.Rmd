@@ -53,9 +53,7 @@ dataModelAccuracy
 ## Answer for B:
 ```
 The accuracy of the logistic regression classifier as compared to the nearest neighbors algorithm is 
-
-1. 71.33% with 100 nearest neighbors comparison
-2. 97.66% with 50 nearest neighbors comparison
+96.66% with 37 nearest neighbors comparison
 ```
 
 ```{r echo=TRUE, include=TRUE} 
@@ -69,13 +67,13 @@ trained_dataset <- binaryClassifier_df[binaryClassifier_split,1]
 test_dataset <- binaryClassifier_df[-binaryClassifier_split,1]
 
 # Applying k nearest neighbour algorithm
-knnTestprediction <- knn(trainds,testds,cl=trained_dataset,k=100)
+knnTestprediction <- knn(trainds,testds,cl=trained_dataset,k=37)
 confusionMatrix <- table(test_dataset,knnTestprediction)
 confusionMatrix
 
 modelaccuracy <- (confusionMatrix[[1,1]] + confusionMatrix[[2,2]]) / sum(confusionMatrix)
 modelaccuracy
-# model accuracy with 100 neighbors
+# model accuracy with 37 neighbors
 
 ```
 
@@ -85,7 +83,7 @@ modelaccuracy
 
 ## Answer For C
 ```
-KNN :- K-nearest neighbor works/predicts as per the surrounding datapoints (K). It is a deterministic algorithm, if you keep the value of K and run the algorithm n times, the results will be the same. KNN is lazy execution and can be applied to non-linear solutions, due to this it provides better accuracy than logistic regression
+KNN :- K-nearest neighbor works/predicts as per the surrounding datapoints (K). KNN is lazy execution and can be applied to non-linear solutions, due to this it provides better accuracy than logistic regression
 
 Logistic Regression :- It works with algebraic calculation for best fit curve for the complete population. it is linear regression with some non-linear activation function at the end to covert the regular/continuous output into different classes.
 ```
