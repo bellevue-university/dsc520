@@ -1,0 +1,94 @@
+
+---
+title: 'ASSIGNMENT 8 Exercise 14: Fit a Logistic Regression Model to Previous Dataset'
+author: "Abhijit Mandal"
+date: '2020-10-26'
+output:
+  word_document: default
+---
+
+## Assignment
+**Fit a logistic regression model to the binary-classifier-data.csv dataset from the previous assignment.**
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question A:
+**What is the accuracy of the logistic regression classifier?**
+
+## Answer for A:
+```
+The accuracy came out to be 58.34%
+```
+
+
+```{r echo=TRUE, include=TRUE} 
+setwd("~/Documents/GitHub/dsc520")
+binary_df <- read.csv("data/binary-classifier-data.csv")
+
+binaryClassifier_df <- read.csv("data/binary-classifier-data.csv")
+
+#Logistic regression model
+binaryClassifier_glm <- glm(label ~ x + y, data=binaryClassifier_df, family = binomial)
+
+summary(binaryClassifier_glm)
+
+res_val <- predict(binaryClassifier_glm, type="response")
+
+bcPredictionData <- table(Actual_Value = binaryClassifier_df$label, Predicted_Value = res_val > 0.5)
+
+bcPredictionData
+
+dataModelAccuracy <- (bcPredictionData[[1,1]] + bcPredictionData[[2,2]]) / sum(bcPredictionData)
+
+dataModelAccuracy
+
+```
+
+
+## Question B. 
+**How does the accuracy of the logistic regression classifier compare to the nearest neighbors algorithm?**
+
+## Answer for B:
+```
+The accuracy of the logistic regression classifier as compared to the nearest neighbors algorithm is 
+
+1. 71.33% with 100 nearest neighbors comparison
+2. 97.66% with 50 nearest neighbors comparison
+```
+
+```{r echo=TRUE, include=TRUE} 
+library(class)
+# Splitting the  binary classifier data in 80-20 ratio, 20 to train and 80 to test
+binaryClassifier_split <- sample(1:nrow(binaryClassifier_df), 0.8 * nrow(binaryClassifier_df))
+trainds <- binaryClassifier_df[binaryClassifier_split,]
+testds <- binaryClassifier_df[-binaryClassifier_split,]
+
+trained_dataset <- binaryClassifier_df[binaryClassifier_split,1]
+test_dataset <- binaryClassifier_df[-binaryClassifier_split,1]
+
+# Applying k nearest neighbour algorithm
+knnTestprediction <- knn(trainds,testds,cl=trained_dataset,k=100)
+confusionMatrix <- table(test_dataset,knnTestprediction)
+confusionMatrix
+
+modelaccuracy <- (confusionMatrix[[1,1]] + confusionMatrix[[2,2]]) / sum(confusionMatrix)
+modelaccuracy
+# model accuracy with 100 neighbors
+
+```
+
+
+## Question C:
+**Why is the accuracy of the logistic regression classifier different from that of the nearest neighbors?**
+
+## Answer For C
+```
+KNN :- K-nearest neighbor works/predicts as per the surrounding datapoints (K). It is a deterministic algorithm, if you keep the value of K and run the algorithm n times, the results will be the same. KNN is lazy execution and can be applied to non-linear solutions, due to this it provides better accuracy than logistic regression
+
+Logistic Regression :- It works with algebraic calculation for best fit curve for the complete population. it is linear regression with some non-linear activation function at the end to covert the regular/continuous output into different classes.
+```
+
+
+
