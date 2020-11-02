@@ -1,0 +1,155 @@
+---
+title: "Ayachit Madhukar Exercise16"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 16 
+
+### reading file to create data frame 
+
+```{r }
+setwd("~/MadR/Workspaces/dsc520")
+data.cluster=read.csv("data/clustering-data.csv")
+
+```
+
+### a. Creating initial plot and observing data /structure using str() and summary() 
+
+```{r}
+summary(data.cluster)
+str(data.cluster)
+plot(data.cluster,col=c("red","blue"),type="b")
+
+```
+
+### b.  Preparing clusters for k=2 to 12 and plotting all the results for visualization 
+
+```{r}
+
+
+
+library(factoextra)
+library(gridExtra)
+
+
+
+result<-NULL
+for (i in 2:12) result[i]<-sum(kmeans(data.cluster,centers = i)$tot.withinss)
+plot(1:12,result,type="b",xlab = "k",ylab = "cluster") 
+
+
+results2<-kmeans(data.cluster,2)
+results3<-kmeans(data.cluster,3)
+results4<-kmeans(data.cluster,4)
+results5<-kmeans(data.cluster,5)
+results6<-kmeans(data.cluster,6)
+results7<-kmeans(data.cluster,7)
+results8<-kmeans(data.cluster,8)
+results9<-kmeans(data.cluster,9)
+results10<-kmeans(data.cluster,10)
+results11<-kmeans(data.cluster,11)
+results12<-kmeans(data.cluster,12)
+
+
+p2 <- fviz_cluster(results2, geom = "point", data = data.cluster) + ggtitle("k = 2")
+p3 <- fviz_cluster(results3, geom = "point", data = data.cluster) + ggtitle("k = 3")
+p4 <- fviz_cluster(results4, geom = "point", data = data.cluster) + ggtitle("k = 4")
+p5 <- fviz_cluster(results5, geom = "point", data = data.cluster) + ggtitle("k = 5")
+p6 <- fviz_cluster(results6, geom = "point", data = data.cluster) + ggtitle("k = 6")
+p7 <- fviz_cluster(results7, geom = "point", data = data.cluster) + ggtitle("k = 7")
+p8 <- fviz_cluster(results8, geom = "point", data = data.cluster) + ggtitle("k = 8")
+p9 <- fviz_cluster(results9, geom = "point", data = data.cluster) + ggtitle("k = 9")
+p10 <- fviz_cluster(results10, geom = "point", data = data.cluster) + ggtitle("k = 10")
+p11 <- fviz_cluster(results11, geom = "point", data = data.cluster) + ggtitle("k = 11")
+p12 <- fviz_cluster(results12, geom = "point", data = data.cluster) + ggtitle("k = 12")
+
+
+grid.arrange(p2,p3,p4,p5,nrow = 2)
+grid.arrange(p6,p7,p8,p9,nrow = 2)
+grid.arrange(p11,p12,nrow = 2)
+
+
+```
+
+### c. measuring distance and depicting in the graph 
+
+
+
+```{r}
+
+fviz_cluster(results2, data.cluster, ellipse.type = "norm")
+distance2 <- get_dist(data.cluster)
+fviz_dist(distance2, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07") )
+
+```
+
+### Euclidean Distance 
+
+```{r}
+df<-data.cluster
+
+distances <- c()
+for(i in 1:12){
+  model <- kmeans(df, i)
+  df$label <- as.factor(model$cluster)
+  centers <- as.data.frame(model$centers)
+  df$distance <- sqrt((df$x - model$centers[df$label,'x']) ** 2 + (df$y - model$centers[df$label,'y']) ** 2)
+distances[i] <- mean(df$distance)
+}
+
+k.values <- 1:12
+dist.df <- data.frame(k.values, distances)
+
+dist.df
+```
+
+
+
+### Elbow 
+
+```{r}
+library(purrr)
+library(cluster)
+
+
+# function to compute total within-cluster sum of square 
+wss <- function(k) {
+  kmeans(data.cluster, k, nstart = 10 )$tot.withinss
+}
+
+# Compute and plot wss for k = 1 to k = 15
+k.values <- 2:12
+
+# extract wss for 2-12 clusters
+wss_values <- map_dbl(k.values, wss)
+
+
+plot(k.values, wss_values,main="Elbow",
+       type="b", pch = 19, frame = FALSE, 
+       xlab="Number of clusters K",
+       ylab="Total within-clusters sum of squares")
+
+
+
+
+
+
+```
+
+
+
+```{r}
+
+fviz_nbclust(data.cluster, kmeans, method = "silhouette")
+
+```
+
+
+

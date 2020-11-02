@@ -1,0 +1,91 @@
+---
+title: "Exerise13_AyachitMadhukar"
+output:
+  pdf_document: default
+  html_document.pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise #13
+
+
+
+```{r echo=TRUE}
+
+setwd("~/MadR/Workspaces/dsc520")
+
+
+```
+
+
+### Loading data from file 
+
+```{r}
+library(foreign)
+surgery_df=read.arff("data/ThoraricSurgery.arff")
+
+```
+
+### GLM Summary 
+
+```{r}
+
+GLM.1 <- glm(Risk1Yr ~ ., family=binomial(), data=surgery_df)
+summary(GLM.1)
+
+```
+
+### List of significant variables  
+>*However, I did not remove non-significant variables from the model as It did not optiomize model significantly*  
+
+```{r}
+toselect.x<-summary(GLM.1)$coeff[-1,4] < 0.05
+relevant.x <- names(toselect.x)[toselect.x == TRUE]
+relevant.x
+```
+
+### Preparing Testing/Training models 
+
+```{r}
+library(caTools)
+
+split<- sample.split(surgery_df,SplitRatio=.8)
+
+train<-subset(surgery_df,split=="TRUE")
+test<-subset(surgery_df,split=="FALSE")
+
+
+```
+
+### Running test data through the model and validating the model 
+
+```{r}
+
+res<-predict(GLM.1,test,type="response")
+res<-predict(GLM.1,train,type="response")
+
+conffmatrix<- table(actual_value=train$Risk1Yr,Predicted_value=res>0.5)
+
+conffmatrix
+
+
+
+
+
+```
+
+
+```{r echo=FALSE}
+
+acc<-(conffmatrix[1,1] + conffmatrix[2,2])/(conffmatrix[1,1] + conffmatrix[2,2] + conffmatrix[2,1]+ conffmatrix[1,2]) *100
+```
+
+### Accuracy is `r acc` % : 
+
+
+
+
+

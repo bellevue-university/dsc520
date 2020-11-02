@@ -1,0 +1,352 @@
+---
+title: "Exercise15"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Exercise 15
+
+```{r echo=TRUE}
+
+setwd("~/MadR/Workspaces/dsc520")
+
+
+```
+
+### Loading data from file 
+
+```{r}
+data.binary=read.csv("data/binary-classifier-data.csv")
+data.trinary=read.csv("data/trinary-classifier-data.csv")
+
+summary(data.binary)
+summary(data.trinary)
+```
+
+### a. Plot the data from each dataset using a scatter plot.
+
+```{r}
+plot(data.binary$x,data.binary$y,col=data.binary$label +1,
+     main="Scatterplot Binary Classifier",   xlab="X ", ylab="Y ")
+plot(data.trinary$x,data.trinary$y,col=data.trinary$label +1,
+     main="Scatterplot Trinary Classifier",   xlab="X ", ylab="Y ")
+
+
+
+```
+### b - Binary data set 
+
+```{r}
+set.seed(9850)
+gp<-runif(nrow(data.binary))
+data.binary<-data.binary[order(gp),]
+head(data.binary)  
+
+normalize<-function(x){
+  return (
+            (x - min(x))/max(x)-min(x)
+         )
+}
+data.binary.n<-as.data.frame(lapply(data.binary[,c(2:3)], normalize))
+
+str(data.binary.n)
+summary(data.binary.n)
+
+r<-round(0.8*nrow(data.binary.n))
+l<-nrow(data.binary.n)
+
+data.train<-data.binary.n[1:r,]
+data.test<-data.binary.n[r:l,]
+
+data.train.target<-data.binary[1:r,1]
+data.test.target<-data.binary[r:l,1]
+
+k_value<-round(sqrt(nrow(data.binary)))
+
+```
+
+### calculatig knn and accuracy for each k =3 , 5 ,10 ,15 ,20 , 25 and  39 
+
+```{r}
+
+ library("class")
+
+
+
+knn.3<- knn(train = data.train, test=data.test,cl=data.train.target, k=3)
+ACC.3<-100 * sum( data.test.target == knn.3) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.3)
+
+ACC.3
+
+knn.5<- knn(train = data.train, test=data.test,cl=data.train.target, k=5)
+ACC.5<-100 * sum( data.test.target == knn.5) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.5)
+
+ACC.5
+
+knn.10<- knn(train = data.train, test=data.test,cl=data.train.target, k=10)
+ACC.10<-100 * sum( data.test.target == knn.10) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.10)
+
+ACC.10
+
+knn.15<- knn(train = data.train, test=data.test,cl=data.train.target, k=15)
+ACC.15<-100 * sum( data.test.target == knn.15) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.15)
+
+ACC.15
+
+
+knn.20<- knn(train = data.train, test=data.test,cl=data.train.target, k=20)
+ACC.20<-100 * sum( data.test.target == knn.20) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.20)
+
+ACC.20
+
+
+knn.25<- knn(train = data.train, test=data.test,cl=data.train.target, k=25)
+ACC.25<-100 * sum( data.test.target == knn.25) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.25)
+
+ACC.25
+
+
+knn.39<- knn(train = data.train, test=data.test,cl=data.train.target, k=k_value)
+ACC.39<-100 * sum( data.test.target == knn.39) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.39)
+
+ACC.39
+
+
+
+```
+
+### Plot for binary knn data
+
+```{r}
+
+
+
+binary.plot<- data.frame("K.Value"=c(3,5,10,15,20,25,39),
+                         "Accuracy"=c(ACC.3,ACC.5,ACC.10,ACC.15,ACC.20,ACC.25,ACC.39)
+                        )
+library(caret)
+
+plot(binary.plot,
+     main="K Value vs Accuracy",
+      xlab="K Value ", ylab="Accuracy",type="l"
+     )
+   text(binary.plot[, 'K.Value'], binary.plot[, 'Accuracy'],  binary.plot$K.Value, 
+     cex = 0.88, pos = 2, col = "darkgreen") 
+
+   
+```
+
+###  decision plot function 
+
+```{r}
+
+
+decisionplot <- function(model, data, class = NULL, predict_type = "class",
+  resolution = 100, showgrid = TRUE, ...) {
+
+  if(!is.null(class)) cl <- data[,class] else cl <- 1
+  data <- data[,2:3]
+  k <- length(unique(cl))
+
+  plot(data, col = as.integer(cl)+1L, pch = as.integer(cl)+1L, ...)
+
+  # make grid
+  r <- sapply(data, range, na.rm = TRUE)
+  xs <- seq(r[1,1], r[2,1], length.out = resolution)
+  ys <- seq(r[1,2], r[2,2], length.out = resolution)
+  g <- cbind(rep(xs, each=resolution), rep(ys, time = resolution))
+  colnames(g) <- colnames(r)
+  g <- as.data.frame(g)
+
+  ### guess how to get class labels from predict
+  ### (unfortunately not very consistent between models)
+  p <- predict(model, g, type = predict_type)
+  if(is.list(p)) p <- p$class
+  p <- as.factor(p)
+
+  if(showgrid) points(g, col = as.integer(p)+1L, pch = ".")
+
+  z <- matrix(as.integer(p), nrow = resolution, byrow = TRUE)
+  contour(xs, ys, z, add = TRUE, drawlabels = FALSE,
+    lwd = 2, levels = (1:(k-1))+.5)
+
+  invisible(z)
+}
+
+```
+
+### c. Decision boundry for binary dataset 
+
+```{r}
+library(lattice)
+
+
+model <- glm(label ~., data = data.binary)
+class(model) <- c("lr", class(model))
+predict.lr <- function(object, newdata, ...)
+  predict.glm(object, newdata, type = "response") > .5
+
+
+decisionplot(model, data.binary, class = "label", main = "Logistic Regression")
+
+```
+
+
+       
+## Trinary 
+
+### b - Trinary data set 
+
+```{r}
+set.seed(9850)
+gp<-runif(nrow(data.trinary))
+data.trinary<-data.trinary[order(gp),]
+head(data.trinary)  
+
+normalize<-function(x){
+  return (
+            (x - min(x))/max(x)-min(x)
+         )
+}
+data.trinary.n<-as.data.frame(lapply(data.trinary[,c(2:3)], normalize))
+
+str(data.trinary.n)
+summary(data.trinary.n)
+
+r<-round(0.8*nrow(data.trinary.n))
+l<-nrow(data.trinary.n)
+
+data.train<-data.trinary.n[1:r,]
+data.test<-data.trinary.n[r:l,]
+
+data.train.target<-data.trinary[1:r,1]
+data.test.target<-data.trinary[r:l,1]
+
+k_value<-round(sqrt(nrow(data.trinary)))
+
+```
+
+### calculatig knn and accuracy for each k =3 , 5 ,10 ,15 ,20 , 25 and  39 
+
+```{r}
+
+ library("class")
+
+
+
+knn.3<- knn(train = data.train, test=data.test,cl=data.train.target, k=3)
+ACC.3<-100 * sum( data.test.target == knn.3) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.3)
+
+ACC.3
+
+knn.5<- knn(train = data.train, test=data.test,cl=data.train.target, k=5)
+ACC.5<-100 * sum( data.test.target == knn.5) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.5)
+
+ACC.5
+
+knn.10<- knn(train = data.train, test=data.test,cl=data.train.target, k=10)
+ACC.10<-100 * sum( data.test.target == knn.10) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.10)
+
+ACC.10
+
+knn.15<- knn(train = data.train, test=data.test,cl=data.train.target, k=15)
+ACC.15<-100 * sum( data.test.target == knn.15) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.15)
+
+ACC.15
+
+
+knn.20<- knn(train = data.train, test=data.test,cl=data.train.target, k=20)
+ACC.20<-100 * sum( data.test.target == knn.20) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.20)
+
+ACC.20
+
+
+knn.25<- knn(train = data.train, test=data.test,cl=data.train.target, k=25)
+ACC.25<-100 * sum( data.test.target == knn.25) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.25)
+
+ACC.25
+
+
+knn.39<- knn(train = data.train, test=data.test,cl=data.train.target, k=k_value)
+ACC.39<-100 * sum( data.test.target == knn.39) / NROW(data.test.target)
+                                                     
+table(data.test.target,knn.39)
+
+ACC.39
+
+
+
+```
+
+### Plot for trinary knn data 
+
+```{r}
+
+library(purrr)
+
+trinary.plot<- data.frame("K.Value"=c(3,5,10,15,20,25,39),
+                         "Accuracy"=c(ACC.3,ACC.5,ACC.10,ACC.15,ACC.20,ACC.25,ACC.39)
+                        )
+library(caret)
+
+plot(trinary.plot,
+     main="K Value vs Accuracy",
+      xlab="K Value ", ylab="Accuracy",type="l"
+     )
+   text(trinary.plot[, 'K.Value'], trinary.plot[, 'Accuracy'], 
+        trinary.plot$K.Value, 
+     cex = 0.88, pos = 2, col = "darkgreen") 
+
+   
+```
+
+### Decision boundry for trinary dataset 
+
+```{r}
+
+model <- glm(label ~., data = data.trinary)
+class(model) <- c("lr", class(model))
+predict.lr <- function(object, newdata, ...)
+  predict.glm(object, newdata, type = "response") > .5
+
+
+decisionplot(model, data.trinary, class = "label", main = "Logistic Regression")
+       
+```
+
+### data doesn't look suitable for linear classifier 
+
+
+
+
