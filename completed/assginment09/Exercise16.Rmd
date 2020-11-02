@@ -93,21 +93,24 @@ fviz_dist(distance2, gradient = list(low = "#00AFBB", mid = "white", high = "#FC
 ### Euclidean Distance 
 
 ```{r}
-model <- kmeans(data.cluster, centers = 2)
-data.cluster$clustered <-model$cluster
+df<-data.cluster
 
-head(data.cluster)
+distances <- c()
+for(i in 1:12){
+  model <- kmeans(df, i)
+  df$label <- as.factor(model$cluster)
+  centers <- as.data.frame(model$centers)
+  df$distance <- sqrt((df$x - model$centers[df$label,'x']) ** 2 + (df$y - model$centers[df$label,'y']) ** 2)
+distances[i] <- mean(df$distance)
+}
 
+k.values <- 1:12
+dist.df <- data.frame(k.values, distances)
 
-
-data.cluster$x.dist <- model$centers[data.cluster$clustered,][1] - data.cluster$x
-data.cluster$y.dist <- model$centers[data.cluster$clustered,][2] - data.cluster$y
-
-
-data.cluster$euclid <- sqrt((data.cluster$x.dist ** 2) + (data.cluster$y.dist ** 2))
-
-#data.cluster$euclid 
+dist.df
 ```
+
+
 
 ### Elbow 
 
