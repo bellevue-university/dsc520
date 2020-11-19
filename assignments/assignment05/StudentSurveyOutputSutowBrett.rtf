@@ -1,0 +1,39 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 # Assignment: Student Surveys\
+# Name: Sutow, Brett\
+# Date: 2020-09-29\
+\
+#Setup\
+setwd("/Users/Brett/Desktop/dsc520-master")\
+studentsurvey <- read.csv("/Users/Brett/Desktop/dsc520-master/data/student-survey.csv")\
+head(studentsurvey)\
+timereading<-studentsurvey[,c(1)]\
+timetv<-studentsurvey[,c(2)]\
+happiness<-studentsurvey[,c(3)]\
+gender<-studentsurvey[,c(4)]\
+\
+#Covariance of Time Reading and Time TV\
+cov(timereading,timetv)\
+\
+#Correlation Test\
+cor(studentsurvey, use= "everything", method= "pearson")\
+\
+cor.test(timereading, timetv, use= "everything", method= "pearson", level= 0.95)\
+cor.test(timereading, timetv, use= "everything", method= "pearson", conf.level= 0.99)\
+\
+#Coefficient of Determination\
+timereading.lm = lm(timereading ~ timetv, data= studentsurvey)\
+summary(timereading.lm)$r.squared\
+timetv.lm = lm(timetv ~ timereading, data = studentsurvey)\
+summary(timetv.lm)$r.squared\
+\
+#Partial Correlation\
+pcor.test(timereading, timetv, happiness)\
+\
+}

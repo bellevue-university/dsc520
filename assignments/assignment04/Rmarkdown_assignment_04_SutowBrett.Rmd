@@ -1,0 +1,146 @@
+
+---
+title: "ASSIGNMENT 4"
+author: "Brett Sutow"
+date: '2020-09-24'
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+bibliography: bibliography.bib
+---
+
+# Markdown Basics
+
+## Favorite Foods
+
+1. Burger
+2. Steak
+3. Onion Rings
+
+## Images
+<p>
+![All Cases (Log Plot)](/Users/Brett/Desktop/dsc520-master/completed/assignment04/plots/10-all-cases-log.png)
+</p>
+
+## Add a Quote
+
+>>>I have no idea what I'm doing. But I know I'm doing it really, really well.
+
+
+## Add an Equation
+
+$$
+10+10
+$$
+
+
+
+## Add a Footnote
+
+Footnote^[This is a footnote for the assignment]
+
+## Add Citations
+
+* R for Everyone(Lander 2014)
+* Discovering Statistics Using R(Field, Miles, and Field 2012)
+
+# Inline Code
+
+```{r,include=FALSE}
+setwd("/Users/Brett/Desktop/dsc520-master")
+heights_df <- read.csv("data/r4ds/heights.csv")
+heights_df
+covid_df <- read.csv("data/nytimes/covid-19-data/us-states.csv")
+date <- covid_df[,c(1)]
+state <- covid_df[,c(2)]
+fips <- covid_df[,c(3)]
+cases <- covid_df[,c(4)]
+deaths <- covid_df[,c(5)]
+covid_df$date <- as.Date(date, "%Y-%m-%d")
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <-  covid_df [ which( covid_df$state == "New York"), ]
+florida_df <-  covid_df [ which( covid_df$state == "Florida"), ]
+california_df
+florida_df
+ny_df
+```
+
+
+## NY Times COVID-19 Data
+
+```{r,echo=FALSE}
+library(ggplot2)
+covid_df$date <- as.Date(date, "%Y-%m-%d")
+ggplot(data=florida_df, aes(x= date, group=1)) +
+  geom_line(aes(y = cases, colour = "Florida")) +
+  geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+  geom_line(data=california_df, aes(y = cases, colour="California")) +
+  scale_colour_manual("",
+                      breaks = c("Florida", "New York", "California"),
+                      values = c("darkred", "darkgreen", "steelblue")) +
+  xlab(" ") + ylab("Cases") + scale_y_log10()
+ ```
+ 
+
+## R4DS Height vs Earnings  
+
+ ```{r,echo=FALSE}
+ggplot(heights_df, aes(x= height, y= earn, col= sex)) + geom_point( )+
+  ggtitle("Height vs Earnings") + labs(x="Height(Inches)", y="Earnings(Dollars)")
+```
+
+# Tables
+
+```{r, echo=FALSE}
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+```
+## Knitr Table with Kable
+
+```{r,echo=FALSE}
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+
+library(knitr)
+knitr:: kable(characters_df,caption = "One Ring to Rule Them All")
+```
+
+
+## Pandoc Table
+
+```{r,include=FALSE}
+library(rmarkdown)
+library(pander)
+rmarkdown::find_pandoc(version = "2.9.1")
+pandoc.table(characters_df, 'One Ring to Rule Them All', col.names = c("Name", "Race","In Fellowship?", "Is Ring Bearer?", "Age"))
+```
+Table: One Ring to Rule Them All
+
+|Name |     Race |    In Fellowship?     | Is Ring Bearer?  | Age |  
+|:----: | :-----: | :----------------: | :--------------: |:---: |
+| Aragon    | Men       | TRUE         | FALSE            | 88 |  
+| Bilbo     | Hobbit    | FALSE        | TRUE             | 129 |  
+| Frodo     | Hobbit    | TRUE         | TRUE             | 51 |  
+| Galadriel | Elf       | FALSE        | FALSE            | 7000 | 
+| Sam       | Hobbit    | TRUE         | TRUE             | 36 |  
+| Gandalf   | Maia      | TRUE         | TRUE             | 2019 | 
+| Legolas   | Elf       | TRUE         | FALSE            | 2931 | 
+| Sauron    | Maia      | FALSE        | TRUE             | 7052 | 
+| Gollum    | Hobbit    | FALSE        | TRUE             | 589 |  
+
+# References
+
+Field, A., Miles, J., & Field, Z. (2012). Discovering Statistics Using R (1st ed.). SAGE Publications Ltd.
+
+Lander, J. (2017). R for Everyone: Advanced Analytics and Graphics (Addison-Wesley Data & Analytics Series) (2nd ed.). Addison-Wesley Professional.
