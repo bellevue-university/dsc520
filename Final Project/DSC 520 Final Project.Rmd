@@ -113,7 +113,7 @@ ggplot(cars_M, aes(x = Fuel.Consumption.Comb..L.100.km., y = CO2.Emissions.g.km.
 
 > The CO2 emissions of gas ethanol cars to determine if ethanol is more eco-friendly
 
-## Based on the t tests, there is a significant difference between gas and premium gas fuel consumption. There is also a significant difference between gas and diesel CO2 emissions, and gas and ethanol CO2 emissions. More data on diesel and ethanol cars will need to be obtained in the future, since their sample sizes are very small.
+## Based on the t tests, there is a significant difference between gas and premium gas fuel consumption. There is a significant difference between gas and ethanol CO2 emissions, but not gas and diesel CO2 emissions. More data on diesel and ethanol cars will need to be obtained in the future, since their sample sizes are very small.
 
 ``` {r t-tests, echo = FALSE}
 cars_gas <- filter(cars, Fuel.Type == 'X')
@@ -132,7 +132,7 @@ res
 #Do diesel cars really pollute more than regular gas cars? Let's find out as well.
 res2 <- t.test(cars_gas$CO2.Emissions.g.km., cars_diesel$CO2.Emissions.g.km.)
 res2
-#Based on the p-value of 0.46, the difference in emissions between gas and diesel is barely significant. This appears to confirm the common claim that diesel cars pollute more despite being more fuel efficient; however, the diesel sample is an order of magnitude smaller than the gas sample so more data will be needed to confirm this.
+#Based on the p-value of 0.46, the difference in emissions between gas and diesel is not significant. This appears to go against the common claim that diesel cars pollute more despite being more fuel efficient; however, the diesel sample is an order of magnitude smaller than the gas sample so more data will be needed to confirm this.
 
 #Ethanol cars appear to have a higher mean emissions rate than other fuels, despite people claiming 
 #ethanol to be a clean burning fuel. Is there an emission difference between ethanol and normal gas?
