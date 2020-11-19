@@ -1,0 +1,37 @@
+setwd("C:/Users/PS3ma/Documents/GitHub/dsc520")
+
+library('foreign')
+library('tidyverse')
+library('ggplot2')
+
+binary <- read.csv('data/binary-classifier-data.csv')
+
+#Generating our model for label based on x and y
+logistic_model <- glm(label ~ x + y, data = binary)
+
+#Summary of the model
+summary(logistic_model)
+
+#Predicts the probability of the label being closer to 0 or 1
+model_probabilities1 <- fitted(logistic_model)
+
+#Defining each probability as either a 1 or 0 based on a cutoff of 43%
+#This cutoff was found to maximize the accuracy of this model 
+#In addition, 43% makes reasonable sense as it is very close to 50%
+model_pred1 <- 1*(model_probabilities1 > 0.43) + 0
+
+#Defining a accuracy vector where each 1 represents the prediction matching the actual data
+accuracy1 <-  1*(model_pred1 == binary$label)
+
+#Calculates percent accuracy by dividing the sum of the match vector by the
+#number of rows in the data set then multiplying by 100
+percent1 <- (sum(accuracy1)/nrow(binary)) * 100
+
+
+#B: The accuracy of KNN tends to be greater than the accuracy of the logistic
+#regression classifier.
+
+#C: The accuracies are different due to the way each method is run. Logistic regression
+#is used for linear solutions while KNN can be used for nonlinear solutions. KNN is relatively
+#slower than logistic regression. Logistic regression is a parametric model and can derive
+#probabilities and confidence levels, while KNN is non-parametric, and can only output labels.

@@ -3,13 +3,13 @@
 # Date: 2010-02-14
 
 ## Set the working directory to the root of your DSC 520 directory
-setwd("/homoe/jdoe/Workspaces/dsc520")
+setwd("/home/jdoe/Workspaces/dsc520")
 
 ## Load the `data/r4ds/heights.csv` to
 heights_df <- read.csv("data/r4ds/heights.csv")
 
 # Fit a linear model
-earn_lm <-  lm(___ ~ ___ + ___ + ___ + ___ + ___, data=___)
+earn_lm <-  lm(___ ~ ___ + ___ + ___ + ___ + ___, data = ___)
 
 # View the summary of your model
 summary(earn_lm)

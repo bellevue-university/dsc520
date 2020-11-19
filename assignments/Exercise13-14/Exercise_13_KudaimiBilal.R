@@ -1,0 +1,41 @@
+setwd("C:/Users/PS3ma/Documents/GitHub/dsc520")
+
+library('foreign')
+library('tidyverse')
+
+#Importing data and changing the dependent variable column to binary
+ThoraricSurgery <- read.arff("data/ThoraricSurgery.arff")
+ThoraricSurgery$Risk1Yr = 1*(ThoraricSurgery$Risk1Yr == "T") + 0
+
+#Generating our model for Risk1Yr based on all other variables
+model <- glm(formula = Risk1Yr  ~  DGN + PRE4 + PRE5 + PRE6 + PRE7 + PRE8 + PRE9
+             + PRE10 + PRE11 + PRE14 + PRE17 
+             + PRE19 + PRE25 + PRE30 + PRE32 
+             + AGE, data = ThoraricSurgery,  family = binomial())
+
+#Summary of our model
+summary(model)
+
+#According to the z-statistics from the summary, the variables PRE9, PRE14OC14,
+#PRE17,and PRE30 had the greatest effect on the survival rate.
+
+#Predicts the probability of the patient surviving for more than a year after surgery
+model_probabilities <- fitted(model)
+
+#Defining each probability as either a 1 or 0 based on a cutoff of 50%
+#65% was found to maximize the accuracy of this model, but 65% doesn't make sense.
+#Would a probability of 60% mean someone is not likely to survive past a year? 
+#This is why 50% was chosen here.
+model_pred <- 1*(model_probabilities > 0.5) + 0
+
+#Defining an accuracy vector where each 1 represents the prediction matching the actual data
+accuracy <-  1*(model_pred == ThoraricSurgery$Risk1Yr)
+
+str(ThoraricSurgery)
+
+#Calculates percent accuracy by dividing the sum of the match vector by the
+#number of rows in the data set then multiplying by 100
+percent <- (sum(accuracy)/nrow(ThoraricSurgery)) * 100
+
+#This model has an accuracy of 83.62%, meaning this model can accurately predict
+#the likelihood of surviving a year after surgery 83.62% of the time
