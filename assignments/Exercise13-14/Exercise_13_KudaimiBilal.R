@@ -31,6 +31,8 @@ model_pred <- 1*(model_probabilities > 0.5) + 0
 #Defining an accuracy vector where each 1 represents the prediction matching the actual data
 accuracy <-  1*(model_pred == ThoraricSurgery$Risk1Yr)
 
+str(ThoraricSurgery)
+
 #Calculates percent accuracy by dividing the sum of the match vector by the
 #number of rows in the data set then multiplying by 100
 percent <- (sum(accuracy)/nrow(ThoraricSurgery)) * 100
