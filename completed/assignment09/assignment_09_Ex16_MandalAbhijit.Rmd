@@ -1,0 +1,106 @@
+
+---
+title: 'ASSIGNMENT 9 Exercise 16: Clustering'
+author: "Abhijit Mandal"
+date: '2020-11-01'
+output:
+  word_document: default
+---
+
+## Assignment
+**In this problem, you will use the k-means clustering algorithm to look for patterns in an unlabeled dataset. The dataset for this problem is found at data/clustering-data.csv.**
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question A:
+**Plot the dataset using a scatter plot.**
+
+## Answer for A:
+
+```{r echo=TRUE, include=TRUE} 
+## Set the working directory to the root of your DSC 520 directory
+
+setwd("~/Documents/GitHub/dsc520")
+
+#Load the `clustering-data.csv`
+
+clustering_data <- read.csv("data/clustering-data.csv")
+head(clustering_data)
+summary(clustering_data)
+
+#plot the data point
+library(ggplot2)
+ggplot(data = clustering_data, aes(y = y, x = x)) + geom_point() + ggtitle("Clustering Data")
+
+
+```
+
+
+## Question B. 
+**Fit the dataset using the k-means algorithm from k=2 to k=12. Create a scatter plot of the resultant clusters for each value of k.**
+
+## Answer for B:
+
+```{r echo=TRUE, include=TRUE} 
+cluster_matrix <- data.matrix(clustering_data)
+wss <- (nrow(cluster_matrix) -1) * sum(apply(cluster_matrix,2,var))
+total.withinss_values <- NULL
+average_distance <- NULL
+kmean_values<- NULL
+
+for(i in 2:12){
+  wss[i] <- sum(kmeans(cluster_matrix,centers=i)$tot.withinss)
+  
+  cdata <- clustering_data
+  cdata.kmeanscluster <- kmeans(cdata, i)
+  cdata$cluster <- as.factor(cdata.kmeanscluster$cluster)
+  
+  p <- ggplot(data = cdata, aes(x = x, y = y, color = cluster)) + geom_point(size = 0.5) + geom_point(data = as.data.frame(cdata.kmeanscluster$centers), 
+color = "blue", shape = 10, size = 2) + ggtitle(paste("K Means Cluster for K = ", i, sep ="")) + theme_bw()
+
+  #display graph
+  print(p)
+  
+  kmean_values<- c(kmean_values, i)
+  x.distance <- cdata.kmeanscluster$centers[cdata$cluster] - cdata$x
+  y.distance <- cdata.kmeanscluster$centers[cdata$cluster] - cdata$y
+  total.distance <- sqrt((x.distance ** 2) + (y.distance ** 2))
+  average_distance <- c(average_distance, mean(total.distance))
+  total.withinss_values <- c(total.withinss_values, cdata.kmeanscluster$tot.withinss)
+  
+}
+
+
+```
+
+
+## Question C.1:
+**As k-means is an unsupervised algorithm, you cannot compute the accuracy as there are no correct values to compare the output to. Instead, you will use the average distance from the center of each cluster as a measure of how well the model fits the data. To calculate this metric, simply compute the distance of each data point to the center of the cluster it is assigned to and take the average value of all of those distances.Calculate this average distance from the center of each cluster for each value of k and plot it as a line chart where k is the x-axis and the average distance is the y-axis.**
+
+## Answer For C.1
+
+```{r echo=TRUE, include=TRUE} 
+avg_distdata <- data.frame(kmean_values, average_distance)
+avg_distdata
+ggplot(data = avg_distdata, aes(x=kmean_values, y=average_distance)) + xlab("Clusters") + ylab("Average Distance") + theme_bw() + geom_point() + geom_line(color = "blue")
+
+
+```
+
+## Question C.2:
+**One way of determining the “right” number of clusters is to look at the graph of k versus average distance and finding the “elbow point”. Looking at the graph you generated in the previous example, what is the elbow point for this dataset?**
+
+## Answer For C.2
+
+Looking the graph generated from average and within sum of squares, the elbow point seems to lie between 7 and 9.
+
+```{r echo=TRUE, include=TRUE} 
+#Plot SS
+plot(1:12, wss, type="b",xlab="Number of clusters",ylab="within sum of squares")
+totalWithinSS <- data.frame(kmean_values, total.withinss_values)
+totalWithinSS
+ggplot(data = totalWithinSS, aes(x=kmean_values, y=total.withinss_values)) + xlab("Clusters") + ylab("Within SS") + theme_bw() + geom_point() + geom_line(color = "blue")
+
+```
