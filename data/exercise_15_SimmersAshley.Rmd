@@ -1,0 +1,53 @@
+---
+title: "Exercise 15"
+author: "Ashley Simmers"
+date: "10/31/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scatterplot
+
+
+```{r, echo=FALSE}
+setwd("C:/Users/ashle/OneDrive/Desktop/DSC_520/DSC_520/dsc520/data")
+trinary_df <- read.csv("trinary-classifier-data.csv")
+library(ggplot2)
+trinary_df$label <- as.factor(trinary_df$label)
+ggplot(trinary_df, aes(y = y, x = x, color = label)) +
+    geom_point()
+```
+
+## KNN
+
+
+```{r, echo=FALSE}
+library(class)
+library(caTools)
+split <- sample.split(trinary_df, SplitRatio = 0.7)
+split
+train <- subset(trinary_df, split == "TRUE")
+test <- subset(trinary_df, split == "FALSE")
+
+error.rate <- NULL
+predicted.values <- NULL
+
+k.values <- 1:30
+
+for (i in k.values) {
+    predicted.values <- knn(train[2:3], test[2:3], train$label, k = i)
+    error.rate[i] <- mean(test$label != predicted.values)
+}
+error.df <- data.frame(error.rate, k.values)
+
+ggplot(data= error.df, aes(x = k.values, y = error.rate)) +
+    geom_point() + geom_line(color = "purple") + xlab("K Values") + ylab("Error")
+```
+
+
+## Linear Classifier
+
+Looking at the scatterplot I don't think that linear classifier would work well. There are many instances where clusters overlap making it challenging to separate the categories. 
