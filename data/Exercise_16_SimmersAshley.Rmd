@@ -1,0 +1,53 @@
+---
+title: "Exercise 16"
+author: "Ashley Simmers"
+date: "11/1/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scatterplot
+
+```{r, echo=FALSE}
+setwd("C:/Users/ashle/OneDrive/Desktop/DSC_520/DSC_520/dsc520/data")
+cluster_df <- read.csv("clustering-data.csv")
+library(ggplot2)
+
+ggplot(cluster_df, aes(y = y, x = x)) +
+    geom_point()
+```
+
+## K-means Clustering
+
+
+```{r, echo=FALSE}
+library(factoextra)
+
+fviz_nbclust(cluster_df, kmeans, method = "wss")
+
+model <- kmeans(cluster_df, centers = 4)
+cluster_df$cluster <- as.factor(model$cluster)
+data.frame(model$centers)
+ggplot(data=cluster_df, aes(x = x, y = y, color = cluster)) +
+    geom_point() + geom_point(data = as.data.frame(model$centers), color = "black", size = 5) + theme_classic()
+```
+
+I am thinking that there might be something I did incorrectly with my Elbow model to calculate K. It looked like 4 was the elbow and would be the right amount of clusters. When looking at this I think a higher amount of clusters would more accurately represent this scatterplot.
+
+```{r, echo=FALSE}
+model <- kmeans(cluster_df, centers = 6)
+cluster_df$cluster <- as.factor(model$cluster)
+data.frame(model$centers)
+ggplot(data=cluster_df, aes(x = x, y = y, color = cluster)) +
+    geom_point() + geom_point(data = as.data.frame(model$centers), color = "black", size = 5) + theme_classic()
+```
+
+Looking to see how changing the amount of clusters changes the model centers. Here we can see that with 6 clusters the centers are mostly residing in the clustered data and not in white space. 
+
+
+## Average Distance
+
+I am not entirely sure how to calculate the average distance from center. Wouldn't think have been the Elbow that I used to determine K? Because it seems like there isn't an optimal elbow in this dataset - or maybe I executed incorrectly? 
