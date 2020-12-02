@@ -1,0 +1,77 @@
+---
+title: "Exercise_14_SimmersAshley"
+author: "Ashley Simmers"
+date: "10/25/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Logistic Regression
+
+
+```{r, echo=FALSE}
+
+setwd("C:/Users/ashle/OneDrive/Desktop/DSC_520/DSC_520/dsc520/data")
+binary_df <- read.csv("binary-classifier-data.csv")
+library(caTools)
+
+split <- sample.split(binary_df, SplitRatio = 0.8)
+split
+train <- subset(binary_df, split == "TRUE")
+test <- subset(binary_df, split == "FALSE")
+
+binary_df$label <- as.factor(binary_df$label)
+
+glm_binary <- glm(label ~ x + y, data = train, family = "binomial")
+summary(glm_binary)
+
+res <- predict(glm_binary, test, type = "response")
+res <- predict(glm_binary, train, type = "response")
+
+confmatrix <- table(Actual_Value=train$label, Predicted_Value = res > 0.5)
+confmatrix
+
+(confmatrix[1,1] + confmatrix[2,2]) / sum(confmatrix)
+```
+This assignment brought up a lot of questions. What exactly are we trying to predict with our logistic regression? I would think that we would we looking for our dependant variable which I understood would normally be Y. In this I placed label since it is a 0 or 1 binary yes or no. The logistic regression models accuracy was very poor being 58.54%. 
+
+
+## Nearest Neighbor 
+
+
+```{r pressure, echo=FALSE}
+library(ggplot2)
+
+ggplot(data = binary_df, aes(x = x, y = y, color = label)) + geom_point()
+```
+
+Above we can see that there is natural clustering in this data set. 
+
+```{r, echo=FALSE}
+library(class)
+error.rate <- NULL
+predicted.values <- NULL
+
+k.values <- 1:30
+
+for (i in k.values) {
+    predicted.values <- knn(train[2:3], test[2:3], train$label, k = i)
+    error.rate[i] <- mean(test$label != predicted.values)
+}
+error.df <- data.frame(error.rate, k.values)
+
+ggplot(data= error.df, aes(x = k.values, y = error.rate)) +
+    geom_point() + geom_line(color = "purple") + xlab("K Values") + ylab("Error")
+
+
+```
+
+Already had created training and test groups. Used them to help determine the right value for K based on rate of error. Lowest error rate is K = 14 and it is 1.4%. 
+
+
+## Accuracy of Logistic Regression Different
+
+KNN plots data points from your training data and uses test data points to find the nearest neighbors. Logistic regression uses a sigmoid function to determine the probability of a bionary question. 
