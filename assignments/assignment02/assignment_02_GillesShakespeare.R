@@ -12,7 +12,7 @@ dir()
 ## If the current directory does not contain the `data` directory, set the
 ## working directory to project root folder (the folder should contain the `data` directory
 ## Use `setwd()` if needed
-setwd("/Users/Shakes/Desktop/DSC520/data")
+setwd("/Users/Shake/Desktop/DSC520/data")
 
 ## Load the file `data/tidynomicon/person.csv` to `person_df1` using `read.csv`
 ## Examine the structure of `person_df1` using `str()`
@@ -92,4 +92,3 @@ toJSON(scores_df)
 
 ## Convert the scores dataframe to JSON using the `toJSON()` function with the `pretty=TRUE` option
 toJSON(scores_df, pretty=TRUE) 
-
