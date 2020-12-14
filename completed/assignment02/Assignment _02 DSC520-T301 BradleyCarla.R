@@ -3,7 +3,7 @@
 # Date: 2020-12-08
 
 ## Check your current working directory using `getwd()`
-___
+getwd()
 
 ## List the contents of the working directory with the `dir()` function
 dir()
