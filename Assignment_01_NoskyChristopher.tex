@@ -1,0 +1,668 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Assignment\_01\_NoskyChristopher.R},
+  pdfauthor={Chris},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Assignment\_01\_NoskyChristopher.R}
+\author{Chris}
+\date{2020-12-06}
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Assignment: ASSIGNMENT 1}
+\CommentTok{# Name: Lastname, Firstname}
+\CommentTok{# Date: 2010-02-14}
+
+\CommentTok{## Create a numeric vector with the values of 3, 2, 1 using the `c()` function}
+\CommentTok{## Assign the value to a variable named `num_vector`}
+\CommentTok{## Print the vector}
+
+\NormalTok{num_vector <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{num_vector}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3 2 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a character vector with the values of "three", "two", "one" "using the `c()` function}
+\CommentTok{## Assign the value to a variable named `char_vector`}
+\CommentTok{## Print the vector}
+
+\NormalTok{char_vector <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'three'}\NormalTok{, }\StringTok{'two'}\NormalTok{, }\StringTok{'one'}\NormalTok{)}
+\NormalTok{char_vector}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "three" "two"   "one"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a vector called `week1_sleep` representing how many hours slept each night of the week}
+\CommentTok{## Use the values 6.1, 8.8, 7.7, 6.4, 6.2, 6.9, 6.6}
+
+\NormalTok{week1_sleep <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Sunday"}\NormalTok{ =}\StringTok{ }\FloatTok{6.1}\NormalTok{, }\StringTok{"Monday"}\NormalTok{ =}\StringTok{ }\FloatTok{8.8}\NormalTok{, }\StringTok{"Tuesday"}\NormalTok{ =}\StringTok{ }\FloatTok{7.7}\NormalTok{, }
+                 \StringTok{"Wednesday"}\NormalTok{ =}\StringTok{ }\FloatTok{6.4}\NormalTok{, }\StringTok{"Thursday"}\NormalTok{ =}\StringTok{ }\FloatTok{6.2}\NormalTok{, }\StringTok{"Friday"}\NormalTok{ =}\StringTok{ }\FloatTok{6.9}\NormalTok{,}
+                 \StringTok{"Saturday"}\NormalTok{ =}\StringTok{ }\FloatTok{6.6}\NormalTok{)}
+\NormalTok{week1_sleep}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Sunday    Monday   Tuesday Wednesday  Thursday    Friday  Saturday 
+##       6.1       8.8       7.7       6.4       6.2       6.9       6.6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Display the amount of sleep on Tuesday of week 1 by selecting the variable index}
+
+\NormalTok{week1_sleep[}\DecValTok{3}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Tuesday 
+##     7.7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a vector called `week1_sleep_weekdays`}
+\CommentTok{## Assign the weekday values using indice slicing}
+
+\NormalTok{week1_sleep_weekdays <-}\StringTok{ }\NormalTok{week1_sleep[}\DecValTok{1}\OperatorTok{:}\DecValTok{7}\NormalTok{]}
+\NormalTok{week1_sleep_weekdays}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Sunday    Monday   Tuesday Wednesday  Thursday    Friday  Saturday 
+##       6.1       8.8       7.7       6.4       6.2       6.9       6.6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Add the total hours slept in week one using the `sum` function}
+\CommentTok{## Assign the value to variable `total_sleep_week1`}
+
+\NormalTok{total_sleep_week1 <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(week1_sleep)}
+\NormalTok{total_sleep_week1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 48.7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a vector called `week2_sleep` representing how many hours slept each night of the week}
+\CommentTok{## Use the values 7.1, 7.4, 7.9, 6.5, 8.1, 8.2, 8.9}
+\NormalTok{week2_sleep <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Sunday'}\NormalTok{ =}\StringTok{ }\FloatTok{7.1}\NormalTok{, }\StringTok{'Monday'}\NormalTok{ =}\StringTok{ }\FloatTok{7.4}\NormalTok{, }\StringTok{'Tuesday'}\NormalTok{ =}\StringTok{ }\FloatTok{7.9}\NormalTok{,}
+                 \StringTok{'Wednesday'}\NormalTok{ =}\StringTok{ }\FloatTok{6.5}\NormalTok{, }\StringTok{'Thursday'}\NormalTok{ =}\StringTok{ }\FloatTok{8.1}\NormalTok{, }\StringTok{'Friday'}\NormalTok{ =}\StringTok{ }\FloatTok{8.2}\NormalTok{,}
+                 \StringTok{'Saturday'}\NormalTok{ =}\StringTok{ }\FloatTok{8.9}\NormalTok{)}
+\NormalTok{week2_sleep}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Sunday    Monday   Tuesday Wednesday  Thursday    Friday  Saturday 
+##       7.1       7.4       7.9       6.5       8.1       8.2       8.9
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Add the total hours slept in week two using the sum function}
+\CommentTok{## Assign the value to variable `total_sleep_week2`}
+\NormalTok{total_sleep_week2 <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(week2_sleep)}
+\NormalTok{total_sleep_week2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 54.1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Determine if the total sleep in week 1 is less than week 2 by using the < operator}
+
+\NormalTok{total_sleep_week1 }\OperatorTok{<}\StringTok{ }\NormalTok{total_sleep_week2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Calculate the mean hours slept in week 1 using the `mean()` function}
+
+\KeywordTok{mean}\NormalTok{(week1_sleep_weekdays)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 6.957143
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a vector called `days` containing the days of the week.}
+\CommentTok{## Start with Sunday and end with Saturday}
+\NormalTok{days <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Sunday'}\NormalTok{, }\StringTok{'Monday'}\NormalTok{, }\StringTok{'Tuesday'}\NormalTok{, }\StringTok{'Wednesday'}\NormalTok{, }\StringTok{'Thursday'}\NormalTok{, }\StringTok{'Friday'}\NormalTok{, }\StringTok{'Saturday'}\NormalTok{)}
+
+\CommentTok{## Assign the names of each day to `week1_sleep` and `week2_sleep` using the `names` function and `days` vector}
+\KeywordTok{names}\NormalTok{(week1_sleep) <-}\StringTok{ }\NormalTok{days}
+\KeywordTok{names}\NormalTok{(week2_sleep) <-}\StringTok{ }\NormalTok{days}
+\NormalTok{week1_sleep}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Sunday    Monday   Tuesday Wednesday  Thursday    Friday  Saturday 
+##       6.1       8.8       7.7       6.4       6.2       6.9       6.6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Display the amount of sleep on Tuesday of week 1 by selecting the variable name}
+\NormalTok{week1_sleep[}\StringTok{'Tuesday'}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Tuesday 
+##     7.7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create vector called weekdays from the days vector}
+\NormalTok{weekdays <-}\StringTok{ }\NormalTok{days[}\DecValTok{2}\OperatorTok{:}\DecValTok{6}\NormalTok{]}
+\NormalTok{weekdays}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Monday"    "Tuesday"   "Wednesday" "Thursday"  "Friday"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create vector called weekends containing Sunday and Saturday}
+\NormalTok{weekends <-}\StringTok{ }\NormalTok{days[}\OperatorTok{-}\NormalTok{(}\DecValTok{2}\OperatorTok{:}\DecValTok{6}\NormalTok{)]}
+\NormalTok{weekends}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Sunday"   "Saturday"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Calculate the mean about sleep on weekdays for each week}
+\CommentTok{## Assign the values to weekdays1_mean and weekdays2_mean}
+
+\NormalTok{weekdays1_mean <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(week1_sleep[weekdays])}
+\NormalTok{weekdays2_mean <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(week2_sleep[weekdays])}
+\NormalTok{weekdays1_mean}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 7.2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{weekdays2_mean}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 7.62
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Using the weekdays1_mean and weekdays2_mean variables,}
+\CommentTok{## see if weekdays1_mean is greater than weekdays2_mean using the `>` operator}
+\NormalTok{weekdays1_mean }\OperatorTok{>}\StringTok{ }\NormalTok{weekdays2_mean}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] FALSE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Determine how many days in week 1 had over 8 hours of sleep using the `>` operator}
+\NormalTok{week1_sleep[weekdays] }\OperatorTok{>}\StringTok{ }\DecValTok{8}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Monday   Tuesday Wednesday  Thursday    Friday 
+##      TRUE     FALSE     FALSE     FALSE     FALSE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a matrix from the following three vectors}
+
+\NormalTok{student01 <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{100.0}\NormalTok{, }\FloatTok{87.1}\NormalTok{)}
+\NormalTok{student02 <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{77.2}\NormalTok{, }\FloatTok{88.9}\NormalTok{)}
+\NormalTok{student03 <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{66.3}\NormalTok{, }\FloatTok{87.9}\NormalTok{)}
+
+\NormalTok{students_combined <-}\StringTok{ }\KeywordTok{c}\NormalTok{(student01, student02, student03)}
+\NormalTok{grades <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(students_combined), }\DataTypeTok{nrow =} \DecValTok{3}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{TRUE}\NormalTok{)}
+
+\NormalTok{grades}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       [,1] [,2]
+## [1,] 100.0 87.1
+## [2,]  77.2 88.9
+## [3,]  66.3 87.9
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Add a new student row with `rbind()`}
+\NormalTok{student04 <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{95.2}\NormalTok{, }\FloatTok{94.1}\NormalTok{)}
+\NormalTok{grades <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(grades, student04)}
+\NormalTok{grades}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            [,1] [,2]
+##           100.0 87.1
+##            77.2 88.9
+##            66.3 87.9
+## student04  95.2 94.1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Add a new assignment column with `cbind()`}
+\NormalTok{assignment04 <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{92.1}\NormalTok{, }\FloatTok{84.3}\NormalTok{, }\FloatTok{75.1}\NormalTok{, }\FloatTok{97.8}\NormalTok{)}
+\NormalTok{grades <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(grades, assignment04)}
+\NormalTok{grades}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                      assignment04
+##           100.0 87.1         92.1
+##            77.2 88.9         84.3
+##            66.3 87.9         75.1
+## student04  95.2 94.1         97.8
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Add the following names to columns and rows using `rownames()` and `colnames()`}
+\NormalTok{assignments <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Assignment 1"}\NormalTok{, }\StringTok{"Assignment 2"}\NormalTok{, }\StringTok{"Assignment 3"}\NormalTok{)}
+\NormalTok{students <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Florinda Baird"}\NormalTok{, }\StringTok{"Jinny Foss"}\NormalTok{, }\StringTok{"Lou Purvis"}\NormalTok{, }\StringTok{"Nola Maloney"}\NormalTok{)}
+
+\KeywordTok{rownames}\NormalTok{(grades) <-}\StringTok{ }\NormalTok{students}
+\KeywordTok{colnames}\NormalTok{(grades) <-}\StringTok{ }\NormalTok{assignments}
+\NormalTok{grades}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                Assignment 1 Assignment 2 Assignment 3
+## Florinda Baird        100.0         87.1         92.1
+## Jinny Foss             77.2         88.9         84.3
+## Lou Purvis             66.3         87.9         75.1
+## Nola Maloney           95.2         94.1         97.8
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Total points for each assignment using `colSums()`}
+\NormalTok{total_points <-}\StringTok{ }\KeywordTok{colSums}\NormalTok{(grades)}
+\NormalTok{total_points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Assignment 1 Assignment 2 Assignment 3 
+##        338.7        358.0        349.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Total points for each student using `rowSums()`}
+\NormalTok{total_points_student <-}\StringTok{ }\KeywordTok{rowSums}\NormalTok{(grades)}
+\NormalTok{total_points_student}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Florinda Baird     Jinny Foss     Lou Purvis   Nola Maloney 
+##          279.2          250.4          229.3          287.1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Matrix with 10% and add it to grades}
+\NormalTok{weighted_grades <-}\StringTok{ }\NormalTok{grades }\OperatorTok{*}\StringTok{ }\FloatTok{0.1} \OperatorTok{+}\StringTok{ }\NormalTok{grades}
+\NormalTok{weighted_grades}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                Assignment 1 Assignment 2 Assignment 3
+## Florinda Baird       110.00        95.81       101.31
+## Jinny Foss            84.92        97.79        92.73
+## Lou Purvis            72.93        96.69        82.61
+## Nola Maloney         104.72       103.51       107.58
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a factor of book genres using the genres_vector}
+\CommentTok{## Assign the factor vector to factor_genre_vector}
+\NormalTok{genres_vector <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Fantasy"}\NormalTok{, }\StringTok{"Sci-Fi"}\NormalTok{, }\StringTok{"Sci-Fi"}\NormalTok{, }\StringTok{"Mystery"}\NormalTok{, }\StringTok{"Sci-Fi"}\NormalTok{, }\StringTok{"Fantasy"}\NormalTok{)}
+\NormalTok{factor_genre_vector <-}\StringTok{ }\NormalTok{genres_vector}
+\NormalTok{factor_genre_vector}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Fantasy" "Sci-Fi"  "Sci-Fi"  "Mystery" "Sci-Fi"  "Fantasy"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Use the `summary()` function to print a summary of `factor_genre_vector`}
+\KeywordTok{summary}\NormalTok{(factor_genre_vector)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Length     Class      Mode 
+##         6 character character
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create ordered factor of book recommendations using the recommendations_vector}
+\CommentTok{## `no` is the lowest and `yes` is the highest}
+\NormalTok{recommendations_vector <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"neutral"}\NormalTok{, }\StringTok{"no"}\NormalTok{, }\StringTok{"no"}\NormalTok{, }\StringTok{"neutral"}\NormalTok{, }\StringTok{"yes"}\NormalTok{)}
+\NormalTok{factor_recommendations_vector <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(}
+\NormalTok{  recommendations_vector,}
+  \DataTypeTok{ordered =} \OtherTok{TRUE}\NormalTok{,}
+  \DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'no'}\NormalTok{, }\StringTok{'neutral'}\NormalTok{, }\StringTok{'yes'}\NormalTok{)}
+\NormalTok{)}
+\NormalTok{factor_recommendations_vector}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] neutral no      no      neutral yes    
+## Levels: no < neutral < yes
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Use the `summary()` function to print a summary of `factor_recommendations_vector`}
+\KeywordTok{summary}\NormalTok{(factor_recommendations_vector)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      no neutral     yes 
+##       2       2       1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Using the built-in `mtcars` dataset, view the first few rows using the `head()` function}
+\KeywordTok{head}\NormalTok{(mtcars)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Using the built-in mtcars dataset, view the last few rows using the `tail()` function}
+\KeywordTok{tail}\NormalTok{(mtcars)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                 mpg cyl  disp  hp drat    wt qsec vs am gear carb
+## Porsche 914-2  26.0   4 120.3  91 4.43 2.140 16.7  0  1    5    2
+## Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.9  1  1    5    2
+## Ford Pantera L 15.8   8 351.0 264 4.22 3.170 14.5  0  1    5    4
+## Ferrari Dino   19.7   6 145.0 175 3.62 2.770 15.5  0  1    5    6
+## Maserati Bora  15.0   8 301.0 335 3.54 3.570 14.6  0  1    5    8
+## Volvo 142E     21.4   4 121.0 109 4.11 2.780 18.6  1  1    4    2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Create a dataframe called characters_df using the following information from LOTR}
+\NormalTok{name <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Aragon"}\NormalTok{, }\StringTok{"Bilbo"}\NormalTok{, }\StringTok{"Frodo"}\NormalTok{, }\StringTok{"Galadriel"}\NormalTok{, }\StringTok{"Sam"}\NormalTok{, }\StringTok{"Gandalf"}\NormalTok{, }\StringTok{"Legolas"}\NormalTok{, }\StringTok{"Sauron"}\NormalTok{, }\StringTok{"Gollum"}\NormalTok{)}
+\NormalTok{race <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Men"}\NormalTok{, }\StringTok{"Hobbit"}\NormalTok{, }\StringTok{"Hobbit"}\NormalTok{, }\StringTok{"Elf"}\NormalTok{, }\StringTok{"Hobbit"}\NormalTok{, }\StringTok{"Maia"}\NormalTok{, }\StringTok{"Elf"}\NormalTok{, }\StringTok{"Maia"}\NormalTok{, }\StringTok{"Hobbit"}\NormalTok{)}
+\NormalTok{in_fellowship <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{)}
+\NormalTok{ring_bearer <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\OtherTok{FALSE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{FALSE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{, }\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{age <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{88}\NormalTok{, }\DecValTok{129}\NormalTok{, }\DecValTok{51}\NormalTok{, }\DecValTok{7000}\NormalTok{, }\DecValTok{36}\NormalTok{, }\DecValTok{2019}\NormalTok{, }\DecValTok{2931}\NormalTok{, }\DecValTok{7052}\NormalTok{, }\DecValTok{589}\NormalTok{)}
+
+\NormalTok{characters_df <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(name, race, in_fellowship, ring_bearer, age)}
+\NormalTok{characters_df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        name   race in_fellowship ring_bearer  age
+## 1    Aragon    Men          TRUE       FALSE   88
+## 2     Bilbo Hobbit         FALSE        TRUE  129
+## 3     Frodo Hobbit          TRUE        TRUE   51
+## 4 Galadriel    Elf         FALSE       FALSE 7000
+## 5       Sam Hobbit          TRUE        TRUE   36
+## 6   Gandalf   Maia          TRUE        TRUE 2019
+## 7   Legolas    Elf          TRUE       FALSE 2931
+## 8    Sauron   Maia         FALSE        TRUE 7052
+## 9    Gollum Hobbit         FALSE        TRUE  589
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Sorting the characters_df by age using the order function and assign the result to the sorted_characters_df}
+\NormalTok{sorted_characters_df <-}\StringTok{ }\NormalTok{characters_df[}\KeywordTok{order}\NormalTok{(age),]}
+\NormalTok{sorted_characters_df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        name   race in_fellowship ring_bearer  age
+## 5       Sam Hobbit          TRUE        TRUE   36
+## 3     Frodo Hobbit          TRUE        TRUE   51
+## 1    Aragon    Men          TRUE       FALSE   88
+## 2     Bilbo Hobbit         FALSE        TRUE  129
+## 9    Gollum Hobbit         FALSE        TRUE  589
+## 6   Gandalf   Maia          TRUE        TRUE 2019
+## 7   Legolas    Elf          TRUE       FALSE 2931
+## 4 Galadriel    Elf         FALSE       FALSE 7000
+## 8    Sauron   Maia         FALSE        TRUE 7052
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Use `head()` to output the first few rows of `sorted_characters_df`}
+\KeywordTok{head}\NormalTok{(sorted_characters_df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      name   race in_fellowship ring_bearer  age
+## 5     Sam Hobbit          TRUE        TRUE   36
+## 3   Frodo Hobbit          TRUE        TRUE   51
+## 1  Aragon    Men          TRUE       FALSE   88
+## 2   Bilbo Hobbit         FALSE        TRUE  129
+## 9  Gollum Hobbit         FALSE        TRUE  589
+## 6 Gandalf   Maia          TRUE        TRUE 2019
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Select all of the ring bearers from the dataframe and assign it to ringbearers_df}
+\NormalTok{ringbearers_df <-}\StringTok{ }\NormalTok{characters_df[characters_df}\OperatorTok{$}\NormalTok{ring_bearer }\OperatorTok{==}\StringTok{ }\OtherTok{TRUE}\NormalTok{,]}
+\NormalTok{ringbearers_df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      name   race in_fellowship ring_bearer  age
+## 2   Bilbo Hobbit         FALSE        TRUE  129
+## 3   Frodo Hobbit          TRUE        TRUE   51
+## 5     Sam Hobbit          TRUE        TRUE   36
+## 6 Gandalf   Maia          TRUE        TRUE 2019
+## 8  Sauron   Maia         FALSE        TRUE 7052
+## 9  Gollum Hobbit         FALSE        TRUE  589
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Use `head()` to output the first few rows of `ringbearers_df`}
+\KeywordTok{head}\NormalTok{(ringbearers_df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      name   race in_fellowship ring_bearer  age
+## 2   Bilbo Hobbit         FALSE        TRUE  129
+## 3   Frodo Hobbit          TRUE        TRUE   51
+## 5     Sam Hobbit          TRUE        TRUE   36
+## 6 Gandalf   Maia          TRUE        TRUE 2019
+## 8  Sauron   Maia         FALSE        TRUE 7052
+## 9  Gollum Hobbit         FALSE        TRUE  589
+\end{verbatim}
+
+\end{document}
