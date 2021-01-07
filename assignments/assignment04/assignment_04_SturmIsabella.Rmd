@@ -1,0 +1,117 @@
+---
+title: "ASSIGNMENT 4"
+author: "Isabella Sturm"
+date: '2021-01-05'
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+bibliography: bibliography.bib
+---
+
+# Markdown Basics
+
+## Favorite Foods
+1. Cupcakes
+2. Mac n Cheese
+3. Pizza
+
+## Images
+![All Cases (Log Plot)](../../completed/assignment04/plots/10-all-cases-log.png)
+
+## Add a Quote
+> Success is most often achieved by those who don't know that failure is inevitable.
+> ~ \- Coco Chanel
+
+## Add an Equation
+$x=\frac{-b\pm \sqrt(b^{2}-4ac)}{2a}$
+
+## Add a Footnote
+I have a cat [^1].
+
+[^1]: Her name is Cupcake.
+
+## Add Citations
+
+* R for Everyone [@lander2014r]
+* Discovering Statistics Using R [@field2012discovering]
+
+# Inline Code
+``` {r include=FALSE}
+## Load the ggplot2 package
+library(ggplot2)
+theme_set(theme_minimal())
+
+## Set the working directory to the root of your DSC 520 directory
+setwd("/Users/isabellasturm/Documents/DataScience/dsc520")
+
+## Load the `data/r4ds/heights.csv` to
+heights_df <- read.csv("data/r4ds/heights.csv")
+
+# https://www.rdocumentation.org/packages/ggplot2/versions/3.3.0/topics/geom_path
+## Load the file `"data/nytimes/covid-19-data/us-states.csv"` and
+## assign it to the `covid_df` dataframe
+covid_df <- read.csv("data/nytimes/covid-19-data/us-states.csv")
+
+## Parse the date column using `as.Date()``
+covid_df$date <- as.Date(covid_df$date)
+
+## Create three dataframes named `california_df`, `ny_df`, and `florida_df`
+## containing the data from California, New York, and Florida
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which(covid_df$state == "New York"), ]
+florida_df <- covid_df[ which(covid_df$state == "Florida"), ]
+```
+
+## NY Times COVID-19 Data
+```{r echo=FALSE}
+## Scale the y axis using `scale_y_log10()`
+ggplot(data=florida_df, aes(x=date, group=1)) +
+  geom_line(aes(y = cases, colour = "Florida")) +
+  geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+  geom_line(data=california_df, aes(y = cases, colour="California")) +
+  scale_colour_manual("",
+                      breaks = c("Florida", "New York", "California"),
+                      values = c("darkred", "darkgreen", "steelblue")) +
+  xlab(" ") + ylab("Cases") + scale_y_log10()
+```
+
+## R4DS Height vs Earnings
+```{r echo=FALSE}
+## Using `ggtitle()`, `xlab()`, and `ylab()` to add a title, x label, and y label to the previous plot
+## Title: Height vs. Earnings
+## X label: Height (Inches)
+## Y Label: Earnings (Dollars)
+ggplot(heights_df, aes(x=height, y=earn, col=sex)) + ggtitle("Height vs. Earnings") + xlab("Height (Inches)") + ylab("Earnings (Dollars)") + geom_point()
+```
+
+# Tables
+
+## Knitr Table with Kable
+``` {r echo=FALSE}
+library(knitr)
+## Set the working directory to the root of your DSC 520 directory
+setwd("/Users/isabellasturm/Documents/DataScience/dsc520")
+
+# Load characters dataframe
+characters_df <- read.csv('data/tidynomicon/person.csv')
+kable(characters_df, "simple", caption="One Ring to Rule Them All")
+```
+
+## Pandoc Table
++-----------+-----------+----------------+-----------------+---------+
+| Name      | Race      | In Fellowship? | Is Ring Bearer? | Age     |
++===========+===========+================+=================+=========+
+| Aragon    | Men       | Yes            | No              | 88      |
++-----------+-----------+----------------+-----------------+---------+
+| Bilbo     | Hobbit    | No             | Yes             | 129     |
++-----------+-----------+----------------+-----------------+---------+
+| Frodo     | Hobbit    | Yes            | Yes             | 51      |
++-----------+-----------+----------------+-----------------+---------+
+| Sam       | Hobbit    | Yes            | Yes             | 36      |
++-----------+-----------+----------------+-----------------+---------+
+| Sauron    | Maia      | No             | Yes             | 7052    |
++-----------+-----------+----------------+-----------------+---------+
+
+
+# References
