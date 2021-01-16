@@ -1,0 +1,238 @@
+---
+output:
+  word_document: default
+  html_document: default
+  slidy_presentation: default
+  beamer_presentation: default
+  pdf_document: default
+  css: complex-css.css
+---
+
+---
+
+## R Markdown
+
+Title:    Exercise 9 Student Survey
+
+Author:   Carla Bradley
+
+Date:    01/05/2021
+
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo= FALSE)
+```
+
+
+```{r}
+setwd("/Users/carla/Documents/GitHub/dsc520/data")
+student_srv <- read.csv("student-survey.csv")
+```
+
+
+## Analysis
+
+As a data science intern with newly learned knowledge in skills in statistical correlation and R programming, you will analyze the results of a survey recently given to college students. You learn that the research question being investigated is: “Is there a significant relationship between the amount of time spent reading and the time spent watching television?” You are also interested if there are other significant relationships that can be discovered? The survey data is located in this StudentSurvey.csv file.
+
+
+
+
+##    1. Is there a significant relationship between the amount of time spent reading and the time spent watching television?
+
+#
+```{r}
+
+library(ggplot2)
+head(student_srv)
+cor(student_srv$TimeTV, student_srv$Happiness)
+```
+
+
+
+#
+```{r}
+head(student_srv)
+xPart <- student_srv$TimeTV - mean(student_srv$TimeTV)
+yPart <- student_srv$TimeReading - mean(student_srv$TimeReading)
+
+```
+#
+```{r}
+nMinusOne <- (nrow(student_srv) - 1)
+xSD <- sd(student_srv$TimeTV)
+ySD <- sd(student_srv$TimeReading)
+sum(xPart * yPart) / (nMinusOne * xSD * ySD)
+cor(student_srv[, c(1, 2:3)]) 
+GGally::ggpairs(student_srv[, c(1, 2:3)])
+
+```
+
+#
+   
+    Answer:   There is a significant inverse relationship between TimeTV and TimeReading variables. 
+    
+#
+    
+##    2.	Is there any other significant relationships that can be discovered? 
+#
+ Answer:   Another significant relationship on this calculation denotes a close relationship between the  TimeTV and Happiness variables.
+
+
+##  A.	Use R to calculate the covariance of the Survey variables and provide an explanation of why you would use this calculation and what the results indicate? 
+
+# 
+Answer: The covariance between variables “TimeTV” and TimeReading resulted in a covariance of -20.36364 Denoting a negative relationship between the two variables. I have to denote that the order in cov command doesn’t matter cov(student_srv$ TimeReading,student_srvTimeTV)and cov(student_s rvTimeTV,student_srv$TimeReading) both these will give the same result.
+              
+
+```{r}
+
+cov(student_srv$TimeTV,student_srv$TimeReading)
+
+```
+#
+  Answer: I calculated the covariance TimeTV and Happiness resulting in a covariance of 114.3773 Denoting a positive relationship between the two variables. I have to denote that the order in   cov command doesn’t matter cov(student_srv$ Happiness,student_srvTimeTV) and cov(student_s rvTimeTV,student_s rvHappiness) both these will give the same result.
+ I choose this calculation because it allows to examine the relationship between two variables.
+
+
+#        
+```{r}
+data("student_srv")
+cov(student_srv$TimeTV,student_srv$Happiness)
+
+```
+
+
+##      B. Examine the Survey data variables. What measurement is being used for the variables?
+
+ Answer: The type of data measurement used is  quantitative and qualitative Categorical variables.
+
+
+
+##      C.	Examine the Survey data variables. What measurement is being used for the variables? Explain what effect changing the measurement being used for the variables would have on the                 covariance calculation. Would this be a problem? Explain and provide a better alternative if needed.
+
+#
+   Answer: The type of data measurement use as  variables are Nominal Scale and Ratio scale. 
+   
+   Both of the time variables are continuous variables since time is a continuous datatype. Covariance calculation works best with continuous variables and therefore changing measurements would    not correct results.
+ 
+  A change in the units of measurement can change the covariance Thus, covariance is only useful to find the direction of the relationship between two variables and not the magnitude.
+ 
+  I dont believe there is a problem if units of measurement are change as long the TimeTV and  TimeReading variables has the same type of  unit measurement since this will determine the type of   techniques to be used for statistical analysis.
+
+#
+
+
+
+
+
+```{r}
+
+
+aggregate(TimeTV ~ Gender, data=student_srv, var)
+
+
+```
+
+
+##Perform a correlation analysis of
+
+
+1.	All variables
+
+
+```{r}
+cor(student_srv, use="everything")
+
+```
+2. A single correlation between two a pair of the variables 
+```{r}
+data(student_srv, package="reshape2")
+head(student_srv)
+GGally::ggpairs(student_srv)
+
+```
+
+
+
+## 3.Repeat your correlation test in step 2 but set the confidence interval at 99%
+
+Answer According to this test, I can conclude that watching tv and reading has a remarkable difference. While all this statistical simple rule of thumb would be to see if the two means are within two standard deviations of each other and the mean according with this sample display a distant standard deviation.
+
+```{r}
+cor.test(student_srv$TimeTV, student_srv$TimeReading,
+         exact = NULL, conf.level = 0.99, continuity = FALSE)
+
+```
+
+
+
+
+## 4.	Describe what the calculations in the correlation matrix suggest about the relationship between the variables. Be specific with your explanation.
+
+
+
+```{r}
+t.test(student_srv$TimeTV, student_srv$Happiness,
+       mu = 0, paired = FALSE, var.equal = FALSE,
+       conf.level = 0.99)
+
+t.test(student_srv$TimeReading, student_srv$Happiness,
+       mu = 0, paired = FALSE, var.equal = FALSE,
+       conf.level = 0.99)
+```
+Answer Calculations in the correlation matrix suggest that both positive and negative correlations between variables exist. Time spent on TV has a moderate positive correlation to happiness while time spent reading has a low negative correlation to happiness.
+
+## e.	Calculate the correlation coefficient and the coefficient of determination, describe what you conclude about the results
+
+#Correlation Coefficient
+
+Correlation Coefficient is -0.883%  causing no effect -0.883% of the total variance.
+
+```{r}
+cor(student_srv$TimeTV, student_srv$TimeReading)
+
+
+```
+# Coefficient of Determination,
+
+This correlation, is represented as a value of  0.7798085 indicating a very close fit to the model and suggests that 78% of the dependent variable is predicted by the independent variable.
+
+```{r}
+student_srv2 = lm(TimeTV ~ TimeReading, data=student_srv)
+summary(student_srv2)$r.squared 
+
+```
+
+Answer: The coefficient of determination of the simple linear regression model for the data set  is 0.7798085 indicating a very close fit to the model and suggests that 78% of the dependent variable is predicted by the independent variable.
+
+
+
+## f.	Based on your analysis can you say that watching more TV caused students to read less? 
+
+Based on my analysis student are more inclined to watch tv  than  reading.I also  denote a noticeable high level of  happiness by watching tv.
+
+
+
+
+## g.	Pick three variables and perform a partial correlation, documenting which variable you are “controlling”. Explain how this changes your interpretation and explanation of the results.
+#
+
+#
+
+```{r}
+library(ppcor)
+setwd("/Users/carla/Documents/GitHub/dsc520/data")
+student_srv <- read.csv("student-survey.csv")
+pcor.test(student_srv$TimeTV, student_srv$TimeReading, student_srv$Happiness)
+
+```
+
+
+```
+
+
+#The controlling variable in this case is "Happiness" from the result, for students who are happy, watching TV has strong negatiive correlation to reading.
+
+
+
+
