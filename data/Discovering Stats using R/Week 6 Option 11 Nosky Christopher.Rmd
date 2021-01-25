@@ -1,0 +1,59 @@
+---
+title: "Week 6 Option 11"
+author: "Nosky, Christopher"
+date: "1/23/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+library(boot); library(car); library(QuantPsyc)
+
+
+setwd('C:/Users/cwnos/Documents/DSC520/Git repo/DSC520/dsc520/data/Discovering Stats using R')
+
+album2 <- read.delim('Album Sales 2.dat', header = TRUE)
+```
+
+This week I am going to attempt to kill two birds with one stone, that is to say that in this weeks discussion while I will be looking into Question 11:  
+
+___"Compare the models albumSales.2 and albumSales.3 using anova(). How can you say that the model albumSales.3 is a better than the model albumSales.2?"___.  
+
+In additon to answering this question I'm also attempting to do this using Rmarkdown, I'm doing this second part primarily because I want to gain increased comfort in using Rmarkdown and as always, practice makes perfect.  
+
+So to start off, what did we learn this week? We learned that regression is used to test a model's fit of the data being presented. Through the course of reading this week (or in my case reading, re-reading and banging my head against the wall) we were taken from performing a simple regression with the output variable and a single predictor variable through performing a multiple regression with the output with multiple predictor variables. The output looked like this:  
+
+```{r albumSales.2, echo= FALSE}
+albumSales.2 <- lm(sales ~ adverts, data = album2)
+summary(albumSales.2)
+```
+
+As presented in the reading, this output from `albumSales.2` shows us quite a lot. Starting with the function used to call this output at the top (oddly enough I didn't notice this until it was pointed out) followed by the residuals or the difference between the observed value and the mean value of the model, the coefficients giving the intercept and slope of the regression and finally the last section Residual standard error, Multiple R-squared and F-statistic. The values I'm most interested in for answering this week's topic are from Multiple R-squared: 0.3346 and Adjusted R-squared: 0.3313 these values describe the overall model. These values tell us how much of the variability in album sales can be accounted for by advertising budget, which the book converts to a percentage of 33.5%. Next we will look at the summary of `albumSales.3`. 
+
+```{r albumSales.3, echo=FALSE}
+albumSales.3 <- lm(sales ~ adverts + airplay + attract, data = album2)
+summary(albumSales.3)
+
+```
+
+Here we see the same summary output as before but with the additional predictor variables of airplay and attract added to the model. Again for the purpose of the question we will look at the R-squared values and see that now this model shows that about 66% of the variability in album sales can be accounted for by advertising, airplay and attractiveness. With these regression summaries we might at this point be able to make an educated guess that `albumSales.3` is a better model than `albumSales.2`.  
+
+To know which model is a better fit we need to compare them to see if the  
+
+___'$R^2$ value is significantly higher in the second model than in the first'___  
+
+The significance can be tested using an F-ratio which the formula used is $F =(N-k-1)R^2/k(1-R^2)$ for a single predictor variable or if we have multiple predictors $F_{Change} = (N - k_2 - 1)R^2_{Change}/k_{Change}(1-R^2_2)$. Fortunatly, for those of us who look at those equations and scratch our heads while saying  "huh?!?" there is an easier way thanks to R. To do this we will use the anova() function which if I remember correctly from the reading is 'Analysis of Variation' which looks like this:  
+
+```{r, echo=TRUE}
+anova(albumSales.2, albumSales.3)
+
+```
+
+What does this all mean? Well I'm not an expert, but based on what I've read this week the anova() function shows us degrees of freedom, sum of squares, the F-ratio and the p value. The p-value can help provide a significance interpretation of our F-ratio (or F-statistic) which is showing us that the F-ratio 96.447 < 2.2e-16 or as the book describes it a _"very small value and we can say that `albumSales.3` significantly improved the fit of the model to the data compared to `albumSales.2`."_  
+
+While my conclusion resulted in the same outcome as the book, I did make the previous statement that we could make the educated guess that the model `albumSales.3` was a better fit. At the time, my thought was that we could perhaps save ourselves the step of doing the anova() test but upon thinking about it further I can say that it would be a mistake to do so. First, it would call into question my entire analysis causing questions about where else I may have cut corners, secondly imagine if I was looking at this later and decided to run the analysis and found that I was originally wrong? How long have we been using the wrong model? and How much could that have cost us? Moving forward I would do well to remember this. 
+

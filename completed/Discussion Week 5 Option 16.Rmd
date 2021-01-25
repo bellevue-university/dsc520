@@ -1,0 +1,39 @@
+---
+title: "Week 5 Question 16"
+author: "Nosky, Christopher"
+date: "1/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+This week I will be attempting to explain Binomial distribution, to do this it would be helpful to at least know what that is. For this I turn to Wikipedia:
+“In probability theory and statistics, the binomial distribution with parameters n and p is the discrete probability distribution of the number of successes in a sequence of n independent experiments, each asking a yes–no question, and each with its own Boolean-valued outcome: success (with probability p) or failure (with probability q = 1 − p)”
+While that gives a good definition, I think we can trim that down a bit to get a better idea of what we really want to know. “is the discrete probability distribution of the number of successes in a sequence of n independent experiments, each asking a yes-no question, and each with its own Boolean-valued outcome.” It’s still a bit wordy but is a bit easier to understand when separated out like this. The formula looks like this. 
+
+ ![Binomial Distribution Formula](C:\Users\cwnos\Documents\DSC520\Git repo\DSC520\dsc520\completed\binomial-distribution-formula.png)
+
+Basically, as StatisticsHowTo.com points out, a binomial distribution can represent anything you can think of that can only be a success or failure. Some examples include a new drug to cure a disease, either it cures it or it doesn’t; Buying a lottery ticket, either you win or you don’t or Asking someone out, they’re either going to say yes or no (understanding this would have made high school a little better).
+
+In this weeks reading, we were presented with the R function rbinom(), which we are able to use to generate a random sample for the binomial distribution. Though as explained, it is not simply generating random numbers but rather generating the number of successes of independent trials.
+
+```r{17.4, echo=FALSE}
+
+library(ggplot2)
+binomData <- data.frame(Successes=rbinom(n=10000, size=10, prob=.3))
+ggplot(binomData, aes(x=Successes)) + geom_histogram(binwidth=1)
+
+```
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
