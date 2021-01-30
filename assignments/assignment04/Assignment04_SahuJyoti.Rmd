@@ -1,0 +1,137 @@
+---
+title: "ASSIGNMENT 4"
+author: "Jyoti Sahu"
+date: '2020-01-09'
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+bibliography: bibliography.bib
+---
+# Markdown Basics
+
+## Favorite Foods
+1. Tandoori Chicken
+2. Mutton Curry
+3. Chenapoda
+
+## Images
+
+![All Cases (Log Plot)](/Users/sahujyot/Documents/Masters/Github/dsc520/completed/assignment04/plots/10-all-cases-log.png)
+
+## Add a Quote
+
+"Pretend that every single person you meet has a sign around his or her neck that says, 'Make me feel important.' Not only will you succeed in sales, you will succeed in life." -Mary Kay Ash
+
+## Add an Equation
+$a^{2} - b^{2} = (a + b)(a - b)$
+
+$(a - b)^2 = a^2 + b^2 -2ab$
+
+$(a + b)^2 = a^2 + b^2 + 2ab$
+
+
+
+
+## Add a Footnote
+
+This is a footnote^[Learn and be Curious]
+
+## Add Citations
+
+* R for Everyone [@lander2014r]
+* Discovering Statistics Using R[@field2012discovering]
+
+# Inline Code
+```{r, echo=FALSE, include=FALSE}
+## Load the ggplot2 package
+library(ggplot2)
+theme_set(theme_minimal())
+## Set the working directory to the root of your DSC 520 directory
+setwd("/Users/sahujyot/Documents/DSC520")
+## Load the `data/r4ds/heights.csv` to
+heights_df <- read.csv("data/r4ds/heights.csv")
+# https://www.rdocumentation.org/packages/ggplot2/versions/3.3.0/topics/geom_path
+## Load the file `"data/nytimes/covid-19-data/us-states.csv"` and
+## assign it to the `covid_df` dataframe
+covid_df <- read.csv("data/nytimes/covid-19-data/us-states.csv")
+## Parse the date column using `as.Date()``
+covid_df$date <- as.Date(covid_df$date)
+## Create three dataframes named `california_df`, `ny_df`, and `florida_df`
+## containing the data from California, New York, and Florida
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which( covid_df$state == "New York"), ]
+florida_df <- covid_df[ which( covid_df$state == "Florida"), ]
+```
+
+## NY Times COVID-19 Data
+```{r, echo=FALSE, include=TRUE}
+## Scale the y axis using `scale_y_log10()`
+ggplot(data=florida_df, aes(x=date, group=1)) +
+  geom_line(aes(y = cases, colour = "Florida")) +
+  geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+  geom_line(data=california_df, aes(y = cases, colour="California")) +
+  scale_colour_manual("",
+                      breaks = c('Florida','New York','California'),
+                      values = c('darkred','darkgreen','steelblue')) +
+  xlab(" ") + ylab("Cases") + scale_y_log10()
+```
+
+
+## R4DS Height vs Earnings
+```{r, echo=FALSE, include=TRUE}
+## Using `ggtitle()`, `xlab()`, and `ylab()` to add a title, x label, and y label to the previous plot
+## Title: Height vs. Earnings
+## X label: Height (Inches)
+## Y Label: Earnings (Dollars)
+ggplot(heights_df, aes(x=height, y=earn, col=sex)) + geom_point()  + ggtitle('Height vs. Earnings') + xlab('Height (Inches)') + ylab('Earnings (Dollars)') 
+```
+
+
+
+# Tables
+
+```{r, echo=FALSE, include=FALSE}
+## Creating the Dataframe from Assignmemnt 01
+## Create a dataframe called characters_df using the following information from LOTR
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+```
+
+
+## Knitr Table with Kable
+```{r, echo=FALSE, include=TRUE}
+library(knitr)
+knitr::kable(characters_df, caption ='One Ring to Rule Them All',  )
+```
+
+
+
+## Pandoc Table
+| Name      | Race      | In Fellowship? | Is Ring Bearer? | Age    |
+|-----------|-----------|----------------|-----------------|-------:|
+| Aragon    | Men       | Yes            | No              | 88     |
+| Bilbo     | Hobbit    | No             | Yes             | 129    |
+| Frodo     | Hobbit    | Yes            | Yes             | 51     |
+| Sam       | Hobbit    | Yes            | Yes             | 36     |
+| Sauron    | Maia      | No             | Yes             | 7052   |
+
+
+
+# References
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
