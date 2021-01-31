@@ -1,0 +1,271 @@
+---
+output:
+  word_document: default
+  html_document: default
+bibliography: C:/BU/DSC520/assignment_repo/dsc520/bibliography.bib
+---
+
+```yaml
+---
+title: "Assignment7_Exercise12_HousingData"
+author: "SumbarajuAditya"
+date: "1/29/2021"
+output: word_document
+---
+```
+
+
+```
+Work individually on this assignment. You are encouraged to collaborate on ideas and strategies pertinent to this assignment. Data for this assignment is focused on real estate transactions recorded from 1964 to 2016 and can be found in Week 6 Housing.xlsx. Using your skills in statistical correlation, multiple regression and R programming, you are interested in the following variables: Sale Price and several other possible predictors.
+Using your ‘clean’ data set from the previous week complete the following:
+```
+**a. Explain why you chose to remove data points from your ‘clean’ dataset.**
+
+
+
+```{r}
+library("readxl")
+housing_data <- read_excel("C:/BU/DSC520/assignment_repo/dsc520/data/week-7-housing.xlsx")
+head(housing_data)
+nrow(housing_data)
+```
+```{r}
+str(housing_data)
+summary(housing_data)
+upd_housing_data <- housing_data[(is.na(housing_data$sale_warning))  & (housing_data$bedrooms != 0) & (housing_data$bath_full_count !=23), ]
+upd_housing_data$`Sale Date` <- NULL
+upd_housing_data$sale_warning <- NULL
+upd_housing_data$sitetype <- NULL
+upd_housing_data$addr_full <- NULL
+upd_housing_data$ctyname <- NULL
+upd_housing_data$postalctyn <- NULL
+upd_housing_data$current_zoning <- NULL
+upd_housing_data$prop_type <- NULL
+upd_housing_data$present_use <- NULL
+upd_housing_data$bath_half_count <- NULL
+upd_housing_data$bath_3qtr_count <- NULL
+head(upd_housing_data)
+nrow(upd_housing_data)
+```
+Thank you, Dr.Parajulee, for providing your inputs on removing the data points. The data frame housing_data contains data points in the data set that can participate in Data Skewness, resulting in inaccurate linear models. 
+
+Following are the variables are "removed data points" from clean dataset week-7-housing.xlsx. Please find the reasoning as stated below
+•	Removed data points where bedrooms = 0; this will qualify as an outlier based on the myth - "a house cannot be complete without a bedroom." Maybe this could be a bad record.
+•	Removed an outlier bath_full_count =23. Assuming this could be an error record.
+•	Removed data points where sale_warning is not blank since sale warning could have impacted the sale price and could skew the data.
+•	Removed following variables defined as char so that correlation between variables can be determined: Sale Date, sale_warning, sitetype, addr_full, ctyname, postalctyn, current_zoning, prop_type.
+•	As per the understanding of the data points present_use, bath_half_count,bath_3qtr_count.These are ok to be removed as we have a calculated field bath_full_count based on bath_half_count,bath_3qtr_count.
+•	Due to the lack of a data dictionary; It is challenging to determine other numeric variables' impacts.
+Row Count after Anonymizing: The data set originally included 12865 rows, and after cleaning, the data set reduced to 10555 rows.
+
+
+
+
+
+**b. Create two variables; one that will contain the variables Sale Price and Square Foot of Lot (same variables used from previous assignment on simple regression) and one that will contain Sale Price and several additional predictors of your choice. Explain the basis for your additional predictor selections.**
+
+
+```{r}
+options(scipen = 999)
+cor(upd_housing_data$'Sale Price', upd_housing_data$square_feet_total_living)^2 * 100
+cor.test(upd_housing_data$'Sale Price', upd_housing_data$square_feet_total_living)
+cor(upd_housing_data$'Sale Price', upd_housing_data$building_grade)^2 * 100
+cor.test(upd_housing_data$'Sale Price', upd_housing_data$building_grade)
+cor(upd_housing_data$'Sale Price', upd_housing_data$year_built)^2 * 100
+cor.test(upd_housing_data$'Sale Price', upd_housing_data$year_built)
+cor(upd_housing_data$'Sale Price', upd_housing_data$bedrooms)^2 * 100
+cor.test(upd_housing_data$'Sale Price', upd_housing_data$bedrooms)
+```
+**Answer:**  
+Looking at the correlation we can see all the variables shown above are positively correlated. However, building grade and square feet of living room share 50% and 42% variation and sample estimates share 71% and 65% of correlaton in determining sales price. Hence building grade and square feet of living are chosen as predictors for the model over year_built and bedrooms.
+
+
+```{r}
+sales_price_with_sq_ft_lot <-  lm(upd_housing_data$'Sale Price' ~ upd_housing_data$sq_ft_lot, data = upd_housing_data)
+sales_price_with_others <- lm(upd_housing_data$'Sale Price' ~ upd_housing_data$sq_ft_lot + upd_housing_data$square_feet_total_living + upd_housing_data$building_grade, data = upd_housing_data)
+```
+
+**c. Execute a summary() function on two variables defined in the previous step to compare the model results. What are the R2 and Adjusted R2 statistics? Explain what these results tell you about the overall model. Did the inclusion of the additional predictors help explain any large variations found in Sale Price?**
+
+```{r}
+summary(sales_price_with_sq_ft_lot)
+summary(sales_price_with_others)
+```
+
+**Answer:**
+
+R2 value describes whether the regression model is successful in predicting the outcome. Adjusted R2 is used to compare with R2 to determine whether the sample was a good representation of the population. If the difference between R2 and adjusted R2 values is small, then that would indicate that the sample is a good representation of population.
+For the simple regression model, the value of R2 is 0.05777. This indicates that the sq_ft_lot accounted for only 5.77% of the variation in sale price. The value of adjusted R2 is 0.5768 which is very close to R2 value, and that indicates that the sample is a good representation of population.
+For the multiple regression model, the value of R2 is 0.5475. This indicates that the the model with multiple predictors accounted for 54.98% of the variation in sale price. The value of adjusted R2 is 0.5474 which is very close to R2 value, and that indicates that the sample is a good representation of population.
+The prediction percentage went up from 5.77% to 54.75% which indicates that the sale price can be better predicted with the multiple predictors than only with sq_ft_lot variable,
+
+
+
+**d. Considering the parameters of the multiple regression model you have created. What are the standardized betas for each parameter and what do the values indicate?**
+
+```{r}
+library("QuantPsyc")
+lm.beta(sales_price_with_others)
+```
+
+**Answer:** 
+
+The standardized beta estimates tell us the number of standard deviations by which the outcome will change as a result of one standard deviation change in the predictor.
+
+In this case, 1 standard deviation of change in Sq_ft_lot causes sales price to change by 0.064 standard deviation. 
+1 standard deviation change in square_feet_total_living causes sales price to change by 0.483 standard deviation and 
+1 standard deviation change in building_grade can cause 0.287 standard deviation change in sale price. 
+
+**e. Calculate the confidence intervals for the parameters in your model and explain what the results indicate.**
+```{r}
+confint(sales_price_with_others, level = 0.95)
+```
+
+**Answer:**
+
+The confidence interval shows that there is a positive relationship between all predictors and outcomes. Also, the 95% confidence interval range is not very big, which indicates that the value of beta in the sample is close to the true value of the beta in the population.
+The positive or negative sign indicates the direction of the relationship between the predictor and the outcome. If the confidence interval crosses zero, then that is a sign of a terrible model. But in our sample, predictors are having a positive relationship between all predictors and their outcome.
+
+
+**f. Assess the improvement of the new model compared to your original model (simple regression model) by testing whether this change is significant by performing an analysis of variance.**
+
+```{r}
+anova(sales_price_with_sq_ft_lot, sales_price_with_others)
+```
+
+
+**Answer:** The value in the column Pr(>F) is 0.00000000000000022 is an insignificant value. It refers to the p-value for F statistics. From the analysis of variance table We can say that Model 2 -sales_price_with_others significantly improved the fit of the model to the data compared to Model 1- sales_price_with_sq_ft_lot.
+
+
+**g. Perform casewise diagnostics to identify outliers and/or influential cases, storing each function's output in a dataframe assigned to a unique variable name.**
+
+
+```{r}
+# outliers
+upd_housing_data$residuals <- resid(sales_price_with_others)
+upd_housing_data$standardized_residuals<- rstandard(sales_price_with_others)
+upd_housing_data$studentized_residuals<-rstudent(sales_price_with_others)
+# Influential cases
+upd_housing_data$cooks_distance<-cooks.distance(sales_price_with_others)
+upd_housing_data$dfbeta<-dfbeta(sales_price_with_others)
+upd_housing_data$dffit<-dffits(sales_price_with_others)
+upd_housing_data$leverage<-hatvalues(sales_price_with_others)
+upd_housing_data$covariance_ratios<-covratio(sales_price_with_others)
+
+summary(upd_housing_data)
+```
+
+
+**h. Calculate the standardized residuals using the appropriate command, specifying those that are +-2, storing the results of large residuals in a variable you create.**
+
+```{r}
+upd_housing_data$large_residual <- upd_housing_data$standardized_residuals > 2 | upd_housing_data$standardized_residuals < -2
+```
+
+**i. Use the appropriate function to show the sum of large residuals.**
+
+```{r}
+sum(upd_housing_data$large_residual)
+```
+
+**j. Which specific variables have large residuals (only cases that evaluate as TRUE)?**
+
+```{r}
+upd_housing_data[upd_housing_data$large_residual, c('Sale Price', 'sq_ft_lot', 'square_feet_total_living',  'building_grade', "standardized_residuals")]
+```
+
+**k. Investigate further by calculating the leverage, cooks distance, and covariance rations. Comment on all cases that are problematics.**
+
+```{r}
+upd_housing_data[upd_housing_data$large_residual, c("cooks_distance", "leverage", "covariance_ratios","standardized_residuals",'Sale Price', 'sq_ft_lot', 'square_feet_total_living',  'building_grade')]
+
+#Check if any problematic cases exist, with cooks.distance greater than 1
+cook_dist <- upd_housing_data$cooks_distance > 1.0000000000
+sum(cook_dist)
+```
+
+**Answer:**
+
+Out of 350 large residuals only 1 value has cook distance greater than 1. Hence only 1 influential observation in the model. 
+problematic record: As per my analysis, the sale price is tagged as $14,000 and i am assuming that based on the other factors such as The square_feet_total_living is 8750, there are 5 bedrooms, 2 full bathrooms, 2 half bathrooms, and the sq_ft_lot is 1631322, the standardized residual is too high (-13.755762). This indicates that the pricing was is too low for the listed property. 
+(Ref. - Discovering Statistics Using R  [@field2012discovering page 424] )
+
+```{r}
+k <- 3
+sample_size <- 10555
+leverage <- k/sample_size
+leverage
+leverage_data <- upd_housing_data$cooks_distance > 0.0006 | upd_housing_data$cooks_distance < 0.0009
+sum(leverage_data)
+```
+
+
+Leverage we have is 0.0002 which means we have to look for values between 0.0006 (twice of leverage) and 0.0009 (thrice of leverage).
+We can see that all the observations are within the required range and hence there is no problem with the observation used in the model. 
+(Ref. - Discovering Statistics Using R  [@field2012discovering page 424] )
+
+
+
+
+```{r}
+sample_size <- 10555
+covr_min <- 1 + 12/sample_size
+covr_min
+covr_max <- 1 - 12/sample_size
+covr_max
+covr_data <- upd_housing_data$cooks_distance > covr_min |  upd_housing_data$cooks_distance < covr_max
+sum(covr_data)
+```
+
+**Answer:** 
+
+From the covariance data above we can see that all the observation in the dataset lies between cvr_min, cvr_mx and hence there is no outlier as per the covarince ratio calculation. (Ref. - Discovering Statistics Using R  [@field2012discovering page 425] )
+
+**l. Perform the necessary calculations to assess the assumption of independence and state if the condition is met or not.**
+
+```{r}
+#Need to import car library as Durbin Watson Test was not working.
+library("car")
+dwt(sales_price_with_others)
+```
+
+**Answer:** 
+
+The Durbin-Watson statistic should be between 0 and 4 and should be closer to 2: Below are the indicators
+- 2 is no autocorrelation.
+- '0 to <2' is positive autocorrelation (common in time series data).
+- '>2 to 4' is negative autocorrelation (less common in time series data).
+
+Based on the Durbin watson test we can see the DWT-statistic value for the model is 1.46. Which means there is positive autocorrelation and the condition is met. (Ref. - Discovering Statistics Using R  [@field2012discovering page 426] )
+
+**m. Perform the necessary calculations to assess the assumption of no multicollinearity and state if the condition is met or not.**
+
+```{r}
+vif(sales_price_with_others)
+mean(vif(sales_price_with_others))
+#Tolerence Statistics
+1/vif(sales_price_with_others)
+```
+
+**Answer:** VIF values are all well below 10 and the tolerance statistics all well above 0.2. Also, the average VIF is very close to 1. Based on these measures we can safely conclude that there is no multicollinearity within our data.(Ref. - Discovering Statistics Using R  [@field2012discovering page 428] )
+
+
+**n. Visually check the assumptions related to the residuals using the plot() and hist() functions. Summarize what each graph is informing you of and if any anomalies are present.**
+
+
+```{r}
+plot(sales_price_with_others)
+hist(upd_housing_data$studentized_residuals)
+```
+
+Residuals vs. fitted plots depict a random pattern, which means the assumptions of randomness are met. Primarily it does not funnel out, so there is no heteroscedasticity in the data. There is no curve in the graph, so it is not violating any assumptions of linearity. The Q-Q plot shows less normality, but this can happen due to a smaller sample than the population. The Q-Q plot shows less normality but this can happen due to smaller sample than the population. 
+The histogram indicates that the distribution is roughly normal or skewed a little to right; tail is almost on 10.
+
+(Ref. - Discovering Statistics Using R  [@field2012discovering page 428] )
+
+**0. Overall, is this regression model unbiased? If an unbiased regression model, what does this tell us about the sample vs. the entire population model?**
+
+
+The Q-Q plot also showed significant curves at the ends, indicating that there are extreme values in the data set that make the model deviate from normality. Based on the above histogram, which looks like a normal distribution, we can say that the model is both accurate and generalizable to the population. But we need to keep an eye on problematic record observed in assignment question -K; It would be beneficial that if the model is re-created after the problematic record and outliers removed from the data set
+
+References:
