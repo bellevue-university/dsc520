@@ -1,0 +1,107 @@
+---
+title: "ASSIGNMENT 4"
+author: "Michael Paris"
+date: '2020-01-06'
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+bibliography: bibliography.bib
+---
+
+# Markdown Basics
+
+## Favorite Foods
+
+1. Barbecue Brisket
+1. Lasagna
+1. Mexican (Any Mexican)
+
+## Images
+
+![All Cases (Log Plot)](plots/10-all-cases-log.png)
+
+## Add a Quote
+
+> As far back as I can remember, I always wanted to be a gangster.
+
+## Add an Equation
+
+$\sum_{i=1}^n X_i$
+$$\sum_{i=1}^n X_i$$
+
+## Add a Footnote
+
+This really took a while for me to figure out for some reason.^[I didn't realize this was what went at the bottom of the page]
+
+## Add Citations
+
+* R for Everyone [@lander2014r]
+* Discovering Statistics Using R [@field2012discovering]
+
+# Inline Code
+
+```{r, include=FALSE}
+
+library(ggplot2)
+theme_set(theme_minimal())
+heights_df <- read.csv("C:/Users/mpari/OneDrive/DSC520/dsc520/data/r4ds/heights.csv")
+covid_df <- read.csv("C:/Users/mpari/OneDrive/DSC520/dsc520/data/nytimes/covid-19-data/us-states.csv")
+covid_df$date <- as.Date(covid_df$date)
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which( covid_df$state == "New York"), ]
+florida_df <- covid_df[ which( covid_df$state == "Florida"), ]
+
+```
+
+## NY Times COVID-19 Data
+
+```{r, echo=FALSE}
+
+ggplot(data=florida_df, aes(x=date, group=1)) +
+  geom_line(aes(y = cases, colour = "Florida")) +
+  geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+  geom_line(data=california_df, aes(y = cases, colour="California")) +
+  scale_colour_manual("",
+                      breaks = c("Florida", "New York", "California"),
+                      values = c("darkred", "darkgreen", "steelblue")) +
+  xlab(" ") + ylab("Cases") + scale_y_log10()
+
+```
+
+
+## R4DS Height vs Earnings
+
+```{r, echo=FALSE}
+
+ggplot(heights_df, aes(x=height, y=earn, col=sex)) + geom_point() + ggtitle("Height vs. Earnings") + xlab("Hight(Inches)") + ylab("Earnings(Dollars)")
+
+
+```
+
+
+# Tables
+## Knitr Table with Kable
+```{r, echo=FALSE}
+
+library(knitr)
+
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+
+knitr::kable(characters_df, caption = "One Ring to Rule Them All", align = "lllll")
+
+
+## Pandoc Table
+library(pander)
+
+pandoc.table(characters_df, style="grid", caption = "One Ring to Rule Them All")
+
+```
+
+# References
