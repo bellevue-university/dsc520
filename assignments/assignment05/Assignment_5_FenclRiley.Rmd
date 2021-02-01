@@ -1,0 +1,109 @@
+---
+title: Assignment 5
+author: "Riley Fencl"
+date: "1/17/2021"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+library(dplyr)
+library(Hmisc)
+library(ltm)
+students <- read.csv("student-survey.csv")
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+  )
+}
+cor.table <- function(dataset, pvalue, correlationtype) {
+  x <- rcorr(as.matrix(dataset), type = correlationtype)
+  x <- flattenCorrMatrix(x$r,x$P)
+  x <- x %>% 
+    filter(p <= pvalue) %>%
+    arrange(p)
+}
+```
+
+## Question A: Use R to calculate the covariance of the survey variables and provide an explanation of why you would use this calculation and what the results indicate.
+
+```{r inlcude = FALSE}
+cov(students)
+```
+
+  Here I would only use covariance for TimeReading vs. Time TV since they are both the same variable (Time). However, before doing a covariance calculation I would convert Timereading to minutes, since that is what the TimeTV variable seems to use. Since the units between the two are not identical the interpretation becomes fairly difficult to understand, but at the very least, the covariance output indicates that the two have a negative covariance. This means that as you spend more time reading you will spend less time watching TV and vice versa which makes sense in this case. 
+
+
+## Question B: Examine the survey data variables. What measurement is being used for the variables? Explain what effect changing the measurement being used for the variables would have on the covariance calculation. Would this be a problem? Explain and provide a better alternative if needed. 
+
+  It looks like TimeReading is using hours, TimeTV is using minutes, and Gender is just a simple binary coding for male and female. Im not sure which equals which. Happiness is a bit of a confusing one due to the nature of "measuring" happiness. I suppose the safest assumption here is that it is a percentage (?) Changing the measurements to make them uniform with eachother (Although impossible in this case with one exception) would make the covariance more interpretable. For example, if I changed the TimeReading variable to minutes instead of hours, the covariance output would be in minutes which would make more sense when trying to interpret the covariance result. The only time I can think of it being a problem is if we were trying to change variables to non-uniform when they were already in the same measurement. In this case, since we can't really manipulate the current measurements that we have to be uniform, using correlation would be much more effect since it can compare relationships regardless of measurement (Except in the case of binary variable like gender). 
+
+## Question C: Choose the type of correlation test to perform, explain why you chose this test. Make a prediction if the test yields a positive or negative correlation. 
+
+  For my predictions, I would assume that TimeReading/TimeTV is negative, TimeReading/Happiness is positive, TimeReading/Gender is non-correlated, TimeTV/Happiness is negative, TimeTV/Gender is non-correlated, and Happiness/Gender is non-correlated. 
+
+  For my correlation test I will be using pearsons since I failed to reject the null value of my normality tests on each of the variables (With the exception of gender since it is a binary variable). For gender I will be using the point-biserial correlation since it is used to calculated correlation between a binary and a continuous or discrete variable. 
+
+``` {r, echo = FALSE}
+shapiro.test(students$TimeReading)
+shapiro.test(students$TimeTV)
+shapiro.test(students$Happiness)
+```
+
+## Question D: Perform a correlation analysis of: All variables, A single correlation between two pairs of the variables, and describe what the calculations in the correlation matrix suggest about the relationship between the variables. Be specific with your explanation.
+
+1) Firstly, here is a correlation table for all the variables. All correlations for the gender variable will be ingored as this table output is generated using the pearson correlation method. 
+
+``` {r, echo = FALSE}
+(cor.table(students, .99, "pearson"))
+```
+
+And here are the results of the point-biserial correlation tests. 
+``` {r}
+biserial.cor(students$TimeReading, students$Gender)
+biserial.cor(students$TimeTV, students$Gender)
+biserial.cor(students$Happiness, students$Gender)
+```
+
+Interestingly enough, despite using two different correlation tests, the correlations found were identical with the exception of some values being flipped from positive to negative. 
+
+The calculations given in the correlation table tell us a few things. Firstly, in our table we have our first two columns which tell us which variables we are matching. Then we have the actual correlation coefficient and the p value. The p-value tells the chance of obtaining the test statistic from the test conducted given that the null hypothesis is true. In this case, if we were looking at confidence level, our p-value would tell us at what level of confidence our results are signficant. So at an alpha level of .05 or 95% confidence, the only significant correlations we have are TimeReading/TimeTV and TimeTV/TimeHappiness. If we had an alpha level of .1 or 99% confidence, then our only signficant correlation would be TimeReading/TimeTV.
+
+Looking at the different correlations and p-value, we see that our strongest correlation is TimeRead/TimeTv. They are negatively correlated at the strength of .88 and their p-value is incredibly signficant. With TimeTv/Happiness we see the next strongest correlation at a strength of .63 and positively correlated. The p-value here is signficant at the 95% confidence level however it is not significant at the 99% confidence level.  The following relationships have very high p-values as well as fairly weak correlations (with the exception of TimeReading/Happiness). 
+
+## Question E: Calculate the correlation coefficient(Done in the previous step) and the coefficient of determination, describe what you conclude about the results. 
+``` {r, echo = FALSE}
+students_r2 <- cor.table(students, .99, "pearson")
+students_r2 <- students_r2[,-4]
+students_r2$cor <- students_r2$cor * students_r2$cor
+colnames(students_r2)[3] <- "R^2"
+head(students_r2)
+``` 
+
+Most of the R-squareds are pretty small with the exception of TimeReading and TimeTV and TimeTv/Happiness. While the latter is significantly larger than the former, a single variable explaining 40% of the variability for another variable is pretty huge. Other than these 2 examples and maybe TimeReading/Happiness there is nothing else that jumps out. I will note that an R-squared of 78% on a single variable is massive. 
+
+## Question F: Based on your analysis can you say that watching more TV caused students to read less? Explain.
+Given that the question uses the word "caused" I want to say no, correlation does not equal causation. Despite an incredibly large R-squared, a very strong correlation, an extremely significant p-value, and a plausible causative mechanism this does not determine causation. I'm going to assume that we're not asking a super technical question based on the mechanism of limited time and using it, but rather a question that asks if watching more tv makes students want to read less or watching tv makes reading less interesting to students or something along those lines. The way that the question is worded opens up a giant rabbit hole of technicallity. We could say that by the virtue of time being limited in your day and watching tv consuming time, you will inherently have less time to read caused by the fact that you expended some of its limited quantity doing something that wasn't reading (In this case watching TV). However, if were asking a question along the lines of: does watching more tv cause students to want to read less? Then the answer is I'm not sure. It's possible that is the case, but it's also possible that students who like to watch tv generally don't like read anyway regardless of how much tv that they watch. 
+
+## Question G: Pick three variables and perform a partial correlation, documenting which variable you are "controlling". Explain how this changes your interpretation and explanation of the results. 
+I chose to look at the correlation between time spent watching tv (TimeTV) and Happiness, while controlling for time spent reading. Since time spent reading drastically influenced time spent watching TV I wanted to see how much watching TV correlated to happiness while controlling for time spent reading.
+
+``` {r, include = FALSE}
+library(ggm)
+pcr1 <- pcor(c("TimeTV", "Happiness", "TimeReading"), var(students))
+```
+``` {r}
+# Partial Correlation of TimeTv vs. Happiness, while controlling for "TimeReading"
+pcr1
+# R^2 of TimeTV vs. Happiness, while controlling for "TimeReading"
+pcr1 * pcr1 
+```
+
+As I had anticipated the correlation weakend and the R^2 went down. I suspected that this would have been the case since TimeReading accounted for a massive amount of variability in TimeTV and TimeReading had a negative correlation with Happiness, and since TimeReading and TimeTV were strongly negatively related it would make sense that probably some of the variation in TimeTV/Happiness was caused from TimeReading, and this makes sense in a practical way. It's probably not that people are just so happy that they get to watch tv, but rather part of that is also the fact that they don't have to read either. 
