@@ -12,13 +12,6 @@ output: word_document
 bibliography: C:/BU/DSC520/assignment_repo/dsc520/bibliography.bib
 ---
 ```
----
-output:
-  word_document: default
-  bibliography: C:/BU/DSC520/assignment_repo/dsc520/bibliography.bib
----
-
-
 
 Fit a logistic regression model to the binary-classifier-data.csv dataset from the previous assignment.
 
