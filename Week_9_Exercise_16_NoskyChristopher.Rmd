@@ -1,0 +1,161 @@
+---
+title: "Week 9 Exercise 16"
+author: "Nosky, Christopher"
+date: "2/18/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(purrr)
+library(cluster)
+library(dplyr)
+library(class)
+library(caret)
+
+setwd('C:/Users/cwnos/Documents/DSC520/Git repo/DSC520/dsc520/Week 9')
+
+classifier_set <- read.csv('clustering-data.csv')
+```
+
+>These assignments are here to provide you with an introduction to the “Data Science” use for these tools. This is your future. It may seem confusing and weird right now but it hopefully seems far less so than earlier in the semester. Attempt these homework assignments. You will not be graded on your answer but on your approach. This should be a, “Where am I on learning this stuff” check. If you can’t get it done, please explain why.
+
+>Remember to submit this assignment in an R Markdown report.
+
+>Labeled data is not always available. For these types of datasets, you can use unsupervised algorithms to extract structure. The k-means clustering algorithm and the k nearest neighbor algorithm both use the Euclidean distance between points to group data points. The difference is the k-means clustering algorithm does not use labeled data.
+
+>In this problem, you will use the k-means clustering algorithm to look for patterns in an unlabeled dataset. The dataset for this problem is found at data/clustering-data.csv.
+
+>a. Plot the dataset using a scatter plot.
+
+```{r}
+ggplot(classifier_set, aes(x=x, y=y)) + geom_point()
+
+```
+
+
+>b. Fit the dataset using the k-means algorithm from k=2 to k=12. Create a scatter plot of the resultant clusters for each value of k.
+
+```{r}
+# Normalize
+normalize <- function(x) 
+  return ((x - min(x)) / (max(x) - min(x)))
+
+classifier_set_n <- as.data.frame(lapply(classifier_set[,1:2], normalize))
+head(classifier_set_n)
+
+# Build a kmeans model
+classifier_km_2 <- kmeans(classifier_set, centers = 2)
+classifier_km_3 <- kmeans(classifier_set, centers = 3)
+classifier_km_4 <- kmeans(classifier_set, centers = 4)
+classifier_km_5 <- kmeans(classifier_set, centers = 5)
+classifier_km_6 <- kmeans(classifier_set, centers = 6)
+classifier_km_7 <- kmeans(classifier_set, centers = 7)
+classifier_km_8 <- kmeans(classifier_set, centers = 8)
+classifier_km_9 <- kmeans(classifier_set, centers = 9)
+classifier_km_10 <- kmeans(classifier_set, centers = 10)
+classifier_km_11 <- kmeans(classifier_set, centers = 11)
+classifier_km_12 <- kmeans(classifier_set, centers = 12)
+
+# Extract the cluster assignment vector from the kmeans model
+classifier_clust_km_2 <- classifier_km_2$cluster
+classifier_clust_km_3 <- classifier_km_3$cluster
+classifier_clust_km_4 <- classifier_km_4$cluster
+classifier_clust_km_5 <- classifier_km_5$cluster
+classifier_clust_km_6 <- classifier_km_6$cluster
+classifier_clust_km_7 <- classifier_km_7$cluster
+classifier_clust_km_8 <- classifier_km_8$cluster
+classifier_clust_km_9 <- classifier_km_9$cluster
+classifier_clust_km_10 <- classifier_km_10$cluster
+classifier_clust_km_11 <- classifier_km_11$cluster
+classifier_clust_km_12 <- classifier_km_12$cluster
+
+# Create a new data frame appending the cluster assignment
+class_km_2 <- mutate(classifier_set, cluster = classifier_clust_km_2)
+class_km_3 <- mutate(classifier_set, cluster = classifier_clust_km_3)
+class_km_4 <- mutate(classifier_set, cluster = classifier_clust_km_4)
+class_km_5 <- mutate(classifier_set, cluster = classifier_clust_km_5)
+class_km_6 <- mutate(classifier_set, cluster = classifier_clust_km_6)
+class_km_7 <- mutate(classifier_set, cluster = classifier_clust_km_7)
+class_km_8 <- mutate(classifier_set, cluster = classifier_clust_km_8)
+class_km_9 <- mutate(classifier_set, cluster = classifier_clust_km_9)
+class_km_10 <- mutate(classifier_set, cluster = classifier_clust_km_10)
+class_km_11 <- mutate(classifier_set, cluster = classifier_clust_km_11)
+class_km_12 <- mutate(classifier_set, cluster = classifier_clust_km_12)
+
+# Plot the positions of the players and color them using their cluster
+ggplot(class_km_2, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_3, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_4, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_5, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_6, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_7, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_8, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_9, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_10, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_11, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(class_km_12, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+
+```
+
+
+>c. As k-means is an unsupervised algorithm, you cannot compute the accuracy as there are no correct values to compare the output to. Instead, you will use the average distance from the center of each cluster as a measure of how well the model fits the data. To calculate this metric, simply compute the distance of each data point to the center of the cluster it is assigned to and take the average value of all of those distances.
+
+```{r}
+dist_classifier <- dist(classifier_set, method = 'euclidean')
+head(dist_classifier)
+
+```
+
+>Calculate this average distance from the center of each cluster for each value of k and plot it as a line chart where k is the x-axis and the average distance is the y-axis.
+
+```{r}
+# Use map_dbl to run many models with varying value of k (centers)
+tot_withinss <- map_dbl(2:12,  function(k){
+  model <- kmeans(x = classifier_set_n, centers = k)
+  model$tot.withinss
+})
+
+# Generate a data frame containing both k and tot_withinss
+elbow_df <- data.frame(
+  k = 2:12,
+  tot_withinss = tot_withinss
+)
+
+# Plot the elbow plot
+ggplot(elbow_df, aes(x = k, y = tot_withinss)) +
+  geom_line() +
+  geom_point() + 
+  scale_x_continuous(breaks = 2:12)
+
+```
+
+>One way of determining the “right” number of clusters is to look at the graph of k versus average distance and finding the “elbow point”. Looking at the graph you generated in the previous example, what is the elbow point for this dataset?
+
+  >+ Looking at the graph, I would suggest the elbow point to be k = 5. Interesting side note, each time I've Knit the output I get a different graph here where it would suggest k = 4 as a good elbow point as well. 

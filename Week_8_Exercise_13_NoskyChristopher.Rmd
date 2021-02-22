@@ -1,0 +1,104 @@
+---
+title: "Week 8 Exercise 13"
+author: "Nosky, Christopher"
+date: "2/19/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(foreign)
+library(caTools)
+
+setwd('C:/Users/cwnos/Documents/DSC520/Git repo/DSC520/dsc520/Week 8')
+
+surgery <- read.arff('ThoraricSurgery.arff')
+
+surgery$asthma <- as.factor(surgery$PRE32)
+
+split <- sample.split(surgery, SplitRatio = 0.75)
+
+surgery_train <- subset(surgery,  split == 'TRUE')
+surgery_test <- subset(surgery, split == 'FALSE')
+```
+
+>For this problem, you will be working with the thoracic surgery data set from the University of California Irvine machine learning repository. This dataset contains information on life expectancy in lung cancer patients after surgery.
+
+>The underlying thoracic surgery data is in ARFF format. This is a text-based format with information on each of the attributes. You can load this data using a package such as foreign or by cutting and pasting the data section into a CSV file.
+
+>Assignment Instructions:
+
+>Include all of your answers in a R Markdown report. Here is an example R Markdown report that you can use as a guide.
+
+>a. Fit a binary logistic regression model to the data set that predicts whether or not the patient survived for one year (the Risk1Y variable) after the surgery. Use the glm() function to perform the logistic regression. See Generalized Linear Models for an example. Include a summary using the summary() function in your results.
+
+```{r}
+# Model with all binary variables included
+LogModel.1 <- glm(Risk1Yr ~ PRE6 + PRE7 + PRE8 + PRE9 + PRE10 + PRE11 + PRE14 + PRE17 + PRE19 + PRE25 + PRE30, data = surgery_train, family = 'binomial')
+summary(LogModel.1)
+```
+```{r}
+# Model with significant varibles only
+LogModel.2 <- glm(Risk1Yr ~ PRE9 + PRE14 + PRE17, data = surgery_train, family = 'binomial')
+summary(LogModel.2)
+
+```
+
+
+>b. According to the summary, which variables had the greatest effect on the survival rate?
+
+  >+ According to the summary of `LogModel.1` the most significant variables were `PRE9`, `PRE14` and `PRE17` though for `PRE14` only the tumor size OC13 appears to be significant. As shown above I also created `LogModel.2` to compare the results. 
+
+>c. To compute the accuracy of your model, use the dataset to predict the outcome variable. The percent of correct predictions is the accuracy of your model. What is the accuracy of your model?
+
+>+ `LogModel.1` Confusion matrix and Accuracy
+
+```{r}
+surgery.1_train_pred <- predict(LogModel.1, surgery_train, type = 'response')
+
+surgery.1_test_pred <- predict(LogModel.1, surgery_test, type= 'response') 
+
+# Model 1 Train confusion matrix
+confmatrix.1 <- table(Actual_Value=surgery_train$Risk1Yr, Predicted_Value = surgery.1_train_pred > 0.5)
+confmatrix.1
+# Model 2 Test confusion matrix
+confmatrix.2 <- table(Actual_Value=surgery_test$Risk1Yr, Predicted_Value = surgery.1_test_pred > 0.5)
+confmatrix.2
+
+```
+
+```{r}
+# Model 1 Train acc
+(confmatrix.1[[1,1]] + confmatrix.1[[2,2]]) / sum(confmatrix.1)
+# Model 1 Test acc
+(confmatrix.2[[1,1]] + confmatrix.2[[2,2]]) / sum(confmatrix.2)
+```
+
+>+ `LogModel.2` Confusion matrix and Accuracy
+
+```{r}
+# Model 2 test and train prediction 
+surgery.2_train_pred <- predict(LogModel.2, surgery_train, type = 'response')
+
+surgery.2_test_pred <- predict(LogModel.2, surgery_test, type = 'response')
+
+# Model 2 Train confusion matrix
+confmatrix.3 <- table(Actual_Value=surgery_train$Risk1Yr, Predicted_Value = surgery.2_train_pred > 0.5)
+confmatrix.3
+
+# Model 2 Train Confusion matrix
+confmatrix.4 <- table(Actual_Value=surgery_test$Risk1Yr, Predicted_Value = surgery.2_test_pred > 0.5)
+confmatrix.4
+```
+
+```{r}
+# Model 2 Train acc
+(confmatrix.3[[1,1]] + confmatrix.3[[2,2]]) / sum(confmatrix.3)
+# Model 2 Test acc
+(confmatrix.4[[1,1]] + confmatrix.4[[2,2]]) / sum(confmatrix.4)
+```
+
+>+ It would appear that there isn't a significant difference in Accuracy between the two models as shown. Both models present an accuracy of 84-85%. 

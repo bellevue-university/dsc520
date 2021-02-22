@@ -1,0 +1,115 @@
+---
+title: "Week 8 Exercise 14"
+author: "Nosky, Christopher"
+date: "2/19/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(caTools)
+library(readr)
+library(class)
+library(caret)
+
+setwd('C:/Users/cwnos/Documents/DSC520/Git repo/DSC520/dsc520/Week 8')
+
+binary_data <- read.csv('binary-classifier-data.csv')
+
+split <- sample.split(binary_data, SplitRatio = 0.80)
+
+
+binary_train <- subset(binary_data,  split == 'TRUE')
+binary_test <- subset(binary_data, split == 'FALSE')
+
+```
+
+>Include all of your answers in a R Markdown report. Here is an example R Markdown report that you can use as a guide.
+
+>Fit a logistic regression model to the binary-classifier-data.csv dataset from the previous assignment.
+
+```{r}
+LogModel.1 <- glm(label~x+y, data = binary_train, family = binomial())
+summary(LogModel.1)
+
+```
+
+>a. What is the accuracy of the logistic regression classifier?
+
+```{r}
+LogModel.1.train <- predict(LogModel.1, binary_train, type= 'response') 
+
+LogModel.1.test <- predict(LogModel.1, binary_test, type = 'response')
+
+# Model 1 Train confusion matrix
+confmatrix.1 <- table(Actual_Value=binary_train$label, Predicted_Value = LogModel.1.train > 0.5)
+confmatrix.1
+# Model 1 Test confusion matrix
+confmatrix.2 <- table(Actual_Value=binary_test$label, Predicted_Value = LogModel.1.test > 0.5)
+confmatrix.2
+
+```
+```{r}
+# Model 1 Train acc
+(confmatrix.1[[1,1]] + confmatrix.1[[2,2]]) / sum(confmatrix.1)
+# Model 1 Test acc
+(confmatrix.2[[1,1]] + confmatrix.2[[2,2]]) / sum(confmatrix.2)
+```
+
+>b. How does the accuracy of the logistic regression classifier compare to the nearest neighbors algorithm?
++ First we'll split the data into training and test sets.
+
+```{r}
+# Split for training / test
+
+set.seed(123) #Getting random sample
+dat.d <- sample(1:nrow(binary_data), size=nrow(binary_data)*0.8, replace = FALSE) # Selects 80% of data at random
+
+train.binary <-  binary_data[dat.d,] # 80% training data
+test.binary <- binary_data[-dat.d,] # remaining 20% for testing
+
+# Now creating seperate dataframe.
+train.binary_labs <- binary_data[dat.d,1]
+test.binary_labs <- binary_data[-dat.d, 1]
+
+NROW(train.binary_labs)
+
+```
+
+>+ Next we'll build our Knn model where K=3. As you can see the accuracy comes in at 99.3333%, which is confirmed with the confusion matrix. 
+
+```{r}
+bin_knn_3 <- knn(train=train.binary, test=test.binary, cl=train.binary_labs, k=3)
+
+# Let's calculate the proprotion of correct classification for k = 3
+
+bin_acc_3 <- 100 * sum(test.binary_labs == bin_knn_3)/NROW(test.binary_labs) # For knn = 3
+bin_acc_3 # Accuracy 
+
+table(bin_knn_3, test.binary_labs) # to check prediction against actual value in tabular form
+
+# ConfusionMatrix
+confusionMatrix(table(bin_knn_3, test.binary_labs))
+```
+
+>+ Next lets look at different values of K, to see if we can get a better fit. As you can see it appears that we may be able to get a high degree of accuraccy from all of our tested values with K = 18 coming in at 99.66667%
+
+```{r}
+i=1 # Declaration to initiate for loop
+bin.k.optm=1 # Declaration to initiate for loop
+for (i in 2:25){
+  bin.knn.mod <- knn(train=train.binary, test=test.binary, cl=train.binary_labs, k=i)
+  bin.k.optm[i] <- 100 * sum(test.binary_labs == bin.knn.mod)/NROW(test.binary_labs)
+  k=i
+  cat(k,'=', bin.k.optm[i], '\n')
+}
+
+plot(bin.k.optm, type='b', xlab='K- Value', ylab='Accuracy level')
+```
+
+>c. Why is the accuracy of the logistic regression classifier different from that of the nearest neighbors?
++ There are likely a number of reasons that the accuracy is different between the two methods. As the reading points out KNN is a lazy execution, it fits and predicts at the time it is ran. KNN doesn't tell us which of our predictors are significant, where logistic regression we can approach it in a backwards stepwise method and see the coeficients and pvalues of our predictors to find the variables with the highest significance. 
+

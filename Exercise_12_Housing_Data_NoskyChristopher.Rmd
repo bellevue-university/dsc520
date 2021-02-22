@@ -1,0 +1,289 @@
+---
+title: "Exercise_12_Housing_Data_NoskyChristopher"
+author: "Nosky, Christopher"
+date: "1/31/2021"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+
+setwd('C:/Users/cwnos/Documents/DSC520/Git repo/DSC520/dsc520')
+
+library(readxl)
+library(Rcmdr)
+library(ggplot2)
+library(pastecs)
+library(MASS, pos = 18)
+library(car)
+week_7_housing <- read_excel("data/week-6-housing.xlsx")
+
+week_7_housing_orginial <- read_excel("data/week-6-housing.xlsx")
+
+week_7_housing <- within(week_7_housing, {
+  addr_full <- NULL
+  building_grade <- NULL
+  ctyname <- NULL
+  lat <- NULL
+  lon <- NULL
+  sale_instrument <- NULL 
+  sale_reason <- NULL
+  sale_warning <- NULL
+  sitetype <- NULL
+  year_renovated <- NULL 
+})
+
+week_7_housing_Updated <- na.omit(week_7_housing)
+sale_price <- week_7_housing_Updated$`Sale Price`
+bathrooms <- subset(week_7_housing_Updated,  
+                    select = c('bath_full_count', 'bath_half_count',
+                               'bath_3qtr_count'), drop = FALSE)
+
+total_bathrooms <- (bathrooms$bath_full_count * 1) + 
+                   (bathrooms$bath_half_count * 0.5) + 
+                   (bathrooms$bath_3qtr_count * 0.75)
+
+week_7_housing_Updated$total_bathrooms <- total_bathrooms
+
+week_7_housing_Updated <- subset(week_7_housing_Updated, 
+                  select = c('Sale Price', 
+                             'square_feet_total_living',
+                             'bedrooms', 
+                             'sq_ft_lot', 
+                             'total_bathrooms')) 
+
+str(week_7_housing_Updated)
+
+```
+
+>Work individually on this assignment. You are encouraged to collaborate on ideas and strategies pertinent to this assignment. Data for this assignment is focused on real estate transactions recorded from 1964 to 2016 and can be found in Week 6 Housing.xlsx. Using your skills in statistical correlation, multiple regression and R programming, you are interested in the following variables: Sale Price and several other possible predictors.  
+
+>Using your ‘clean’ data set from the previous week complete the following:  
+
+>Explain why you chose to remove data from your data set.  
+  
+  >+ Starting with the removed data points outlined in Tech Fort this week, I considered each point and came to the same conclusions indicated
+    and removed them from the start. 
+  
+  >+ As indicated I also reworked the three(3) separate bathroom variables into a single value, without knowing 
+    for certain I was using the same methodology this proved to be an amusing endeavor first arriving at a sum of all the bathroom values for the
+    entire data set. After adding the `total_bathrooms` subset back into `week_7_housing_Updated` I created a new subset `week_7_housing_Updated` with 5 variables.  
+  
+  >+ The final variable I removed was __building_grade__ because after considering what those values might indicate it opened up a 'rabbit-hole'
+    of questions I wasn't certain I could get the answers for. For example, the biggest question I had after considering that it was a ranking 
+    metric for the quality of the build I now question how the ranking might be normalized considering the range of the data set. Given that 
+    building code is updated regularly and construction methods and materials are often improved year after year, are we ranking the building_grade
+    based on the year it was built or did we base it off of current standards? If we were to know which method was used to get the ranking we could
+    possibly through a bit of work write a function that normalizes the metric around a single standard. 
+  
+>Create two variables; one that will contain the variables Sale Price and Square Foot of Lot (same variables used from previous assignment on 
+  simple regression) and one that will contain Sale Price and several additional predictors of your choice. Explain the basis for your 
+  additional predictor selections.
+
+```{r, include=TRUE}
+
+RegModel.1 <- lm(sale_price~square_feet_total_living, data = week_7_housing_Updated)
+
+```
+
+```{r}
+RegModel.2 <- lm(sale_price~square_feet_total_living+total_bathrooms +bedrooms+sq_ft_lot, 
+  data = week_7_housing_Updated)
+
+
+```
+
+
+
+  >+ Here I have created two models the first contains Sale price with sq_ft_lot as it's predictor variable, and the second uses Sale price with predictors sq_ft_lot, bedrooms, total_bathrooms, square_feet_total_living.
+    
+  >+ My inclusion of the predictors bedrooms, total_bathrooms and square_feet_total_living seemed a logical choice as I didn't know the effect each may 
+    have on the sale price. My intention was to start with all three and remove them one at a time to see if we could get a better fit.   
+    
+>Execute a summary() function on two variables defined in the previous step to compare the model results. What are the R2 and Adjusted R2 statistics? 
+  Explain what these results tell you about the overall model. Did the inclusion of the additional predictors help explain any large variations found 
+  in Sale Price?  
+  
+```{r}
+summary(RegModel.1)
+```
+
+```{r}
+summary(RegModel.2)
+```
+
+  >+ From our reading, we know we can look at the R-squared and Adjusted R-squared values like a percentage of variability that our predictor variables 
+    account for. Looking at the `RegModel.1` values it would appear that `sq_ft_lot` accounts for about 1.4% of the variability in sale price, sadly this
+    doesn't help us out all that much.  
+  
+  >+ Our second model (I was hoping would do better) shows R-squared and Adjusted R-squared values are 0.2096 & 0.2095 respectively and can account for about 21% 
+    of the variability in our sale price. What strikes me as odd as I look at the rest of this summary is the `bedrooms` variable appears to impact the sale price 
+    negatively, that is if I'm reading this correctly. As I understand it, for each additional bedroom the sale price drops by about $28,000. 
+    
+    
+  >+ At this point, I would say it may be worth revisiting the included data points I am using to see if we can find additional factors that may be able to explain
+    this variability. 
+    
+>Considering the parameters of the multiple regression model you have created. What are the standardized betas for each parameter and what do the values indicate?  
+
+```{r}
+compareCoefs(RegModel.1, RegModel.2)
+```
+
+
+
+  >+ Above you can see the standardized beta coefficients for each model's variables. As I found by [searching](https://www.dataanalytics.org.uk/beta-coefficients-from-linear-models/#beta):    
+    ___Beta coefficients are regression coefficients (analogous to the slope in a simple regression/correlation) that are standardized against one another. This standardization means that they are “on the same scale”, or have the same units, which allows you to compare the magnitude of their effects directly.___  
+    These results indicate that of the variables I've chosen that `square_feet_total_living` has the greatest impact on `sale_price`. 
+    
+>Calculate the confidence intervals for the parameters in your model and explain what the results indicate.
+
+```{r, Confidence intervals}
+
+confint.lm(RegModel.1, level = 0.95)
+confint.lm(RegModel.2, level = 0.95)
+```
+
+  >+ To be honest, I'm not sure how to interpret these values. Looking at our first model, if I understand this weeks reading I would say that with `sq_ft_lot` as a predictor     we are 95% confident that the interval (.729, .972) captured the true mean of our model. This explanation becomes a little less clear as I begin looking at the next two
+    models, I suspect this is due to using multiple predictors in these models.  
+    
+>Assess the improvement of the new model compared to your original model (simple regression model) by testing whether this change is significant by performing an 
+analysis of variance.  
+  
+```{r}
+anova(RegModel.1, RegModel.2)
+```
+
+  >+ Based on our reading, I interpret these tables to indicate that both `RegModel.2` significantly improved the fit over `RegModel.1`. As I discussed in 
+    my Discussion post last week what we're looking at here are the F-ratio and the p value to arrive at this conclusion.  
+    
+    
+>Perform casewise diagnostics to identify outliers and/or influential cases, storing each function's output in a dataframe assigned to a unique variable name.
+    
+```{r}
+RegModelOrg <- 
+  lm(sale_price~square_feet_total_living+total_bathrooms+bedrooms+building_grade+lat+lon+present_use+sale_instrument+sale_reason+sq_ft_lot+year_built+year_renovated+zip5,
+   data=week_7_housing_orginial)
+summary(RegModelOrg)
+```
+
+```{r}
+outlierTest(RegModelOrg)
+```
+
+```{r}
+outlierTest(RegModel.1)
+
+```
+
+
+```{r}
+outlierTest(RegModel.2)
+```
+
+
+```{r}
+Out_L_week_7_housing_orginial <- week_7_housing_orginial
+```
+
+```{r}
+str(Out_L_week_7_housing_orginial)
+```
+
+```{r}
+Out_L_week_7_housing_updated <- week_7_housing_Updated
+```
+
+```{r}
+str(Out_L_week_7_housing_updated)
+```
+
+
+```{r}
+RegModel.3 <- lm(sale_price~square_feet_total_living, data = Out_L_week_7_housing_updated)
+summary(RegModel.3)
+```
+
+```{r}
+RegModel.4 <- lm(sale_price~square_feet_total_living+total_bathrooms+bedrooms+sq_ft_lot, 
+  data = Out_L_week_7_housing_updated)
+summary(RegModel.4)
+```
+
+  
+>Calculate the standardized residuals using the appropriate command, specifying those that are +-2, storing the results of large residuals in a variable you create.  
+
+```{r }
+Out_L_week_7_housing_updated$standardized.residuals <- rstandard(RegModel.4)
+Out_L_week_7_housing_updated$studentized.residuals <- rstudent(RegModel.4)
+Out_L_week_7_housing_updated$cooks.distance <- cooks.distance(RegModel.4)
+Out_L_week_7_housing_updated$dfbeta <- dfbeta(RegModel.4)
+Out_L_week_7_housing_updated$leverage <- hatvalues(RegModel.4)
+Out_L_week_7_housing_updated$covariance.ratios <- covratio(RegModel.4)
+
+str(Out_L_week_7_housing_updated)
+
+```
+
+> Use the appropriate function to show the sum of large residuals.
+
+```{r}
+Out_L_week_7_housing_updated$large.residual <- Out_L_week_7_housing_updated$standardized.residuals > 2 | Out_L_week_7_housing_updated$studentized.residuals < -2
+
+str(Out_L_week_7_housing_updated)
+```
+> Which specific variables have large residuals (only cases that evaluate as TRUE)?
+
+```{r}
+sum(Out_L_week_7_housing_updated$large.residual)
+```
+
+```{r}
+head(Out_L_week_7_housing_updated)
+
+```
+
+```{r}
+Out_L_week_7_housing_updated[Out_L_week_7_housing_updated$large.residual , c("Sale Price", "square_feet_total_living","total_bathrooms" , "bedrooms", "sq_ft_lot")]
+```
+
+> Investigate further by calculating the leverage, cooks distance, and covariance rations. Comment on all cases that are problematics.
+
+```{r}
+Out_L_week_7_housing_updated[Out_L_week_7_housing_updated$large.residual , c("leverage" , "cooks.distance","covariance.ratios") ]
+```
+
+> Perform the necessary calculations to assess the assumption of independence and state if the condition is met or not.
+
+```{r}
+dwt(RegModel.4)
+```
+
+> Visually check the assumptions related to the residuals using the plot() and hist() functions. Summarize what each graph is informing you of and if any anomalies are present.
+
+```{r}
+with(Out_L_week_7_housing_updated, Hist(standardized.residuals, scale="frequency", breaks="Sturges", col="red", 
+  xlab="Studentized Residuals"))
+```
+
+```{r}
+library(lattice, pos = 24)
+xyplot(square_feet_total_living ~ sale_price | large.residual, groups = large.residual, type = "p", pch = 16, 
+  auto.key = list(border = TRUE), par.settings = simpleTheme(pch = 16), scales = list(x = list(relation = 'same'), 
+  y = list(relation = 'same')), data = Out_L_week_7_housing_updated)
+
+```
+
+```{r}
+with(Out_L_week_7_housing_updated, discretePlot(bedrooms,  scale = "frequency"))
+
+
+```
+
+```{r}
+scatterplotMatrix(~sale_price+square_feet_total_living | large.residual, 
+                       regLine = FALSE, smooth = FALSE, diagonal = list(method = "density"), by.groups = TRUE, 
+  data = Out_L_week_7_housing_updated)
+```

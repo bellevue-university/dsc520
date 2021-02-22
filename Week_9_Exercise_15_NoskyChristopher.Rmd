@@ -1,0 +1,282 @@
+---
+title: "Exercise 15"
+author: "Nosky, Christopher"
+date: "2/17/2021"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(purrr)
+library(cluster)
+library(dplyr)
+library(class)
+library(caret)
+library(ggpubr)
+
+setwd('C:/Users/cwnos/Documents/DSC520/Git repo/DSC520/dsc520/Week 9')
+
+# Read files
+
+binary_set <- read.csv('binary-classifier-data.csv')
+
+trinary_set <-read.csv('trinary-classifier-data.csv')
+```
+>These assignments are here to provide you with an introduction to the “Data Science” use for these tools. This is your future. It may seem confusing and weird right now but it hopefully seems far less so than earlier in the semester. Attempt these homework assignments. You will not be graded on your answer but on your approach. This should be a, “Where am I on learning this stuff” check. If you can’t get it done, please explain why.
+
+>Include all of your answers in a R Markdown report. 
+
+>Regression algorithms are used to predict numeric quantity while classification algorithms predict categorical outcomes. A spam filter is an example use case for a classification algorithm. The input dataset is emails labeled as either spam (i.e. junk emails) or ham (i.e. good emails). The classification algorithm uses features extracted from the emails to learn which emails fall into which category.
+
+>In this problem, you will use the nearest neighbors algorithm to fit a model on two simplified datasets. The first dataset (found in binary-classifier-data.csv) contains three variables; label, x, and y. The label variable is either 0 or 1 and is the output we want to predict using the x and y variables. The second dataset (found in trinary-classifier-data.csv) is similar to the first dataset except that the label variable can be 0, 1, or 2.
+
+>Note that in real-world datasets, your labels are usually not numbers, but text-based descriptions of the categories (e.g. spam or ham). In practice, you will encode categorical variables into numeric values.
+
+>a. Plot the data from each dataset using a scatter plot.
+
+```{r}
+ggplot(binary_set, aes(x = x, y = y)) + geom_point()
+
+ggplot(trinary_set, aes(x = x, y = y)) + geom_point()
+
+```
+
+>b. The k nearest neighbors algorithm categorizes an input value by looking at the labels for the k nearest points and assigning a category based on the most common label. In this problem, you will determine which points are nearest by calculating the Euclidean distance between two points. As a refresher, the Euclidean distance between two points:
+
+```{r}
+normalize <- function(x) 
+  return ((x - min(x)) / (max(x) - min(x)))
+
+binary_set_norm <- as.data.frame(lapply(binary_set[,1:3], normalize))
+head(binary_set_norm)
+
+dist_binary <- dist(binary_set_norm, method = 'euclidean')
+head(dist_binary)
+
+normalize <- function(x) 
+  return ((x - min(x)) / (max(x) - min(x)))
+
+trinary_set_norm <- as.data.frame(lapply(trinary_set[,1:3], normalize))
+head(trinary_set_norm)
+
+dist_trinary <- dist(trinary_set, method = 'euclidean')
+head(dist_trinary)
+
+```
+
+>Fitting a model is when you use the input data to create a predictive model. There are various metrics you can use to determine how well your model fits the data. You will learn more about these metrics in later lessons. For this problem, you will focus on a single metric; accuracy. Accuracy is simply the percentage of how often the model predicts the correct result. If the model always predicts the correct result, it is 100% accurate. If the model always predicts the incorrect result, it is 0% accurate.
+
+  >+  There are a couple methods we can use to check the accuracy of our model. First we will split the data sets into training and test sets. We'll start with the binary data set followed by the trinary set. 
+
+```{r}
+set.seed(123) #Getting random sample
+dat.d <- sample(1:nrow(binary_set_norm), size=nrow(binary_set)*0.7, replace = FALSE) # Selects 70% of data at random
+
+train.binary <-  binary_set[dat.d,] # 70% training data
+test.binary <- binary_set[-dat.d,] # remaining 30% for testing
+
+# Now creating seperate dataframe for 'Creditability' feature which is our target
+train.binary_labs <- binary_set[dat.d,1]
+test.binary_labs <- binary_set[-dat.d, 1]
+
+NROW(train.binary_labs)
+
+bin_knn_3 <- knn(train=train.binary, test=test.binary, cl=train.binary_labs, k=3)
+
+
+```
+  >+  Now that the data is split we can check accuracy. Below you'll see the accuracy calculation for K = 3 along with a Confusion matrix that will also show us the accuracy.
+  
+```{r}
+# Let's calculate the proprotion of correct classification for k = 3
+
+bin_acc_3 <- 100 * sum(test.binary_labs == bin_knn_3)/NROW(test.binary_labs) # For knn = 3
+bin_acc_3 # Accuracy 
+
+# ConfusionMatrix
+confusionMatrix(table(bin_knn_3, test.binary_labs))
+
+```
+  >+  We can also run a calculation showing the accuracy metric for multiple values of K. 
+  
+```{r}
+i=1 # Declaration to initiate for loop
+bin.k.optm=1 # Declaration to initiate for loop
+for (i in 2:25){
+  bin.knn.mod <- knn(train=train.binary, test=test.binary, cl=train.binary_labs, k=i)
+  bin.k.optm[i] <- 100 * sum(test.binary_labs == bin.knn.mod)/NROW(test.binary_labs)
+  k=i
+  cat(k,'=', bin.k.optm[i], '\n')
+}
+
+plot(bin.k.optm, type='b', xlab='K- Value', ylab='Accuracy level')
+
+```
+  
+  
+  >+  It would appear that K values 2-25 would all work well with the highest percentage coming in with K = 10 & K = 11. Next I'll do the same thing for the Trinary data set. 
+  
+```{r}
+# Normalize the data
+normalize <- function(x) 
+  return ((x - min(x)) / (max(x) - min(x)))
+
+trinary_set_norm <- as.data.frame(lapply(trinary_set[,1:3], normalize))
+head(trinary_set_norm)
+
+# Split for training / test
+
+set.seed(123) #Getting random sample
+dat.d <- sample(1:nrow(trinary_set_norm), size=nrow(trinary_set)*0.7, replace = FALSE) # Selects 70% of data at random
+
+train.trinary <-  trinary_set[dat.d,] # 70% training data
+test.trinary <- trinary_set[-dat.d,] # remaining 30% for testing
+
+# Now creating seperate dataframe.
+train.trinary_labs <- trinary_set[dat.d,1]
+test.trinary_labs <- trinary_set[-dat.d, 1]
+
+NROW(train.trinary_labs)
+
+tri_knn_3 <- knn(train=train.trinary, test=test.trinary, cl=train.trinary_labs, k=3)
+
+# Let's calculate the proprotion of correct classification for k = 3
+
+tri_acc_3 <- 100 * sum(test.trinary_labs == tri_knn_3)/NROW(test.trinary_labs) # For knn = 3
+tri_acc_3 # Accuracy 
+
+# Confusion Matrix
+confusionMatrix(table(tri_knn_3, test.trinary_labs))
+
+i=1 # Declaration to initiate for loop
+tri.k.optm=1 # Declaration to initiate for loop
+for (i in 2:25){
+  tri.knn.mod <- knn(train=train.trinary, test=test.trinary, cl=train.trinary_labs, k=i)
+  tri.k.optm[i] <- 100 * sum(test.trinary_labs == tri.knn.mod)/NROW(test.trinary_labs)
+  k=i
+  cat(k,'=', tri.k.optm[i], '\n')
+}
+
+plot(tri.k.optm, type='b', xlab='K- Value', ylab='Accuracy level')
+
+
+
+```
+
+
+>Fit a k nearest neighbors model for each dataset for k=3, k=5, k=10, k=15, k=20, and k=25. Compute the accuracy of the resulting models for each value of k. Plot the results in a graph where the x-axis is the different values of k and the y-axis is the accuracy of the model.
+
+```{r}
+# Build a kmeans model for the Binary data set
+
+# Build a kmeans model
+bin_km_3 <- kmeans(binary_set_norm, centers = 3)
+bin_km_5 <- kmeans(binary_set_norm, centers = 5)
+bin_km_10 <- kmeans(binary_set_norm, centers = 10)
+bin_km_15 <- kmeans(binary_set_norm, centers = 15)
+bin_km_20 <- kmeans(binary_set_norm, centers = 20)
+bin_km_25 <- kmeans(binary_set_norm, centers = 25)
+
+# Extract the cluster assignment vector from the kmeans model
+clust_bin_km_3 <- bin_km_3$cluster
+clust_bin_km_5 <- bin_km_5$cluster
+clust_bin_km_10 <- bin_km_10$cluster
+clust_bin_km_15 <- bin_km_15$cluster
+clust_bin_km_20 <- bin_km_20$cluster
+clust_bin_km_25 <- bin_km_25$cluster
+
+# Create a new data frame appending the cluster assignment
+binary_set_km_3 <- mutate(binary_set_norm, cluster = clust_bin_km_3)
+binary_set_km_5 <- mutate(binary_set_norm, cluster = clust_bin_km_5)
+binary_set_km_10 <- mutate(binary_set_norm, cluster = clust_bin_km_10)
+binary_set_km_15 <- mutate(binary_set_norm, cluster = clust_bin_km_15)
+binary_set_km_20 <- mutate(binary_set_norm, cluster = clust_bin_km_20)
+binary_set_km_25 <- mutate(binary_set_norm, cluster = clust_bin_km_25)
+
+
+## Plotting K = 3,5,10,15,20,25
+
+# Plot the positions of the players and color them using their cluster
+ggplot(binary_set_km_3, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(binary_set_km_5, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(binary_set_km_10, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(binary_set_km_15, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(binary_set_km_20, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(binary_set_km_25, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+
+
+```
+
+```{r}
+# Build a kmeans model for the Trinary data set
+
+tri_km_3 <- kmeans(trinary_set_norm, centers = 3)
+tri_km_5 <- kmeans(trinary_set_norm, centers = 5)
+tri_km_10 <- kmeans(trinary_set_norm, centers = 10)
+tri_km_15 <- kmeans(trinary_set_norm, centers = 15)
+tri_km_20 <- kmeans(trinary_set_norm, centers = 20)
+tri_km_25 <- kmeans(trinary_set_norm, centers = 25)
+
+# Extract the cluster assignment vector from the kmeans model
+clust_tri_km_3 <- tri_km_3$cluster
+clust_tri_km_5 <- tri_km_5$cluster
+clust_tri_km_10 <- tri_km_10$cluster
+clust_tri_km_15 <- tri_km_15$cluster
+clust_tri_km_20 <- tri_km_20$cluster
+clust_tri_km_25 <- tri_km_25$cluster
+
+# Create a new data frame appending the cluster assignment
+trinary_set_km_3 <- mutate(trinary_set_norm, cluster = clust_tri_km_3)
+trinary_set_km_5 <- mutate(trinary_set_norm, cluster = clust_tri_km_5)
+trinary_set_km_10 <- mutate(trinary_set_norm, cluster = clust_tri_km_10)
+trinary_set_km_15 <- mutate(trinary_set_norm, cluster = clust_tri_km_15)
+trinary_set_km_20 <- mutate(trinary_set_norm, cluster = clust_tri_km_20)
+trinary_set_km_25 <- mutate(trinary_set_norm, cluster = clust_tri_km_25)
+
+
+## Plotting K = 3,5,10,15,20,25
+
+ggplot(trinary_set_km_3, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(trinary_set_km_5, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(trinary_set_km_10, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(trinary_set_km_15, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(trinary_set_km_20, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+ggplot(trinary_set_km_25, aes(x = x, y = y, color = factor(cluster))) +
+  geom_point(shape=3) + theme_dark() + theme(panel.grid=element_blank())
+
+
+```
+
+
+
+>c. In later lessons, you will learn about linear classifiers. These algorithms work by defining a decision boundary that separates the different categories.
+
+>Looking back at the plots of the data, do you think a linear classifier would work well on these datasets?
+
+  >+  I think it might work well, though to be honest I am only guessing at this point and I don't have enough insight to know yet. 
