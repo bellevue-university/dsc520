@@ -1,0 +1,396 @@
+---
+title: "DSC520-FinalProject"
+author: "SumbarajuAditya"
+date: "2/25/2021"
+output: word_document
+---
+
+
+# library
+
+```{r}
+library(knitr)
+library(ggplot2)
+library(gvlma)
+library(pander)
+library(dplyr)
+library(gridExtra)
+#library(reshape2) 
+#library(ISLR) 
+library(car) 
+#library(leaps)
+library(glmnet) 
+#library(bestglm) 
+#library(pROC)
+#library(broom)
+#library(mapproj)
+#library(boot)
+#library(tree)
+#library(randomForest) 
+#library(rpart)
+
+```
+ Data importing and cleaning steps
+
+```{r}
+
+filename <- 'C:/BU/DSC520/assignment_repo/dsc520/data/final_project/diabetic_data_v1.csv'
+diabetic_data <- read.table(filename, sep = ",", header = T, na.strings = "?")
+#head(data)
+
+
+```
+
+For getting the readmission prediction we dont need many columns hence we should be selecting only relevant values to make it simpler.Also we need to remove those columns which mainly has NA values.
+
+```{r}
+diabetic_data$admission_type_id <- as.factor(diabetic_data$admission_type_id)
+diabetic_data$discharge_disposition_id <- as.factor(diabetic_data$discharge_disposition_id)
+diabetic_data$admission_source_id <- as.factor(diabetic_data$admission_source_id)
+
+
+```
+
+Cleaning Missing Values
+Below is the logic to replace bad data “?” and “unknown/invalid values” with NA. I am passing respective columns from diabetic_data_clean “diabetic_data” using ncol and trying to identify the bad data by passing the columns in loop and there by replacing the data with NA.
+```{r}
+
+count <- 0
+for(i in 1:ncol(diabetic_data))
+  {
+  if(is.factor(diabetic_data[,i]))
+    {
+    for(j in 1:nrow(diabetic_data))
+      {
+      if(diabetic_data[j,i]== "?" | diabetic_data[j,i]== "Unknown/Invalid" )
+        {
+        count <- count + 1
+        diabetic_data[j,i] <- NA  #replace "?" and "Unknown/Invalid" values with NA
+        }
+      }
+    if(count > 0)
+      {
+      print(c(colnames(diabetic_data)[i],count))
+      }
+   }
+  count <- 0
+  }
+```
+
+
+Below are the variables removed:
+Payer code, weight and Medical Specialty are not included since they have a large number of missing values.
+
+Minor variability variables are excluded. That includes following variables acetohexamide, glimepiride.pioglitazone, metformin.rosiglitazone, metformin.pioglitazone, chlorpropamide, acetohexamide, tolbutamide, acarbose, miglitor, troglitazone, tolazamide, examide, citoglipton, glyburide.metformin, glipizide.metformin, and glimepiride.pioglitazone.
+
+```{r}
+diabetic_data_clean <- diabetic_data
+diabetic_data_clean$X <- NULL
+diabetic_data_clean$weight <- NULL
+diabetic_data_clean$payer_code <- NULL
+diabetic_data_clean$admission_type_id <- NULL
+diabetic_data_clean$discharge_disposition_id <- NULL
+diabetic_data_clean$admission_source_id <- NULL 
+diabetic_data_clean$medical_specialty <- NULL
+diabetic_data_clean$encounter_id <- NULL
+diabetic_data_clean$diag_1 <- NULL
+diabetic_data_clean$diag_2 <- NULL
+diabetic_data_clean$diag_3 <- NULL
+diabetic_data_clean$examide <- NULL
+diabetic_data_clean$citoglipton <- NULL
+diabetic_data_clean$acetohexamide <- NULL
+diabetic_data_clean$repaglinide <- NULL
+diabetic_data_clean$nateglinide <- NULL
+diabetic_data_clean$metformin.pioglitazone <- NULL 
+diabetic_data_clean$metformin.rosiglitazone <- NULL
+diabetic_data_clean$chlorpropamide <- NULL
+diabetic_data_clean$acetohexamide <- NULL
+diabetic_data_clean$miglitol <- NULL              
+diabetic_data_clean$tolbutamide <- NULL
+diabetic_data_clean$acarbose <- NULL
+diabetic_data_clean$miglitor <- NULL
+diabetic_data_clean$troglitazone <- NULL
+diabetic_data_clean$tolazamide <- NULL
+diabetic_data_clean$examide <- NULL
+diabetic_data_clean$citoglipton <- NULL
+diabetic_data_clean$glyburide.metformin <- NULL
+diabetic_data_clean$glipizide.metformin <- NULL
+diabetic_data_clean$glimepiride.pioglitazone <- NULL
+diabetic_data_clean <- na.omit(diabetic_data_clean)
+#write.csv(diabetic_data_clean, file = "C:/BU/DSC520/assignment_repo/dsc520/data/final_project/diabetic_data_clean2.csv")
+dim(diabetic_data_clean)
+```
+
+
+Below is the Summary & Structure of the data; 
+
+```{r}
+str(diabetic_data_clean)
+#head (diabetic_data_clean)
+# Raw diabetic_data_clean:
+dim(diabetic_data)
+# Clean diabetic_data_clean
+dim(diabetic_data_clean)
+#write.csv(diabetic_data_clean, file = "diabetic_data_clean1.csv")
+
+```
+
+
+```{r}
+#diabetic_data_clean <- subset(diabetic_data_clean, select = -c(encounter_id)) # delete ID variables
+names(diabetic_data_clean)[length(diabetic_data_clean)] <- "y" 
+diabetic_data_clean$y <- as.character(diabetic_data_clean$y)
+diabetic_data_clean$y[which(diabetic_data_clean$y == ">30" | diabetic_data_clean$y == "NO")] <- "0"
+diabetic_data_clean$y[which(diabetic_data_clean$y == "<30")] <- "1"
+diabetic_data_clean$y <- as.factor(diabetic_data_clean$y)
+
+#rename variables
+names(diabetic_data_clean) <- c("pers", "race", "gend", "agem", "hosp", "labp", "proc", "nmed", "nout", "emer", "ninp", "diag", "mglu", "A1Cr", "metf", "glim", "glip", "glyb", "piog", "rosi", "insu", "chge", "diab", "disc", "adms", "admt", "mod1", "mod2", "mod3", "y")
+
+str(diabetic_data_clean)
+# Data partition
+set.seed(1121)
+pos <- sample(1:nrow(diabetic_data_clean), round(nrow(diabetic_data_clean)*0.2))
+testing <- diabetic_data_clean[pos, -1] 
+training <- diabetic_data_clean[-pos, -1] 
+
+# XX and y 
+data <- training
+y <- data$y
+response <- "readmitted" 
+XX <- model.matrix(y ~., data)[, -1]
+Y <- y
+glimpse(data)
+glimpse(testing)
+```
+
+#Patient Demographics
+
+```{r}
+Readmission_indicator <- prop.table(table(data$y)) 
+yprop2 <- with(data, table(y, y))
+yprop3 <- prop.table(yprop2, margin = 1) 
+df.y <- data.frame(round(rbind(Readmission_indicator, t(yprop3)), 3)*100)
+names(df.y) <- c("Never or > 30 days","< 30 days")
+head (df.y,n=1)
+```
+>About 11.3% of observations have a record of readmission within 30 days. 88.7 % of observations have a record of readmission >30 days.
+
+```{r}
+# subset data which excludes duplicate data points
+# demographics
+Total <- prop.table(table(data$race)) 
+crosstab <- with(data, table(race, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.race <- data.frame(round(rbind(Total, t(ytab2)), 3))
+#names(df.race)[1] <- "Missing"
+#rownames(df.race) <- c("Total", "y = 0", "y = 1")
+df.race
+```
+
+```{r}
+
+Total <- prop.table(table(data$gend)) 
+crosstab <- with(data, table(gend, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.gender <- data.frame(round(rbind(Total, t(ytab2)), 3))
+#rownames(df.gender) <- c("Total","y = 0", "y = 1")
+df.gender
+```
+
+```{r}
+Total <- prop.table(table(data$agem)) 
+crosstab <- with(data, table(agem, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.age <- data.frame(round(rbind(Total, t(ytab2)), 3))
+#rownames(df.age) <- c("Total", "y = 0", "y = 1")
+#colnames(df.age) <-  c("0~19", "20~59", "60~79", "80+")
+df.age
+```
+# Patient Medical History
+>As for labp, proc, and nmed, each shares similar distributions in the meas and spreads under two levels of the readmission status. For hosp and diag, the spread of the length of stay in the hospital is larger and the average number of diagnosis is higher for a patient being readmitted within 30 days.
+
+```{r}
+# names(data)
+# df <- subset(data, select = c(race, gender, y))
+# knitr::kable(df)
+# continuous data
+plot1 <- ggplot(data, aes(x = y,  y = hosp, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "length of stay (days)", x = "readmitted within < 30 days") 
+plot2 <- ggplot(data, aes(x = y,  y = labp, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of lab procedures", x = "readmitted within < 30 days") 
+plot3 <- ggplot(data, aes(x = y,  y = proc, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of non-lab procedures", x = "readmitted within < 30 days") 
+plot4 <- ggplot(data, aes(x = y,  y = nmed, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of distinct medications", x = "readmitted within < 30 days") 
+plot8 <- ggplot(data, aes(x = y,  y = diag, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of diagnosis", x = "readmitted within < 30 days") 
+grid.arrange(plot1, plot2, plot3, plot4, plot8, nrow = 2)
+
+plot5 <- ggplot(data, aes(x = y,  y = nout, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of outpatient", x = "readmitted within < 30 days") 
+plot6 <- ggplot(data, aes(x = y,  y = emer, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of emergency", x = "readmitted within < 30 days") 
+plot7 <- ggplot(data, aes(x = y,  y = ninp, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of inpatient", x = "readmitted within < 30 days") 
+grid.arrange(plot5, plot6, plot7, nrow = 1)
+```
+
+#Clinical Results:
+>
+The correlation between mglu and A1Cr is -0.046, which is not significant.
+
+>The diagnosis of diabetes is based on the patients’ blood glucose level, i.e. mglu. And the A1c test (A1Cr) is an important measure of how well a person with diabetes is controlling their blood glucose level. 
+Note: The American Diabetes Association recommends a goal of less than 7.0% A1c.
+
+
+```{r}
+subdata <- subset(data, select = c(mglu, A1Cr))
+subdata <- as.matrix(subdata)
+subdata[which(subdata == "None")] <- 0
+subdata[which(subdata == "Norm")] <- 1
+subdata[which(subdata == ">7")] <- 2
+subdata[which(subdata == ">8")] <- 3
+subdata[which(subdata == ">200")] <- 2
+subdata[which(subdata == ">300")] <- 3
+subdata <- matrix(as.numeric(subdata), ncol = 2)
+subdata <- data.frame(subdata)
+names(subdata) <- c("mglu", "A1Cr")
+cor <- round(cor(subdata), 3)
+summary(cor)
+
+```
+
+#Medication Details:
+
+```{r}
+
+Total <- prop.table(table(data$chge)) 
+crosstab <- with(data, table(chge, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df <- data.frame(round(rbind(Total, t(ytab2)), 3))
+#rownames(df) <- c("Total","y = 0", "y = 1")
+names(df) <- c("Change diabetes medication", "No change")
+df
+```
+
+```{r}
+# relationship between medication details
+nomed <- sum(with(data, metf == "No" & glim == "No" & glip == "No" &  glyb == "No" &  piog == "No" &  rosi  == "No" & insu == "No"))
+subdata <- subset(data, select = c(metf, glim, glip, glyb, piog, rosi, insu))
+subdata <- as.matrix(subdata)
+subdata[which(subdata == "No")] <- 0
+subdata[which(subdata == "Down")] <- 1
+subdata[which(subdata == "Steady")] <- 2
+subdata[which(subdata == "Up")] <- 3
+subdata <- matrix(as.numeric(subdata), ncol = 7)
+subdata <- data.frame(subdata)
+names(subdata) <- c("metf", "glim", "glip", "glyb", "piog", "rosi", "insu")
+data.frame(round(cor(subdata), 3))
+
+```
+
+#Admission and discharge details
+
+```{r}
+# factor
+Total <- prop.table(table(data$disc)) 
+crosstab <- with(data, table(disc, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.disc <- data.frame(round(rbind(Total, t(ytab2)), 3))
+#rownames(df) <- c("Total","y = 0", "y = 1")
+#names(df.disc) <- c("Discharged_to_home","Discharged_to_home_HomeHealthService","Discharged_Transferred_to_SNF","Other")
+
+df.disc
+
+```
+
+```{r}
+Total <- prop.table(table(data$adms)) 
+crosstab <- with(data, table(adms, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.adms <- data.frame(round(rbind(Total, t(ytab2)), 3))
+#rownames(df) <- c("Total","y = 0", "y = 1")
+#names(df.adms) <- c("Emergency_Room","Other","Physician_Referral","Transfer_from_Home.Health")
+
+df.adms
+
+```
+
+```{r}
+Total <- prop.table(table(data$admt)) 
+crosstab <- with(data, table(admt, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.admt <- data.frame(round(rbind(Total, t(ytab2)), 3))
+#rownames(df) <- c("Total","y = 0", "y = 1")
+df.admt
+
+```
+
+```{r}
+data$A1Cr <- data$A1Cr  %>% recode_factor('>8' = '>7')
+                                          
+ggplot(data = data, aes(x = A1Cr, y = nmed)) +   geom_boxplot()
+ggplot(data = data, aes(x = mglu, y = nmed)) +   geom_boxplot()
+
+data$mglu <- data$mglu  %>% recode_factor('>300' = '>200')
+
+data <- data %>% filter(mglu != 'None') %>% drop()
+
+ggplot(data = data, aes(x = mglu, y = nmed)) +   geom_boxplot()
+```
+#car plot
+
+```{r}
+str(data)
+library(corrplot)
+corrplot(cor(data[, unlist(lapply(data, is.numeric))]))
+
+```
+>
+There appear to be some positive correlations between number of medications and variables like the time spent in hospital, number of procedures, and diagnoses. Next, I’ll look at the categorical variable age, and see if this conforms to my expectation that diabetic patients trend to be older on average.
+
+```{r}
+#names(diabetic_data_clean) <- c("pers", "race", "gend", "agem", "hosp", "labp", "proc", "nmed", "nout", "emer", "ninp", "diag", "mglu", "A1Cr", "metf", "glim", "glip", "glyb", "piog", "rosi", "insu", "chge", "diab", "disc", "adms", "admt", "mod1", "mod2", "mod3", "y")
+dm_lm <- lm(data = data, formula = nmed ~ diag + proc + hosp**2 + diab + mglu + agem + gend + insu + chge + chge*labp)
+
+summary(dm_lm)
+plot(dm_lm)
+hist(dm_lm$residuals)
+gvlma(dm_lm)
+```
+>Per output of glvma, the skewness and kurtosis assumptions are not satisfied. this is due to response variable is skewed to the right. 
+
+> As per Adjusted R-squared the ultimate model only explains 42% of the variation of the number of medications,and p-value: < 2.2e-16 which in my opinion provides too high of residuals to be clinically meaningful.  
+
+>The model has two quadratic features: age and time in hospital. The time in hospital value is of limited value unfortunately as the data have an artificial maximum of 14 days length of stay. The original analysis omitted hospital lengths of stay >15 days. Additionally, the age versus number of medications has several interesting interpretations. It makes sense that younger people would be on fewer medications, but it appears that the oldest patients are less likely to be on multiple medications. This could be because their doctors are concerned about too many medications or a survivor’s bias.
+
+>There were also several dichotomous variables, some of which I adapted. Patients on diabetes medications were much more likely to be on additional medications. By contrast, ‘no changes’ to medications was associated with being on fewer medications, as well as not being insulin-dependent. Men were also own fewer medications.
+
+>Finally, I incorporated one interaction into my model. I looked at the number of lab procedures versus medication changes. My rationale for this is that labs would drive the doses of medications to be changed. However, this last interaction does not have a very large impact on the prediction made by the model.
+
+```{r}
+testing$mglu <- testing$mglu  %>% recode_factor('>300' = '>200') #recode testing data
+
+testing <- testing %>% filter(mglu != 'None') %>% drop()
+testing$insu <- testing$insu  %>% recode_factor('Steady' = 'Yes')
+testing$insu <- testing$insu  %>% recode_factor('Up' = 'Yes')
+testing$insu <- testing$insu  %>% recode_factor('Down' = 'Yes')
+
+
+testing$metf <- testing$metf  %>% recode_factor('Steady' = 'Yes')
+testing$metf <- testing$metf  %>% recode_factor('Up' = 'Yes')
+testing$metf <- testing$metf  %>% recode_factor('Down' = 'Yes')
+
+
+prediction <- predict(dm_lm, data,mu=3)
+
+error <- prediction - testing['nmed']
+
+hist(error$nmed)
+t.test(error)
+
+```
+
+I have used function t.test() that performs T-tests and to calculate T confidence intervals for means.
+

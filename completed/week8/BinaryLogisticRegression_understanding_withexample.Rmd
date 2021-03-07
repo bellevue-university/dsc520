@@ -1,0 +1,138 @@
+---
+title: "BinaryLogisticRegression"
+author: "SumbarajuAditya"
+date: "2/7/2021"
+output: word_document
+bibliography: C:/BU/DSC520/assignment_repo/dsc520/bibliography.bib
+---
+
+**Binary logistic regression**
+Logistic regression is a classification algorithm and it it also called as logic regression. Binary logistic regression models the relationship between a set of predictors and a binary response variable. (Frost, 2021)
+A binary response has only two possible values, such as Yes (1) or No (0). A binary regression model helps us to understand how changes in the predictor values are associated with changes in the probability of an event occurring. [@newtest]
+
+**regression equation**
+
+A regression equation is a statistical model that determined the specific relationship between the predictor variable and the outcome variable. A model regression equation allows you to predict the outcome with a relatively small amount of error.
+The mathematical formula of the linear regression can be written as 
+
+
+$$Y_i=b_0+b_1X_i+ \epsilon_i$$
+
+b0 and b1 are known as the regression beta coefficients or parameters:
+b0 is the intercept of the regression line; that is the predicted value when x = 0.
+b1 is the slope of the regression line.
+e is the error term (also known as the residual errors), the part of y that can be explained by the regression model.
+
+**Replicate the logistic regression example from this link**
+
+https://stats.idre.ucla.edu/r/dae/logit-regression/ 
+(Data: https://stats.idre.ucla.edu/stat/data/binary.csv)
+
+```{r}
+binary_df <- read.csv("C:/BU/DSC520/assignment_repo/dsc520/data/binary.csv")
+head(binary_df)
+
+```
+**Dataset Observations**
+1. admit - The response variable, admit/don’t admit, it is a binary variable dependent of predictor variable gre,gpa,rank
+2. gre- predictor variable
+3. gpa - predictor variable
+4. rank - predictor variable
+5. Rank with 1 have highest prestige and 4 stands lowest and is calculated based on the gpa scores
+
+```{r}
+# get the descriptive of dataset
+summary (binary_df)
+# Standard deviations
+sapply (binary_df, sd)
+## two-way contingency table of categorical outcome and predictors
+xtabs(~admit + rank, data = binary_df)
+```
+**Logit Model**
+1. To estimate the logistic regression model we would be using glm (generalized linear model) function.
+2. indicating rank as categorical value
+```{r}
+binary_df$rank <- factor(binary_df$rank)
+logit_glm <- glm(admit ~ gre + gpa + rank, data = binary_df, family = "binomial")
+summary(logit_glm)
+```
+
+From the coefficients it is evident that 
+1. A unit increase in gre increases the log odds of admissions by 0.002264
+2. A unit increase in gpa increases the log odds of being admitted by 0.804038
+
+**confidence intervals**
+
+```{r}
+confint(logit_glm)
+```
+test for an overall effect of rank using the wald.test function
+```{r}
+library(aod)
+wald.test(b = coef(logit_glm), Sigma = vcov(logit_glm), Terms = 4:6)
+```
+The chi-squared test statistic of 20.9, with three degrees of freedom is associated with a p-value of 0.00011 indicating that the overall effect of rank is statistically significant.[@newtest]
+
+**Predicted probabilities**
+Predicted probabilities can be computed for both categorical and continuous predictor variables.
+To start with Predicted probabilities we need to create a new dataframe with the values we want the independent variables to take on to create our predictions.
+```{r}
+binary_df1 <- with(binary_df, data.frame(gre = mean(gre), gpa = mean(gpa), rank = factor(1:4)))
+binary_df1
+```
+
+Let's create a new variable to predict the rank variable using predicted probability (type="response")
+```{r}
+binary_df1$rankP <- predict(logit_glm, newdata = binary_df1, type = "response")
+binary_df1
+```
+From the above output we see that 
+1. The predicted probability of being accepted into a graduate program is 0.5166016 for students from the highest prestige (rank=1) undergraduate institutions
+2. 0.1846684 for students from the lowest ranked institutions (rank=4), holding gre and gpa at their means.
+
+**predicted probabilities varying the value of gre and rank**
+Let's try to plot 100 values of gre between 200 and 800, at each value of rank (rank=1, 2, 3, and 4).
+
+```{r}
+binary_df2 <- with(binary_df, data.frame(gre = rep(seq(from = 200, to = 800, length.out = 100),
+    4), gpa = mean(gpa), rank = factor(rep(1:4, each = 100))))
+
+binary_df3 <- cbind(binary_df2, predict(logit_glm, newdata = binary_df2, type = "link",
+    se = TRUE))
+binary_df3 <- within(binary_df3, {
+    PredictedProb <- plogis(fit)
+    LL <- plogis(fit - (1.96 * se.fit))
+    UL <- plogis(fit + (1.96 * se.fit))
+})
+
+## view first few rows of final dataset
+head(binary_df3)
+```
+
+**ggplot2**
+
+```{r}
+library(ggplot2)
+ggplot(binary_df3, aes(x = gre, y = PredictedProb)) + geom_ribbon(aes(ymin = LL,
+    ymax = UL, fill = rank), alpha = 0.2) + geom_line(aes(colour = rank),
+    size = 1)
+```
+
+Is our model with predictors fits significantly better than a model with just an intercept? Lets test it.
+
+```{r}
+with(logit_glm, null.deviance - deviance)
+with(logit_glm, df.null - df.residual)
+```
+
+#Claculate P-Value
+```{r}
+options(scipen=10000)
+with(logit_glm, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
+```
+The chi-square of 41.45903 with 5 degrees of freedom and an associated p-value of less than 0.001 tells us that our model as a whole fits significantly better than an null model.
+[@newtest]
+
+**references:**
+* Introduction to SAS. UCLA: Statistical Consulting Group [@newtest]
+* Frost, J. (2021). Binary logistic regression. Retrieved February 08, 2021, from https://statisticsbyjim.com/glossary/binary-logistic-regression/

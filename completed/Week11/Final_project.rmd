@@ -1,0 +1,232 @@
+---
+title: "DSC520-FinalProject"
+author: "SumbarajuAditya"
+date: "2/25/2021"
+output: word_document
+---
+# library
+
+```{r}
+library(knitr)
+library(ggplot2)
+library(pander)
+library(dplyr)
+library(gridExtra)
+library(reshape2) 
+library(ISLR) 
+library(car) 
+library(leaps)
+library(glmnet)     # glmnet()
+library(bestglm) 
+library(pROC)
+library(plyr)
+library(broom)
+library(mapproj)
+library(boot)
+library(tree)
+library(randomForest) 
+library(rpart)
+
+```
+ Data importing and cleaning steps
+
+```{r}
+
+filename <- 'C:/BU/DSC520/assignment_repo/dsc520/data/final_project/diabetic_data.csv'
+diabetic_data <- read.table(filename, sep = ",", header = T, na.strings = "?")
+#head(data)
+
+
+```
+
+For getting the readmission prediction we dont need many columns hence we should be selecting only relevant values to make it simpler.Also we need to remove those columns which mainly has NA values.
+
+```{r}
+diabetic_data$admission_type_id <- as.factor(diabetic_data$admission_type_id)
+diabetic_data$discharge_disposition_id <- as.factor(diabetic_data$discharge_disposition_id)
+diabetic_data$admission_source_id <- as.factor(diabetic_data$admission_source_id)
+
+
+```
+
+Cleaning Missing Values
+Below is the logic to replace bad data “?” and “unknown/invalid values” with NA. I am passing respective columns from diabetic_data_clean “diabetic_data” using ncol and trying to identify the bad data by passing the columns in loop and there by replacing the data with NA.
+```{r}
+
+count <- 0
+for(i in 1:ncol(diabetic_data))
+  {
+  if(is.factor(diabetic_data[,i]))
+    {
+    for(j in 1:nrow(diabetic_data))
+      {
+      if(diabetic_data[j,i]== "?" | diabetic_data[j,i]== "Unknown/Invalid" )
+        {
+        count <- count + 1
+        diabetic_data[j,i] <- NA  #replace "?" and "Unknown/Invalid" values with NA
+        }
+      }
+    if(count > 0)
+      {
+      print(c(colnames(diabetic_data)[i],count))
+      }
+   }
+  count <- 0
+  }
+```
+
+As the data is huge - it is leading to performance issue; hence createda new file which represents clean data.
+```{r}
+write.csv(diabetic_data, file = "diabetic_data_clean.csv")
+
+```
+
+Below are the variables removed:
+Payer code, weight and Medical Specialty are not included since they have a large number of missing values.
+
+Minor variability variables are excluded. That includes following variables acetohexamide, glimepiride.pioglitazone, metformin.rosiglitazone, metformin.pioglitazone, chlorpropamide, acetohexamide, tolbutamide, acarbose, miglitor, troglitazone, tolazamide, examide, citoglipton, glyburide.metformin, glipizide.metformin, and glimepiride.pioglitazone.
+
+```{r}
+diabetic_data_clean <- read.csv("./diabetic_data_clean.csv")
+diabetic_data_clean$X <- NULL
+diabetic_data_clean$weight <- NULL
+diabetic_data_clean$payer_code <- NULL
+#diabetic_data_clean$age <- NULL
+#diabetic_data_clean$admission_type_id <- NULL
+#diabetic_data_clean$discharge_disposition_id <- NULL
+#diabetic_data_clean$admission_source_id <- NULL 
+diabetic_data_clean$medical_specialty <- NULL
+diabetic_data_clean$encounter_id <- NULL
+#diabetic_data_clean$diag_1 <- NULL
+#diabetic_data_clean$diag_2 <- NULL
+#diabetic_data_clean$diag_3 <- NULL
+diabetic_data_clean$examide <- NULL
+diabetic_data_clean$citoglipton <- NULL
+diabetic_data_clean$acetohexamide <- NULL
+diabetic_data_clean$repaglinide <- NULL
+diabetic_data_clean$nateglinide <- NULL
+diabetic_data_clean$metformin.pioglitazone <- NULL 
+diabetic_data_clean$metformin.rosiglitazone <- NULL
+diabetic_data_clean$chlorpropamide <- NULL
+diabetic_data_clean$acetohexamide <- NULL
+diabetic_data_clean$miglitol <- NULL              
+diabetic_data_clean$tolbutamide <- NULL
+diabetic_data_clean$acarbose <- NULL
+diabetic_data_clean$miglitor <- NULL
+diabetic_data_clean$troglitazone <- NULL
+diabetic_data_clean$tolazamide <- NULL
+diabetic_data_clean$examide <- NULL
+diabetic_data_clean$citoglipton <- NULL
+diabetic_data_clean$glyburide.metformin <- NULL
+diabetic_data_clean$glipizide.metformin <- NULL
+diabetic_data_clean$glimepiride.pioglitazone <- NULL
+diabetic_data_clean <- na.omit(diabetic_data_clean)
+write.csv(diabetic_data, file = "diabetic_data_clean1.csv")
+dim(diabetic_data_clean)
+```
+
+Below is the Summary & Structure of the data; 
+
+```{r}
+str(diabetic_data_clean)
+#head (diabetic_data_clean)
+# Raw diabetic_data_clean:
+dim(diabetic_data)
+# Clean diabetic_data_clean
+dim(diabetic_data_clean)
+write.csv(diabetic_data_clean, file = "diabetic_data_clean1.csv")
+
+```
+
+
+```{r}
+#diabetic_data_clean <- subset(diabetic_data_clean, select = -c(encounter_id)) # delete ID variables
+names(diabetic_data_clean)[length(diabetic_data_clean)] <- "y" 
+diabetic_data_clean$y <- as.character(diabetic_data_clean$y)
+diabetic_data_clean$y[which(diabetic_data_clean$y == ">30" | diabetic_data_clean$y == "NO")] <- "0"
+diabetic_data_clean$y[which(diabetic_data_clean$y == "<30")] <- "1"
+diabetic_data_clean$y <- as.factor(diabetic_data_clean$y)
+
+#rename variables
+names(diabetic_data_clean) <- c("pers", "race", "gend",  "agem","admt", "disc", "adms","hosp", "labp", "proc", "nmed", "nout", "emer", "ninp", "mod1", "mod2", "mod3", "diag", "mglu", "A1Cr", "metf", "glim", "glip", "glyb", "piog", "rosi", "insu", "chge", "diab", "y")
+
+# Data partition
+set.seed(43)
+pos <- sample(1:nrow(diabetic_data_clean), round(nrow(diabetic_data_clean)*0.3))
+testing <- diabetic_data_clean[pos, -1] 
+training <- diabetic_data_clean[-pos, -1] 
+
+# XX and y 
+data <- training
+y <- data$y
+response <- "readmitted" 
+XX <- model.matrix(y ~., data)[, -1]
+Y <- y
+```
+
+```{r}
+yprop <- prop.table(table(data$y)) 
+
+
+```
+
+
+```{r}
+# subset data which excludes duplicate data points
+# data2 <- data[!duplicated(data$pers), ] 
+# data3 <- data[!duplicated(c(paste0(data$pers, data$agem))), ] 
+# demographics
+ytab1 <- prop.table(table(data$race)) 
+crosstab <- with(data, table(race, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.race <- data.frame(round(rbind(ytab1, t(ytab2)), 3))
+names(df.race)[1] <- "Missing"
+rownames(df.race) <- c("Total", "y = 0", "y = 1")
+df.race
+```
+
+```{r}
+
+ytab1 <- prop.table(table(data$gend)) 
+crosstab <- with(data, table(gend, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.gender <- data.frame(round(rbind(ytab1, t(ytab2)), 3))
+rownames(df.gender) <- c("Total","y = 0", "y = 1")
+df.gender
+```
+
+```{r}
+ytab1 <- prop.table(table(data$agem)) 
+crosstab <- with(data, table(agem, y))
+ytab2 <- prop.table(crosstab, margin = 2) 
+df.age <- data.frame(round(rbind(ytab1, t(ytab2)), 3))
+rownames(df.age) <- c("Total", "y = 0", "y = 1")
+colnames(df.age) <- c("0~19", "20~59", "60~79", "80+")
+df.age
+```
+
+```{r}
+# names(data)
+# df <- subset(data, select = c(race, gender, y))
+# knitr::kable(df)
+# continuous data
+plot1 <- ggplot(data, aes(x = y,  y = hosp, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "length of stay (days)", x = "readmitted within < 30 days") 
+plot2 <- ggplot(data, aes(x = y,  y = labp, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of lab procedures", x = "readmitted within < 30 days") 
+plot3 <- ggplot(data, aes(x = y,  y = proc, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of non-lab procedures", x = "readmitted within < 30 days") 
+plot4 <- ggplot(data, aes(x = y,  y = nmed, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of distinct medications", x = "readmitted within < 30 days") 
+plot8 <- ggplot(data, aes(x = y,  y = diag, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of diagnosis", x = "readmitted within < 30 days") 
+grid.arrange(plot1, plot2, plot3, plot4, plot8, nrow = 2)
+
+plot5 <- ggplot(data, aes(x = y,  y = nout, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of outpatient", x = "readmitted within < 30 days") 
+plot6 <- ggplot(data, aes(x = y,  y = emer, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of emergency", x = "readmitted within < 30 days") 
+plot7 <- ggplot(data, aes(x = y,  y = ninp, color = y)) + geom_boxplot() + theme(legend.position = "none") +
+          labs(y = "No. of inpatient", x = "readmitted within < 30 days") 
+grid.arrange(plot5, plot6, plot7, nrow = 1)
+```

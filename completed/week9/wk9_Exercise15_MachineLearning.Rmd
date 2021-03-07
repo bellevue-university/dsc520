@@ -1,0 +1,106 @@
+---
+title: "wk9_Exercise15_MachineLearning"
+author: "SumbarajuAditya"
+date: "2/13/2021"
+output: word_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## dataframes for BinaryClassifier and TrinaryClassifier
+```{r}
+library(ggplot2)
+options(scipen = 999)
+
+# dataframes for BinaryClassifier and TrinaryClassifier
+BinaryClassifier <- read.csv("C:/BU/DSC520/assignment_repo/dsc520/data/binary-classifier-data.csv")
+TrinaryClassifier <- read.csv("C:/BU/DSC520/assignment_repo/dsc520/data/trinary-classifier-data.csv")
+# Structure of Binary Classifier
+str(BinaryClassifier)
+# Structure of Trinary Classifier
+str(TrinaryClassifier)
+```
+
+
+## A. Plot the data from each dataset using a scatter plot.
+```{r}
+library("ggplot2")
+BinaryClassiferPlot <- ggplot(BinaryClassifier, aes(x=x, y=y, color=label)) +
+  geom_point() + labs(title="Scatter plot - Binary Classifier Data", tag = "Figure 1",x = "Binary_X",
+       y = "Binary_Y", Color="Binary") + theme_light()
+
+TrinaryClassiferPlot <- ggplot(TrinaryClassifier, aes(x=x, y=y, color=label)) +
+  geom_point() +  labs(title="Scatter plot -  Trinary Classifier Data", tag = "Figure 2", x = "Trinary_X",
+       y = "Trinary_Y",Color="Trinary")  +  theme_light()
+
+BinaryClassiferPlot
+TrinaryClassiferPlot
+```
+
+## B. The k nearest neighbors algorithm categorizes an input value by looking at the labels for the k nearest points and assigning a category based on the most common label. In this problem, you will determine which points are nearest by calculating the Euclidean distance between two points. As a refresher, the Euclidean distance between two points: Fitting a model is when you use the input data to create a predictive model. There are various metrics you can use to determine how well your model fits the data. You will learn more about these metrics in later lessons. For this problem, you will focus on a single metric; accuracy. Accuracy is simply the percentage of how often the model predicts the correct result. If the model always predicts the correct result, it is 100% accurate. If the model always predicts the incorrect result, it is 0% accurate. Fit a k nearest neighbors model for each dataset for k=3, k=5, k=10, k=15, k=20, and k=25. Compute the accuracy of the resulting models for each value of k. Plot the results in a graph where the x-axis is the different values of k and the y-axis is the accuracy of the model. 
+
+```{r}
+library(caret)
+library(class)
+library(lattice)
+library("caTools")
+
+set.seed(30)
+## Binary classifier
+BinaryClassifier_Split<-sample.split(BinaryClassifier, SplitRatio=0.75)
+BinaryClassifier_Train <- subset(BinaryClassifier, BinaryClassifier_Split="TRUE")
+BinaryClassifier_Test <- subset(BinaryClassifier, BinaryClassifier_Split="FALSE")
+
+
+in_K_List = c(3, 5, 10, 15, 20, 25)
+accuracyBin <- c()
+index = 0
+for (i in in_K_List) { 
+        index = index + 1
+        Bin_knn <-  knn(train=BinaryClassifier_Train, test=BinaryClassifier_Test, cl=BinaryClassifier_Train$label, k=i )
+        accuracyBin[index] <- 100 * sum(BinaryClassifier_Test$label == Bin_knn)/NROW(BinaryClassifier_Test$label)
+    }
+
+## Trinary classifier
+TrinaryClassifier_Split<-sample.split(TrinaryClassifier, SplitRatio=0.75)
+TrinaryClassifier_Train <- subset(TrinaryClassifier, TrinaryClassifier_Split="TRUE")
+TrinaryClassifier_Test <- subset(TrinaryClassifier, TrinaryClassifier_Split="FALSE")
+
+
+in_K_List = c(3, 5, 10, 15, 20, 25)
+accuracyTrn <- c()
+index = 0
+for (i in in_K_List) { 
+        index = index + 1
+        Trn_knn <-  knn(train=TrinaryClassifier_Train, test=TrinaryClassifier_Test, cl=TrinaryClassifier_Train$label, k=i )
+        accuracyTrn[index] <- 100 * sum(TrinaryClassifier_Test$label == Trn_knn)/NROW(TrinaryClassifier_Test$label)
+}
+
+acc_bin_data <- data.frame(in_K_List,accuracyBin)
+names(acc_bin_data) <- c("K","Accuracy")
+
+acc_tri_data <- data.frame(in_K_List,accuracyTrn)
+names(acc_tri_data) <- c("K","Accuracy")
+
+## Plot Accuracy
+
+BinaryAccuracyPlot <- ggplot(acc_bin_data, aes(x = K, y = Accuracy)) + 
+  geom_line(linetype = "dashed", color="red") + geom_point() + 
+  labs(title="kNN Model Accuracy Plot - Binary classifier") + theme_bw()
+
+TrinaryAccuracyPlot <- ggplot(acc_tri_data, aes(x = K, y = Accuracy)) +
+  geom_line(linetype = "dashed", color="dark green") + geom_point() +
+  labs(title="kNN Model Accuracy Plot - Trinary classifier") + theme_bw()
+
+BinaryAccuracyPlot
+TrinaryAccuracyPlot
+```
+
+## C. In later lessons, you will learn about linear classifiers. These algorithms work by defining a decision boundary that separates the different categories. Looking back at the plots of the data, do you think a linear classifier would work well on these datasets?
+
+From the below mentioned observations; I don't think linear classifier would work well on these data-sets
+Plot observations:
+1. Data seems to be wide spread.
+2. Accuracy gets dropped with an increase value of K.Looks like linear classifier won't work on these data-sets.
+3. In my opinion; As the data is randomly spread across it would be helpful if we use classification method instead of clustering.
