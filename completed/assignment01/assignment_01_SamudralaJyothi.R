@@ -12,7 +12,7 @@ num_vector
 ## Assign the value to a variable named `char_vector`
 ## Print the vector
 char_vector <- c("three", "two", "one")
-char_vector
+char_vector 
 
 ## Create a vector called `week1_sleep` representing how many hours slept each night of the week
 ## Use the values 6.1, 8.8, 7.7, 6.4, 6.2, 6.9, 6.6

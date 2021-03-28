@@ -8,7 +8,7 @@
 8 + 5
 
 ## Subtract 6 from 22
-22 - 6
+22 - 6  
 
 ## Multiply 6 by 7
 6 * 7
@@ -16,7 +16,7 @@
 ## Add 4 to 6 and divide the result by 2
 (4 + 6) / 2
 
-## Compute 5 modulo 2
+## Compute 5 modulo 2 
 5 %% 2
 
 ## Assign the value 82 to the variable x
