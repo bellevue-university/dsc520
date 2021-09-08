@@ -1,6 +1,6 @@
-# Assignment: ASSIGNMENT 4
+
 # Name: Bradley, Carla
-# Date: 2021-01-05
+
 
 ## Load the ggplot2 package
 library(ggplot2)
