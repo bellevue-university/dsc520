@@ -1,0 +1,315 @@
+
+---
+title: 'ASSIGNMENT 7 Exercise 12: Housing Data'
+author: "Abhijit Mandal"
+date: '2020-10-18'
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+---
+
+## Assignment
+**Work individually on this assignment. You are encouraged to collaborate on ideas and strategies pertinent to this assignment. Data for this assignment is focused on real estate transactions recorded from 1964 to 2016 and can be found in Week 6 Housing.xlsx. Using your skills in statistical correlation, multiple regression and R programming, you are interested in the following variables: Sale Price and several other possible predictors.
+Using your ‘clean’ data set from the previous week complete the following:**
+
+## Question A:
+**Explain why you chose to remove data points from your ‘clean’ dataset.**
+
+### Answer for A
+> Here are the variables and data points I chose to remove:
+* Removed rows whose sale price is > 2 million and square foot lot > 20000 as they are outliers and would skew the data
+* Removed properties with sale warning and no bedrooms as those are mostly land and not a house.
+* Removed columns Sale_date, sale_reason, sale_instrument, sale_warning, site_type as they are not relevant in predicting the prices.
+* Removed Address, ctyname, postalcty, lon, lat as they are redundant info and can be indered from Zip5
+* Removed current_zoning, prop_type and present_use
+
+## Code
+
+```{r echo=TRUE, include=TRUE} 
+setwd("~/Documents/GitHub/dsc520")
+library(readxl)
+## Load the `data/week-7-housing.xlsx` to
+realestate_df <- read_excel("data/week-7-housing.xlsx")
+
+
+## Add a calculated column total_bath which provides no of bathroom in total
+realestate_df <- within(realestate_df, total_bath <- bath_full_count + (bath_half_count/2) + (bath_3qtr_count/3))
+
+##Select relevant data points, sale price < 2000000 and square foot lot < 20000
+realestate_df = realestate_df[realestate_df$'Sale Price' < 2000000 & realestate_df$sq_ft_lot < 20000, ]
+realestate_df <- realestate_df[(is.na(realestate_df$sale_warning)) & (realestate_df$bedrooms != 0), ]
+
+##selecting only relevant columns for our calculation
+
+realestate_df <- realestate_df[, c(2,8,13, 14,15,19,20, 22, 25)]
+
+summary(realestate_df)
+
+plot(realestate_df$'Sale Price',realestate_df$sq_ft_lot)
+```
+## summary plot
+
+## Question B. 
+**Create two variables; one that will contain the variables Sale Price and Square Foot of Lot (same variables used from previous assignment on simple regression) and one that will contain Sale Price and several additional predictors of your choice. Explain the basis for your additional predictor selections.**
+
+### Answer for B:
+> After looking at the corelation between sale price and other variables, I noticed that the variables building_grade, square_feet_total_living, bedrooms, year_built and total_bath have a signification impact on the sale price of the property, so I chose used them as predictors.
+For total bathrooms i have calculated it as bath_full_count + (bath_half_count/3) + (bath_3qtr_count/3) to make it on equal as the customers usually look at the total baths and it is calculated this basis
+
+```{r echo=TRUE, include=TRUE} 
+cor(realestate_df)
+
+## Fit a linear model using the `Square foot of Lot` variable as the predictor and `Sale Price` as the outcome
+salepricebysqft_lm <-  lm(realestate_df$'Sale Price'~realestate_df$sq_ft_lot,data = realestate_df)
+
+## Fit a linear model using several predictors variable and `Sale Price` as the outcome
+salepricebymultiplevar_lm <-  lm(realestate_df$'Sale Price'~realestate_df$square_feet_total_living+realestate_df$year_built+realestate_df$bedrooms+realestate_df$total_bath+realestate_df$building_grade
+                                 ,data = realestate_df)
+```
+
+## Question C:
+**Choose the type of correlation test to perform, explain why you chose this test, and make a prediction if the test yields a positive or negative correlation?**
+
+### Answer For C
+> Looking at the R2 statistics at the bottom of each summary. This value describes the overall model and tells us whether the model is successful in predicting the outcome
+and If the difference between R2 and adjusted R2 values is small this would indicate that the sample taken is a good representation of the population. 
+
+> looking at the first regression model, R2 is 0.0142 so this indicated that sq_ft_lot accounted for only 1.42% of the variation in sale price. 
+
+> Whereas in the multiple regression model, the value of R2 is 0.5874, so this multiple predictor model accounted for 54.98% of the variation in sale price.
+
+>So the inclusion of the new predictors has explained quite a large amount of the variation in sale price, went up from 1.42% to 54.98%
+
+>The adjusted R2 gives us an idea of how well our model generalizes. In our summary the difference for the final model the difference between the R2 and adjusted R2 values is 0.5874 − 0.5872 = .0002 or 0.02%. This shrinkage means that if the model were derived from the population rather than a sample it would account for approximately 0.02% less variance in the outcome.
+
+```{r echo=TRUE, include=TRUE} 
+## View the summary of your model using `summary()`
+summary(salepricebysqft_lm)
+
+## View the summary of your new model using `summary()`
+summary(salepricebymultiplevar_lm)
+```
+
+## Question D: 
+**Considering the parameters of the multiple regression model you have created. What are the standardized betas for each parameter and what do the values indicate?**
+
+### Answer to D
+
+```{r echo=TRUE, include=TRUE} 
+library('QuantPsyc')
+##standardized betas for each parameter 
+lm.beta(salepricebymultiplevar_lm)
+```
+> As we know, the standardized beta estimates tell us the number of standard deviations by which the outcome will change as a result of one standard deviation change in the predictor.
+Looking at the outcome, we can figure out that square_feet_total_living and building_grade have more degree of importance in prediction, whereas bedrooms, year_built and total_bath have a comparably less degree of importance.
+
+## Question E:
+**Calculate the confidence intervals for the parameters in your model and explain what the results indicate.**
+
+### Answer for E
+
+```{r echo=TRUE, include=TRUE} 
+confint(salepricebymultiplevar_lm)
+```
+
+> Lets look at the output generated from the confidence interval:
+* square_feet_total_living  136.36 - 149.3343, this has very tight confidence interval, indicating that the estimates for the current model are likely to be representative of the true population values.
+* building_grade            54953.31011  63423.9444, this is a good predictor but has more gap
+* bedrooms                  -20717.95186 -12287.1934, this is a good predictor but has more gap
+* total_bath                2402.06681  15686.7220, this is a good predictor but has more gap
+* year_built                -59.25909    353.4163, Confidence intervals that cross zero, indicating that in some samples the predictor has a negative relationship to the outcome whereas in others it has a positive relationship
+
+## Question F:
+**Assess the improvement of the new model compared to your original model (simple regression model) by testing whether this change is significant by performing an analysis of variance.**
+
+### Answer for F:
+```{r echo=TRUE, include=TRUE} 
+anova(salepricebysqft_lm, salepricebymultiplevar_lm)
+
+```
+> for salepricebymultiplevar_lm the variance table analysis shows: F(4, 8575) = 2978.2 with p < 0.001 hence we can conclude that the multiple regression model significantly improved the fit of the model to the data compared to salepricebysqft_lm. 
+
+## Question G:
+**Perform casewise diagnostics to identify outliers and/or influential cases, storing each function's output in a dataframe assigned to a unique variable name.**
+
+### Answer for G
+
+> Outliers: Residuals can be obtained with the resid() function, standardized residuals with the rstandard() function and studentized residuals with the rstudent() function. 
+
+>Influential cases: Cook’s distances can be obtained with the cooks.distance() function, DFBeta with the dfbeta() function, DFFit with the dffits() function, hat values (leverage) with the hatvalues() function, and the covariance ratio with the covratio() function.
+
+>Below is the detailed diagnostics of outliers and influential cases
+
+```{r echo=TRUE, include=TRUE}
+## outliers
+realestate_df$residuals <- resid(salepricebymultiplevar_lm)
+realestate_df$studentized.residuals <- rstudent(salepricebymultiplevar_lm)
+realestate_df$standardized.residuals <- rstandard(salepricebymultiplevar_lm)
+
+## Influential cases
+
+realestate_df$dffit <- dffits(salepricebymultiplevar_lm)
+realestate_df$leverage <- hatvalues(salepricebymultiplevar_lm)
+realestate_df$covariance.ratios <- covratio(salepricebymultiplevar_lm)
+realestate_df$cooks.distance <- cooks.distance(salepricebymultiplevar_lm)
+realestate_df$dfbeta <- dfbeta(salepricebymultiplevar_lm)
+
+summary(realestate_df)
+```
+
+## Question G:
+**Perform casewise diagnostics to identify outliers and/or influential cases, storing each function's output in a dataframe assigned to a unique variable name.**
+
+### Answer for G
+
+> Outliers: Residuals can be obtained with the resid() function, standardized residuals with the rstandard() function and studentized residuals with the rstudent() function. 
+
+>Influential cases: Cook’s distances can be obtained with the cooks.distance() function, DFBeta with the dfbeta() function, DFFit with the dffits() function, hat values (leverage) with the hatvalues() function, and the covariance ratio with the covratio() function.
+
+>Below is the detailed diagnostics of outliers and influential cases
+
+```{r echo=TRUE, include=TRUE}
+## outliers
+realestate_df$residuals <- resid(salepricebymultiplevar_lm)
+realestate_df$studentized.residuals <- rstudent(salepricebymultiplevar_lm)
+realestate_df$standardized.residuals <- rstandard(salepricebymultiplevar_lm)
+
+## Influential cases
+
+realestate_df$dffit <- dffits(salepricebymultiplevar_lm)
+realestate_df$leverage <- hatvalues(salepricebymultiplevar_lm)
+realestate_df$covariance.ratios <- covratio(salepricebymultiplevar_lm)
+realestate_df$cooks.distance <- cooks.distance(salepricebymultiplevar_lm)
+realestate_df$dfbeta <- dfbeta(salepricebymultiplevar_lm)
+
+summary(realestate_df)
+```
+
+## Question G:
+**Perform casewise diagnostics to identify outliers and/or influential cases, storing each function's output in a dataframe assigned to a unique variable name.**
+
+### Answer for G
+
+> Outliers: Residuals can be obtained with the resid() function, standardized residuals with the rstandard() function and studentized residuals with the rstudent() function. 
+
+>Influential cases: Cook’s distances can be obtained with the cooks.distance() function, DFBeta with the dfbeta() function, DFFit with the dffits() function, hat values (leverage) with the hatvalues() function, and the covariance ratio with the covratio() function.
+
+>Below is the detailed diagnostics of outliers and influential cases
+
+```{r echo=TRUE, include=TRUE}
+## outliers
+realestate_df$residuals <- resid(salepricebymultiplevar_lm)
+realestate_df$studentized.residuals <- rstudent(salepricebymultiplevar_lm)
+realestate_df$standardized.residuals <- rstandard(salepricebymultiplevar_lm)
+
+## Influential cases
+
+realestate_df$dffit <- dffits(salepricebymultiplevar_lm)
+realestate_df$leverage <- hatvalues(salepricebymultiplevar_lm)
+realestate_df$covariance.ratios <- covratio(salepricebymultiplevar_lm)
+realestate_df$cooks.distance <- cooks.distance(salepricebymultiplevar_lm)
+realestate_df$dfbeta <- dfbeta(salepricebymultiplevar_lm)
+
+summary(realestate_df)
+```
+
+## Question H:
+**Calculate the standardized residuals using the appropriate command, specifying those that are +-2, storing the results of large residuals in a variable you create.**
+
+### Answer for H
+
+```{r echo=TRUE, include=TRUE}
+realestate_df$large.residual <- realestate_df$standardized.residuals > 2 | realestate_df$standardized.residuals < -2
+summary(realestate_df)
+```
+
+## Question I:
+**Use the appropriate function to show the sum of large residuals.**
+
+### Answer for I
+
+```{r echo=TRUE, include=TRUE}
+sum(realestate_df$large.residual)
+```
+
+## Question J:
+**Which specific variables have large residuals (only cases that evaluate as TRUE)?**
+
+### Answer for J
+
+```{r echo=TRUE, include=TRUE}
+realestate_df[realestate_df$large.residual, c("Sale Price", "building_grade", "square_feet_total_living", "bedrooms", "total_bath", "year_built", "sq_ft_lot", "standardized.residuals")]
+
+```
+
+## Question K:
+**Investigate further by calculating the leverage, cooks distance, and covariance rations. Comment on all cases that are problematic.**
+
+### Answer for K
+
+```{r echo=TRUE, include=TRUE}
+realestate_df[realestate_df$large.residual, c("cooks.distance", "leverage", "covariance.ratios")]
+
+```
+> the above generated 284 rows but there is no row where cooks distance is greater than 1, so there are no problematic rows
+
+## Question L:
+**Perform the necessary calculations to assess the assumption of independence and state if the condition is met or not.**
+
+### Answer for L
+
+```{r echo=TRUE, include=TRUE}
+library("car")
+dwt(salepricebymultiplevar_lm)
+```
+
+> We can test the assumption of independent errors using the Durbin–Watson test. We can obtain this statistic along with a measure of autocorrelation and a p-value in R using the durbinWatsonTest().The statistic should be between 1 and 3 and should be closer to 2, in our  case, it is 1.18. The p-value of 0 confirms this conclusion.
+
+## Question M:
+**Perform the necessary calculations to assess the assumption of no multicollinearity and state if the condition is met or not.**
+
+### Answer for M
+
+```{r echo=TRUE, include=TRUE}
+## vif
+vif(salepricebymultiplevar_lm)
+
+## 1/vif
+1/vif(salepricebymultiplevar_lm)
+
+## mean
+mean(vif(salepricebymultiplevar_lm))
+
+```
+
+> For our current model the VIF values are all well below 10 and the tolerance statistics all well above 0.2. Also, the average VIF is very close to 1. Based on these measures we can safely conclude that there is no collinearity within our data.
+
+## Question N:
+
+**Visually check the assumptions related to the residuals using the plot() and hist() functions. Summarize what each graph is informing you of and if any anomalies are present.**
+
+### Answer for N
+
+```{r echo=TRUE, include=TRUE}
+library(ggplot2)
+plot(salepricebymultiplevar_lm)
+
+hist(realestate_df$studentized.residuals)
+
+scatter <- ggplot(realestate_df, aes(fitted, studentized.residuals)) + geom_point() + geom_smooth(method = "lm", colour = "Blue")+ labs(x = "Fitted Values", y = "Studentized Residual")
+
+```
+
+> The first graph shows the plot of fitted values against residuals. looking like a random array of dots evenly dispersed around zero. the  graph is not funneling  out, so there are no chances that there is heteroscedasticity in the data. There is no curve in the graph, so it is not violating any assumptions of linearity.
+
+>The Normal Q-Q plot should show deviations from normality. In the plot above, it deviates from both the ends of the line, which indicates deviation of normality at the extreme values.
+
+## Question O:
+**Overall, is this regression model unbiased? If an unbiased regression model, what does this tell us about the sample vs. the entire population model?**
+
+### Answer for O
+
+> Looking at all the ouputs and calculations performed on the data model after removing the outliers, we can safely conclude that the regression model is unbiased. The sample is a good representation of the entire population model.
+
+

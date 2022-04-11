@@ -1,0 +1,191 @@
+
+---
+title: 'Final Project: Breast Cancer Detection'
+author: "Abhijit Mandal"
+date: '2020-11-20'
+output:
+  pdf_document: default
+  word_document: default
+---
+
+## Assignment
+**Post the last step of your Final Project. This should be an attached file that contains each step in the final project. Include the following:.**
+
+## Question A:
+**Overall, write a coherent narrative that tells a story with the data as you complete this section.**
+
+## Answer for A
+As much as data science is playing a pivotal role everywhere, healthcare also finds it prominent application. Breast Cancer is the top rated type of cancer amongst women; which took away 627,000 lives alone. This high mortality rate due to breast cancer does need attention, for early detection so that prevention can be done in time. As a potential contributor to state-of-art technology development, data mining and machine learning finds a multi-fold application in predicting Brest cancer. The objective of this project is to classify each of the tumor to be malignant or benign.
+
+I used the dataset from Kaggle https://www.kaggle.com/uciml/breast-cancer-wisconsin-data for my research.
+
+
+## Question B. 
+**Summarize the problem statement you addressed.**
+
+## Answer for B:
+I focused on the below problem statement:
+
+* How do we define a tumor as malignant or benign ?
+* Can any benign tumor turn to malignant at later time ?
+* What are the characteristics of a malignant and benign tumor (size, mass, texture, smoothness etc)?
+* Does the chances of a breast cancer varies from individual to individual?
+
+## Code
+```{r echo=TRUE, include=TRUE} 
+## Set the working directory to the root of your DSC 520 directory
+
+setwd("~/Documents/GitHub/dsc520")
+
+## Loading Library
+library(readr)
+library(class)
+library(gmodels)
+library(dplyr)
+
+#load data
+breastcancer_DF <- read.csv("data/BreastCancerData.csv")
+
+str(breastcancer_DF)
+
+
+```
+
+The dataset has 569 observation with 33 variables. Out of 33 variables or features of this dataset, One is identification Number, another is a cancer diagnosis, 30 are numerically valued laboratory measurements and the last variable is X which has all NA value. The diagnosis is coded as "M" to indicate malignant and "B" to indicate benign.
+By looking at the output of str command I can see that the 30 measurement numeric features include the mean, standard error and worst value for the 10 different characteristics of the cell.
+Radius
+Texture
+Perimeter
+Area
+Smoothness
+Compactness
+Concavity
+Concave points
+Symmetry
+Fractal dimension
+
+## Question C:
+**Summarize how you addressed this problem statement (the data used and the methodology employed).**
+
+
+## Answer For C
+
+In this project, I first analyzed the data and looked for any cleanups needed, then I derived correlation between the variables, after visualizing and analyzing the data I used machine learning algorithm KNN to derive at a conclusion.I considered variables such as tumor size, mass, texture, smoothness, thickness etc that can help in predicting the chances of a tumor being malignant or benign, I used K-nearest neighbor algorithm to classify the tumor, the result of this algorithm provided an accurate response.
+
+
+## Code
+```{r echo=TRUE, include=TRUE} 
+#The first variable is id which doesn't provide any useful information, will exclude these from the model.
+
+breastcancer_DF <- select(breastcancer_DF,-id)
+
+#The diagnosis variable is the outcome I want to predict. This feature indicates whether the cell is from the malignant or benign group.
+
+table(breastcancer_DF$diagnosis)
+
+round(prop.table(table(breastcancer_DF$diagnosis)) * 100, digits = 1)
+
+#The table() shows that this dataset has 357 benign cells and 212 malignant cells. The prop.table() shows that 62.7 percent is Benign and 37.3 percent of the mass is malignant.
+
+## Missing values
+
+sum(is.na(breastcancer_DF))
+
+# There are no missing values in the dataset so we can consider it for modeling
+
+head(breastcancer_DF)
+
+## Corelation
+library(corrplot)
+corr_mat <- cor(breastcancer_DF[,3:ncol(breastcancer_DF)])
+corrplot(corr_mat, order = "hclust", tl.cex = 1, addrect = 8)
+#cor(select(breastcancer_DF,-diagnosis))
+
+summary(breastcancer_DF)
+
+#I will be using KNN algorithm, after looking at the output of the summary() , the range for radius_mean is 6.981 to 28.110 and the range of smoothness_mean is 0.05263 to 0.16340, the impact of the radius will be larger than the smoothness in the distance calculation which can cause for modeling.
+
+normalize <- function(x) {
+    return ((x - min(x)) / (max(x) - min(x)))
+}
+
+
+updated_breastcancer_DF <- as.data.frame(lapply(select(breastcancer_DF,-diagnosis), normalize))
+
+summary(select(updated_breastcancer_DF,radius_mean,smoothness_mean))
+
+#Creating a training set for building the KNN model and testing set for checking the accuracy of the model. 
+#I will use the 80% for training and 20% to simulate the new patients.
+
+binaryClassifier_split <- sample(1:nrow(updated_breastcancer_DF), 0.8 * nrow(updated_breastcancer_DF))
+trainds <- updated_breastcancer_DF[binaryClassifier_split,]
+testds <- updated_breastcancer_DF[-binaryClassifier_split,]
+
+trained_dataset <- breastcancer_DF[binaryClassifier_split,1]
+test_dataset <- breastcancer_DF[-binaryClassifier_split,1]
+
+#Data preprocessing
+
+#Because there is so much correlation, some machine learning models can fail. We are going to create a PCA  version of the data
+pca_res <- prcomp(breastcancer_DF[,3:ncol(breastcancer_DF)], center = TRUE, scale = TRUE)
+plot(pca_res, type="l")
+
+summary(pca_res)
+
+#The two first components explains the 0.6324 of the variance. We need 10 principal components to explain more than 0.95 of the variance and 17 to explain more than 0.99
+
+library(ggplot2)
+pca_df <- as.data.frame(pca_res$x)
+ggplot(pca_df, aes(x=PC1, y=PC2, col=breastcancer_DF$diagnosis)) + geom_point(alpha=0.5)
+
+
+#The data can be easly separated.
+library(gridExtra)
+g_pc1 <- ggplot(pca_df, aes(x=PC1, fill=breastcancer_DF$diagnosis)) + geom_density(alpha=0.25)  
+g_pc2 <- ggplot(pca_df, aes(x=PC2, fill=breastcancer_DF$diagnosis)) + geom_density(alpha=0.25)  
+grid.arrange(g_pc1, g_pc2, ncol=2)
+
+# Applying k nearest neighbour algorithm, using K as 23
+knnTestprediction <- knn(trainds,testds,cl=trained_dataset,k=23)
+
+#Model Performance 
+#After the modeling of the data in knn algorithm, checking the performance of the model using confusion matrix
+confusionMatrix <- table(test_dataset,knnTestprediction)
+confusionMatrix
+
+modelaccuracy <- (confusionMatrix[[1,1]] + confusionMatrix[[2,2]]) / sum(confusionMatrix)
+modelaccuracy
+
+#The classification the model is divided into four categories
+# Top Left      - True negative : predicted value was benign and identified as benign
+# Bottom Right  - True positive : predicted value was malignant and identified as malignant
+# Top Right     - False Positive: predicted value was malignant but cancer was actually benign
+# Bottom Left   - False negative: predicted value was benign but the cancer was actually malignant
+
+#False negative should be as much less as possible for our model as it is misleading to the patient and the disease may continue to spread. 
+#False positive is less dangerous than the false negative but it can add an extra financial burden on the patient/ health system and additional stress on the patient.
+
+
+```
+
+
+## Question D:
+**Summarize the interesting insights that your analysis provided.**
+As out of interest I looked at using various other models for comparison with KNN, the areas where KNN is certified as best model were Specificity, Positive Prediction Value and Precision.
+
+## Answer For D
+
+
+## Question E:
+**Summarize the implications to the consumer (target audience) of your analysis**
+
+## Answer For E
+The intent of this project is to assist doctors in diagnosing breast cancer for patients, allowing physicians to spend more time on treating the disease.Using machine learning methods for diagnostic can significantly increase processing speed and on a big scale can make the diagnostic significantly cheaper.
+
+## Question F:
+**Discuss the limitations of your analysis and how you, or someone else, could improve or build on it.**
+
+## Answer For F
+We have features of a tumor but I was not sure what does they mean or actually how much do we need to know about these features I believe that we do not need to know meaning of these features however in order to imagine in our mind we should know something like variance, standard deviation, number of sample (count) or max min values. These type of information helps to understand about what is going on data. For example , the question is appeared in my mind the area_mean feature's max value is 2500 and smoothness_mean features' max 0.16340.
+Also, it would have been great if i could compare the result of my data model vs other machine learning algorithms like Random Forest, SVM etc. 
+In future we can look into the implementation of artificial neural net and deep learning for predictive model development with a larger and un- structured data set. This will use unsupervised learning algorithms such SVM etc. to first label the data and distributing them over training set, cross-validation set and test set.
