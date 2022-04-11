@@ -1,0 +1,269 @@
+
+---
+title: 'ASSIGNMENT 9 Exercise 15: Introduction to Machine Learning'
+author: "Abhijit Mandal"
+date: '2020-10-31'
+output:
+  word_document: default
+---
+
+## Assignment
+**In this problem, you will use the nearest neighbors algorithm to fit a model on two simplified datasets. The first dataset (found in binary-classifier-data.csv) contains three variables; label, x, and y. The label variable is either 0 or 1 and is the output we want to predict using the x and y variables. The second dataset (found in trinary-classifier-data.csv) is similar to the first dataset except that the label variable can be 0, 1, or 2.
+Note that in real-world datasets, your labels are usually not numbers, but text-based descriptions of the categories (e.g. spam or ham). In practice, you will encode categorical variables into numeric values.**
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question A:
+**Plot the data from each dataset using a scatter plot.**
+
+## Answer for A
+
+## Code
+
+```{r echo=TRUE, include=TRUE} 
+## Set the working directory to the root of your DSC 520 directory
+
+setwd("~/Documents/GitHub/dsc520")
+
+## Load the `binary-classifier-data.csv`
+classifierdata.binary <- read.csv("data/binary-classifier-data.csv")
+head(classifierdata.binary)
+summary(classifierdata.binary)
+
+## Load the `trinary-classifier-data.csv`
+classifierdata.trinary <- read.csv("data/trinary-classifier-data.csv")
+head(classifierdata.trinary)
+summary(classifierdata.trinary)
+
+classifierdata.binary$label <- as.factor(classifierdata.binary$label)
+classifierdata.trinary$label <- as.factor(classifierdata.trinary$label)
+
+library(ggplot2)
+ggplot(data = classifierdata.binary, aes(y = y, x = x, color = label)) + 
+geom_point() + ggtitle("Binary Classifier data")
+
+ggplot(data = classifierdata.trinary, aes(y = y, x = x, color = label)) + 
+geom_point() + ggtitle("Trinary Classifier data")
+
+
+```
+
+
+## Question B. 
+**Fit a k nearest neighbors model for each dataset for k=3, k=5, k=10, k=15, k=20, and k=25. Compute the accuracy of the resulting models for each value of k. Plot the results in a graph where the x-axis is the different values of k and the y-axis is the accuracy of the model.**
+
+## Answer for B:
+
+## Binary Classifier - Select data points, normalize and Split 80-20 into train and test datasets.
+```{r echo=TRUE, include=TRUE} 
+
+#normalize function
+normalize<-function(x){
+  return (
+    (x - min(x))/max(x)-min(x)
+  )
+}
+
+classifierdata.normalizedbinary<-as.data.frame(lapply(classifierdata.binary[,c(2:3)], normalize))
+head(classifierdata.normalizedbinary)
+str(classifierdata.normalizedbinary)
+summary(classifierdata.normalizedbinary)
+
+#Select train and test data
+
+data.d = sample(1:nrow(classifierdata.normalizedbinary), size= nrow(classifierdata.normalizedbinary) *0.8, replace = FALSE)
+traindata.binary <- classifierdata.binary[data.d,] #80% training data
+testdata_binary <- classifierdata.binary[-data.d,] #20% training data
+
+#Create separate dataframes for train and test data for label 
+traindata_binary_df<-classifierdata.binary[data.d,1]
+testdata_binary_df<-classifierdata.binary[-data.d,1]
+
+k_valuebinary<-round(sqrt(nrow(classifierdata.binary)))
+
+library(class)
+
+# find no of observations
+NROW(traindata_binary_df)
+
+#define result data frames
+k_binarydata <- c()
+accurary_binarydata <- c()
+
+# Calculate KNN for K=3
+knn.3 <- knn(train = traindata.binary , test = testdata_binary, cl = traindata_binary_df, k = 3)
+# Calculate Accuracy
+acc.3 <- 100* sum(testdata_binary_df == knn.3)/NROW(testdata_binary_df)
+acc.3
+k_binarydata <- c(k_binarydata, 3)
+accurary_binarydata<- c(accurary_binarydata, acc.3)
+
+# Calculate KNN for K=5
+knn.5 <- knn(train = traindata.binary , test = testdata_binary, cl = traindata_binary_df, k = 5)
+# Calculate Accuracy
+acc.5 <- 100* sum(testdata_binary_df == knn.5)/NROW(testdata_binary_df)
+acc.5
+k_binarydata <- c(k_binarydata, 5)
+accurary_binarydata<- c(accurary_binarydata, acc.5)
+
+# Calculate KNN for K=10
+knn.10 <- knn(train = traindata.binary , test = testdata_binary, cl = traindata_binary_df, k = 10)
+# Calculate Accuracy
+acc.10 <- 100* sum(testdata_binary_df == knn.10)/NROW(testdata_binary_df)
+acc.10
+k_binarydata <- c(k_binarydata, 10)
+accurary_binarydata<- c(accurary_binarydata, acc.10)
+
+# Calculate KNN for K=15
+knn.15 <- knn(train = traindata.binary , test = testdata_binary, cl = traindata_binary_df, k = 15)
+# Calculate Accuracy
+acc.15 <- 100* sum(testdata_binary_df == knn.15)/NROW(testdata_binary_df)
+acc.15
+k_binarydata <- c(k_binarydata, 15)
+accurary_binarydata<- c(accurary_binarydata, acc.15)
+
+# Calculate KNN for K=20
+knn.20 <- knn(train = traindata.binary , test = testdata_binary, cl = traindata_binary_df, k = 20)
+# Calculate Accuracy
+acc.20 <- 100* sum(testdata_binary_df == knn.20)/NROW(testdata_binary_df)
+acc.20
+k_binarydata <- c(k_binarydata, 20)
+accurary_binarydata<- c(accurary_binarydata, acc.20)
+
+# Calculate KNN for K=25
+knn.25 <- knn(train = traindata.binary , test = testdata_binary, cl = traindata_binary_df, k = 25)
+# Calculate Accuracy
+acc.25 <- 100* sum(testdata_binary_df == knn.25)/NROW(testdata_binary_df)
+acc.25 
+k_binarydata <- c(k_binarydata, 25)
+accurary_binarydata<- c(accurary_binarydata, acc.25)
+
+# Calculate KNN for K=38 (square root of observations)
+knn.38 <- knn(train = traindata.binary , test = testdata_binary, cl = traindata_binary_df, k = 38)
+# Calculate Accuracy
+acc.38 <- 100* sum(testdata_binary_df == knn.38)/NROW(testdata_binary_df)
+acc.38 
+k_binarydata <- c(k_binarydata, 38)
+accurary_binarydata<- c(accurary_binarydata, acc.38)
+
+accuracy_binarydata_df <- data.frame(k_binarydata, accurary_binarydata)
+accuracy_binarydata_df
+## K Values vs Accuracy Plotting
+
+library(ggplot2)
+
+ggplot(data = accuracy_binarydata_df, aes(y = accurary_binarydata, x = k_binarydata)) + geom_line() + ggtitle("Binary Classifier - Accuracy vs K Value") + ylab("Accuracy %") + xlab("K value")
+
+```
+
+## Trinary Classifier - Select data points, normalize and Split 80-20 into train and test datasets.
+```{r echo=TRUE, include=TRUE} 
+
+#normalize function
+normalize<-function(x){
+  return (
+    (x - min(x))/max(x)-min(x)
+  )
+}
+
+classifierdata.normalizedtrinary<-as.data.frame(lapply(classifierdata.trinary[,c(2:3)], normalize))
+head(classifierdata.normalizedtrinary)
+str(classifierdata.normalizedtrinary)
+summary(classifierdata.normalizedtrinary)
+
+#Select train and test data
+
+data.d = sample(1:nrow(classifierdata.normalizedtrinary), size= nrow(classifierdata.normalizedtrinary) *0.8, replace = FALSE)
+traindata.trinary <- classifierdata.trinary[data.d,] #80% training data
+testdata_trinary <- classifierdata.trinary[-data.d,] #20% training data
+
+#Create separate dataframes for train and test data for label 
+traindata_trinary_df<-classifierdata.trinary[data.d,1]
+testdata_trinary_df<-classifierdata.trinary[-data.d,1]
+
+k_valuetrinary<-round(sqrt(nrow(classifierdata.trinary)))
+
+library(class)
+
+# find no of observations
+NROW(traindata_trinary_df)
+
+#define result data frames
+k_trinarydata <- c()
+accurary_trinarydata <- c()
+
+# Calculate KNN for K=3
+knn.3 <- knn(train = traindata.trinary , test = testdata_trinary, cl = traindata_trinary_df, k = 3)
+# Calculate Accuracy
+acc.3 <- 100* sum(testdata_trinary_df == knn.3)/NROW(testdata_trinary_df)
+acc.3
+k_trinarydata <- c(k_trinarydata, 3)
+accurary_trinarydata<- c(accurary_trinarydata, acc.3)
+
+# Calculate KNN for K=5
+knn.5 <- knn(train = traindata.trinary , test = testdata_trinary, cl = traindata_trinary_df, k = 5)
+# Calculate Accuracy
+acc.5 <- 100* sum(testdata_trinary_df == knn.5)/NROW(testdata_trinary_df)
+acc.5
+k_trinarydata <- c(k_trinarydata, 5)
+accurary_trinarydata<- c(accurary_trinarydata, acc.5)
+
+# Calculate KNN for K=10
+knn.10 <- knn(train = traindata.trinary , test = testdata_trinary, cl = traindata_trinary_df, k = 10)
+# Calculate Accuracy
+acc.10 <- 100* sum(testdata_trinary_df == knn.10)/NROW(testdata_trinary_df)
+acc.10
+k_trinarydata <- c(k_trinarydata, 10)
+accurary_trinarydata<- c(accurary_trinarydata, acc.10)
+
+# Calculate KNN for K=15
+knn.15 <- knn(train = traindata.trinary , test = testdata_trinary, cl = traindata_trinary_df, k = 15)
+# Calculate Accuracy
+acc.15 <- 100* sum(testdata_trinary_df == knn.15)/NROW(testdata_trinary_df)
+acc.15
+k_trinarydata <- c(k_trinarydata, 15)
+accurary_trinarydata<- c(accurary_trinarydata, acc.15)
+
+# Calculate KNN for K=20
+knn.20 <- knn(train = traindata.trinary , test = testdata_trinary, cl = traindata_trinary_df, k = 20)
+# Calculate Accuracy
+acc.20 <- 100* sum(testdata_trinary_df == knn.20)/NROW(testdata_trinary_df)
+acc.20
+k_trinarydata <- c(k_trinarydata, 20)
+accurary_trinarydata<- c(accurary_trinarydata, acc.20)
+
+# Calculate KNN for K=25
+knn.25 <- knn(train = traindata.trinary , test = testdata_trinary, cl = traindata_trinary_df, k = 25)
+# Calculate Accuracy
+acc.25 <- 100* sum(testdata_trinary_df == knn.25)/NROW(testdata_trinary_df)
+acc.25 
+k_trinarydata <- c(k_trinarydata, 25)
+accurary_trinarydata<- c(accurary_trinarydata, acc.25)
+
+# Calculate KNN for K=38 (square root of observations)
+knn.38 <- knn(train = traindata.trinary , test = testdata_trinary, cl = traindata_trinary_df, k = 38)
+# Calculate Accuracy
+acc.38 <- 100* sum(testdata_trinary_df == knn.38)/NROW(testdata_trinary_df)
+acc.38 
+k_trinarydata <- c(k_trinarydata, 38)
+accurary_trinarydata<- c(accurary_trinarydata, acc.38)
+
+accuracy_trinarydata_df <- data.frame(k_trinarydata, accurary_trinarydata)
+accuracy_trinarydata_df
+
+## K Values vs Accuracy Plotting
+
+library(ggplot2)
+
+ggplot(data = accuracy_trinarydata_df, aes(y = accurary_trinarydata, x = k_trinarydata)) + geom_line() + ggtitle("trinary Classifier - Accuracy vs K Value") + ylab("Accuracy %") + xlab("K value")
+```
+
+## Question C:
+**Looking back at the plots of the data, do you think a linear classifier would work well on these datasets?**
+
+## Answer For C
+Looking at the distribution of data in the plot, it is spread in different clusters so a linear classifier may not work with this data.
+
+

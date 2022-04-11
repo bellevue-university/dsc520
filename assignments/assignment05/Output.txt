@@ -1,0 +1,39 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 > # Assignment: ASSIGNMENT 5\
+> # Name: Mandal, Abhijit\
+> # Date: 2010-10-03\
+> \
+> ## Set the working directory to the root of your DSC 520 directory\
+> setwd("~/Documents/GitHub/dsc520.git ")\
+> \
+> ## Load the `data/r4ds/heights.csv` to\
+> heights_df <- read.csv("data/r4ds/heights.csv")\
+> \
+> ## Using `cor()` compute correclation coefficients for\
+> \
+> ## height vs. earn\
+> cor(heights_df$height,heights_df$earn)\
+[1] 0.2418481\
+> \
+> ### age vs. earn\
+> cor(heights_df$age,heights_df$earn)\
+[1] 0.08100297\
+> \
+> ### ed vs. earn\
+> cor(heights_df$ed,heights_df$earn)\
+[1] 0.3399765\
+> \
+> ## Spurious correlation\
+> ## The following is data on US spending on science, space, and technology in millions of today's dollars\
+> ## and Suicides by hanging strangulation and suffocation for the years 1999 to 2009\
+> ## Compute the correlation between these variables\
+> tech_spending <- c(18079, 18594, 19753, 20734, 20831, 23029, 23597, 23584, 25525, 27731, 29449)\
+> suicides <- c(5427, 5688, 6198, 6462, 6635, 7336, 7248, 7491, 8161, 8578, 9000)\
+> cor(tech_spending,suicides)\
+[1] 0.9920817}
