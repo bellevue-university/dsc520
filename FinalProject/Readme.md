@@ -10,7 +10,9 @@ The objective of this project is to classify each of the tumor to be malignant o
 
 The intent of this project is to assist doctors in diagnosing breast cancer for patients, allowing physicians to spend more time on treating the disease. Using machine learning methods for diagnostic can significantly increase processing speed and on a big scale can make the diagnostic significantly cheaper.
 
-### Some of the questions that we are looking to solve here are:
+### <img src="https://user-images.githubusercontent.com/13950516/162672483-4d953e53-2d6b-49d6-81ba-e7daa4a54351.png" width="40" height="40" /> &nbsp; &nbsp; Problem Statement:
+
+#### Some of the questions that we are looking to solve here are:
 
 - How do we define a tumor as malignant or benign ?
 - Can any benign tumor turn to malignant at later time ?
@@ -20,7 +22,7 @@ The intent of this project is to assist doctors in diagnosing breast cancer for 
 ![image](https://user-images.githubusercontent.com/13950516/162662239-6c732024-3b3e-4b3e-90e9-ba7c32b791cb.png)
 
 
-### Dataset
+### <img src="https://user-images.githubusercontent.com/13950516/162672846-869bf047-63a7-489f-9b33-4f4a3beab1b2.png" width="40" height="40" /> &nbsp; Dataset
 The dataset is taken from https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29
 
 ### Variable Descriptions
