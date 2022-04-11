@@ -10,7 +10,7 @@ The objective of this project is to classify each of the tumor to be malignant o
 
 The intent of this project is to assist doctors in diagnosing breast cancer for patients, allowing physicians to spend more time on treating the disease. Using machine learning methods for diagnostic can significantly increase processing speed and on a big scale can make the diagnostic significantly cheaper.
 
-### <img src="https://user-images.githubusercontent.com/13950516/162672483-4d953e53-2d6b-49d6-81ba-e7daa4a54351.png" width="40" height="40" /> &nbsp; &nbsp; Problem Statement:
+### <img src="https://user-images.githubusercontent.com/13950516/162672483-4d953e53-2d6b-49d6-81ba-e7daa4a54351.png" width="40" height="40" /> &nbsp; Problem Statement:
 
 #### Some of the questions that we are looking to solve here are:
 
@@ -25,7 +25,8 @@ The intent of this project is to assist doctors in diagnosing breast cancer for 
 ### <img src="https://user-images.githubusercontent.com/13950516/162672846-869bf047-63a7-489f-9b33-4f4a3beab1b2.png" width="40" height="40" /> &nbsp; Dataset
 The dataset is taken from https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29
 
-### Variable Descriptions
+### <img src="https://user-images.githubusercontent.com/13950516/162673233-e0f5d3ac-ccf7-430e-9a56-46e202098648.png" width="40" height="40" />&nbsp; Variable Descriptions
+
 diagnosis --> The diagnosis of breast tissues (M = malignant, B = benign)
 
 radius_mean --> mean of distances from center to points on the perimeter
@@ -73,7 +74,7 @@ concave points_worst --> "worst" or largest mean value for number of concave por
 
 fractaldimensionworst--> "worst" or largest mean value for "coastline approximation" - 1
 
-### Approach
+### <img src="https://user-images.githubusercontent.com/13950516/162673345-5ea37d71-b9e4-47b7-aa6e-c43921d7b2d0.png" width="40" height="40" />&nbsp; Approach
 
 We will first analyze the data and look for any cleanups needed, then we will derive correlation between the variables, after visualizing and analyzing the data we will use machine learning algorithm KNN to derive at a conclusion.
 
@@ -83,7 +84,7 @@ I have used K-nearest neighbor algorithm to classify the tumor, the result of th
 
 <img width="420" alt="image" src="https://user-images.githubusercontent.com/13950516/162662282-ad502e34-3b56-4690-9b04-234091bd4ab7.png">
 
-### Conclusion
+### <img src="https://user-images.githubusercontent.com/13950516/162673481-c1ce4edf-5240-43be-ae07-e7ef061be0c6.png" width="40" height="40" />&nbsp; Conclusion
 
 We have features of a tumor but I was not sure what does they mean or actually how much do we need to know about these features I believe that we do not need to know meaning of these features however in order to imagine in our mind we should know something like variance, standard deviation, number of sample (count) or max min values. 
 
