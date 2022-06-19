@@ -1,6 +1,8 @@
-# Assignment: ASSIGNMENT 2
-# Name: Lastname, Firstname
-# Date: 2010-02-14
+#' ---
+#' title: "ASSIGNMENT 2"
+#' author: "Avinaz, Gabriel"
+#' date: "2022-06-15"
+#' ---
 
 ## Check your current working directory using `getwd()`
 getwd()
@@ -11,7 +13,7 @@ dir()
 ## If the current directory does not contain the `data` directory, set the
 ## working directory to project root folder (the folder should contain the `data` directory
 ## Use `setwd()` if needed
-## setwd("/home/jdoe/Workspaces/dsc520")
+setwd("/Users/desaturation/Library/CloudStorage/OneDrive-BellevueUniversity/DSC520-T301 Statistics for Data Science/Week 2/Week2Assigments")
 
 ## Load the file `data/tidynomicon/person.csv` to `person_df1` using `read.csv`
 ## Examine the structure of `person_df1` using `str()`

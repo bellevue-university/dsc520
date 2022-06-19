@@ -1,6 +1,8 @@
-# Assignment: ASSIGNMENT 1
-# Name: Avinaz, Gabriel
-# Date: 2022-06-15
+#' ---
+#' title: "ASSIGNMENT 1"
+#' author: "Avinaz, Gabriel"
+#' date: "2022-06-15"
+#' ---
 
 ## Create a numeric vector with the values of 3, 2, 1 using the `c()` function
 ## Assign the value to a variable named `num_vector`

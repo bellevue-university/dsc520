@@ -1,6 +1,8 @@
-# Assignment: ASSIGNMENT 0
-# Name: Avinaz, Gabriel
-# Date: 2022-06-15
+#' ---
+#' title: "ASSIGNMENT 0"
+#' author: "Avinaz, Gabriel"
+#' date: "2022-06-15"
+#' ---
 
 # Basics
 
