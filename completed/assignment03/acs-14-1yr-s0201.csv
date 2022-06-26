@@ -1,0 +1,137 @@
+Id,Id2,Geography,PopGroupID,POPGROUP.display-label,RacesReported,HSDegree,BachDegree
+0500000US01073,1073,"Jefferson County, Alabama",1,Total population,660793,89.1,30.5
+0500000US04013,4013,"Maricopa County, Arizona",1,Total population,4087191,86.8,30.2
+0500000US04019,4019,"Pima County, Arizona",1,Total population,1004516,88,30.8
+0500000US06001,6001,"Alameda County, California",1,Total population,1610921,86.9,42.8
+0500000US06013,6013,"Contra Costa County, California",1,Total population,1111339,88.8,39.7
+0500000US06019,6019,"Fresno County, California",1,Total population,965974,73.6,19.7
+0500000US06029,6029,"Kern County, California",1,Total population,874589,74.5,15.4
+0500000US06037,6037,"Los Angeles County, California",1,Total population,10116705,77.5,30.3
+0500000US06059,6059,"Orange County, California",1,Total population,3145515,84.6,38
+0500000US06065,6065,"Riverside County, California",1,Total population,2329271,80.6,20.7
+0500000US06067,6067,"Sacramento County, California",1,Total population,1482026,86.8,28.9
+0500000US06071,6071,"San Bernardino County, California",1,Total population,2112619,78.6,18.9
+0500000US06073,6073,"San Diego County, California",1,Total population,3263431,86.6,37.1
+0500000US06075,6075,"San Francisco County, California",1,Total population,852469,88.1,54.2
+0500000US06077,6077,"San Joaquin County, California",1,Total population,715597,77.6,18.3
+0500000US06081,6081,"San Mateo County, California",1,Total population,758581,88.1,47.5
+0500000US06085,6085,"Santa Clara County, California",1,Total population,1894605,87.4,48.4
+0500000US06097,6097,"Sonoma County, California",1,Total population,500292,87.6,34.8
+0500000US06099,6099,"Stanislaus County, California",1,Total population,531997,78.4,17
+0500000US06111,6111,"Ventura County, California",1,Total population,846178,83.6,31.6
+0500000US08005,8005,"Arapahoe County, Colorado",1,Total population,618821,91.9,40.9
+0500000US08031,8031,"Denver County, Colorado",1,Total population,663862,85.5,44.3
+0500000US08041,8041,"El Paso County, Colorado",1,Total population,663519,92.8,36.5
+0500000US08059,8059,"Jefferson County, Colorado",1,Total population,558503,94.1,42
+0500000US09001,9001,"Fairfield County, Connecticut",1,Total population,945438,89.8,46.7
+0500000US09003,9003,"Hartford County, Connecticut",1,Total population,897985,89.3,36.8
+0500000US09009,9009,"New Haven County, Connecticut",1,Total population,861277,89.5,34.5
+0500000US10003,10003,"New Castle County, Delaware",1,Total population,552778,90.1,35.8
+0500000US11001,11001,"District of Columbia, District of Columbia",1,Total population,658893,90.2,55
+0500000US12009,12009,"Brevard County, Florida",1,Total population,556885,91.6,27.2
+0500000US12011,12011,"Broward County, Florida",1,Total population,1869235,88.4,30.5
+0500000US12031,12031,"Duval County, Florida",1,Total population,897698,89,26.1
+0500000US12057,12057,"Hillsborough County, Florida",1,Total population,1316298,87.3,29.8
+0500000US12071,12071,"Lee County, Florida",1,Total population,679513,86.3,26.5
+0500000US12086,12086,"Miami-Dade County, Florida",1,Total population,2662874,80.9,26.6
+0500000US12095,12095,"Orange County, Florida",1,Total population,1253001,87.9,31.4
+0500000US12099,12099,"Palm Beach County, Florida",1,Total population,1397710,87.7,33
+0500000US12103,12103,"Pinellas County, Florida",1,Total population,938098,90.1,29.5
+0500000US12105,12105,"Polk County, Florida",1,Total population,634638,84.9,19.7
+0500000US12127,12127,"Volusia County, Florida",1,Total population,507531,88.9,22.5
+0500000US13067,13067,"Cobb County, Georgia",1,Total population,730981,90.3,43.7
+0500000US13089,13089,"DeKalb County, Georgia",1,Total population,722161,88.4,41.7
+0500000US13121,13121,"Fulton County, Georgia",1,Total population,996319,91.3,49.2
+0500000US13135,13135,"Gwinnett County, Georgia",1,Total population,877922,88,35.4
+0500000US15003,15003,"Honolulu County, Hawaii",1,Total population,991788,91.8,32.6
+0500000US17031,17031,"Cook County, Illinois",1,Total population,5246456,85.5,36.2
+0500000US17043,17043,"DuPage County, Illinois",1,Total population,932708,92.3,48
+0500000US17089,17089,"Kane County, Illinois",1,Total population,527306,82.9,32.6
+0500000US17097,17097,"Lake County, Illinois",1,Total population,705186,90.3,44
+0500000US17197,17197,"Will County, Illinois",1,Total population,685419,90.7,33.1
+0500000US18097,18097,"Marion County, Indiana",1,Total population,934243,85,28.8
+0500000US20091,20091,"Johnson County, Kansas",1,Total population,574272,95.5,52.8
+0500000US20173,20173,"Sedgwick County, Kansas",1,Total population,508803,88.8,30.7
+0500000US21111,21111,"Jefferson County, Kentucky",1,Total population,760026,88.5,31.6
+0500000US24003,24003,"Anne Arundel County, Maryland",1,Total population,560133,91.9,38.8
+0500000US24005,24005,"Baltimore County, Maryland",1,Total population,826925,90.4,37.2
+0500000US24031,24031,"Montgomery County, Maryland",1,Total population,1030447,90.9,58.5
+0500000US24033,24033,"Prince George's County, Maryland",1,Total population,904430,85.5,31
+0500000US24510,24510,"Baltimore city, Maryland",1,Total population,622793,84.4,30
+0500000US25005,25005,"Bristol County, Massachusetts",1,Total population,554194,82.5,25.7
+0500000US25009,25009,"Essex County, Massachusetts",1,Total population,769091,89.1,38.9
+0500000US25017,25017,"Middlesex County, Massachusetts",1,Total population,1570315,92.3,52.3
+0500000US25021,25021,"Norfolk County, Massachusetts",1,Total population,692254,94.1,51.9
+0500000US25023,25023,"Plymouth County, Massachusetts",1,Total population,507022,92.2,34.1
+0500000US25025,25025,"Suffolk County, Massachusetts",1,Total population,767254,83.9,42.3
+0500000US25027,25027,"Worcester County, Massachusetts",1,Total population,813475,90.1,34.6
+0500000US26081,26081,"Kent County, Michigan",1,Total population,629237,89.1,33.7
+0500000US26099,26099,"Macomb County, Michigan",1,Total population,860112,89.3,23.9
+0500000US26125,26125,"Oakland County, Michigan",1,Total population,1237868,93.6,44.8
+0500000US26163,26163,"Wayne County, Michigan",1,Total population,1764804,84.9,22.1
+0500000US27053,27053,"Hennepin County, Minnesota",1,Total population,1212064,93.2,47.3
+0500000US27123,27123,"Ramsey County, Minnesota",1,Total population,532655,89.9,40.9
+0500000US29095,29095,"Jackson County, Missouri",1,Total population,683191,90,29.5
+0500000US29189,29189,"St. Louis County, Missouri",1,Total population,1001876,93.2,42.8
+0500000US31055,31055,"Douglas County, Nebraska",1,Total population,543244,88.2,36.3
+0500000US32003,32003,"Clark County, Nevada",1,Total population,2069681,84.5,22.7
+0500000US34003,34003,"Bergen County, New Jersey",1,Total population,933572,91.5,46.2
+0500000US34007,34007,"Camden County, New Jersey",1,Total population,511038,88.3,31.3
+0500000US34013,34013,"Essex County, New Jersey",1,Total population,795723,85.5,32.7
+0500000US34017,34017,"Hudson County, New Jersey",1,Total population,669115,83.4,38.2
+0500000US34023,34023,"Middlesex County, New Jersey",1,Total population,836297,89.1,41
+0500000US34025,34025,"Monmouth County, New Jersey",1,Total population,629279,93.1,43.7
+0500000US34029,34029,"Ocean County, New Jersey",1,Total population,586301,91.7,28.6
+0500000US34031,34031,"Passaic County, New Jersey",1,Total population,508856,83.8,28.6
+0500000US34039,34039,"Union County, New Jersey",1,Total population,552939,86.2,33
+0500000US35001,35001,"Bernalillo County, New Mexico",1,Total population,675551,88,32.7
+0500000US36005,36005,"Bronx County, New York",1,Total population,1438159,70.5,19.3
+0500000US36029,36029,"Erie County, New York",1,Total population,922835,90.6,31.3
+0500000US36047,36047,"Kings County, New York",1,Total population,2621793,80,34.3
+0500000US36055,36055,"Monroe County, New York",1,Total population,749857,90.3,35.9
+0500000US36059,36059,"Nassau County, New York",1,Total population,1358627,90.7,43.2
+0500000US36061,36061,"New York County, New York",1,Total population,1636268,86.8,59.9
+0500000US36081,36081,"Queens County, New York",1,Total population,2321580,80.4,29.8
+0500000US36103,36103,"Suffolk County, New York",1,Total population,1502968,89.8,34
+0500000US36119,36119,"Westchester County, New York",1,Total population,972634,87.4,47.1
+0500000US37081,37081,"Guilford County, North Carolina",1,Total population,512119,89,33.3
+0500000US37119,37119,"Mecklenburg County, North Carolina",1,Total population,1012539,89.5,43
+0500000US37183,37183,"Wake County, North Carolina",1,Total population,998691,92.4,49.2
+0500000US39035,39035,"Cuyahoga County, Ohio",1,Total population,1259828,88.1,31
+0500000US39049,39049,"Franklin County, Ohio",1,Total population,1231393,90,38
+0500000US39061,39061,"Hamilton County, Ohio",1,Total population,806631,90.5,35.6
+0500000US39113,39113,"Montgomery County, Ohio",1,Total population,533116,89.7,25.7
+0500000US39153,39153,"Summit County, Ohio",1,Total population,541943,91.1,30.3
+0500000US40109,40109,"Oklahoma County, Oklahoma",1,Total population,766215,86.8,30.6
+0500000US40143,40143,"Tulsa County, Oklahoma",1,Total population,629598,88.6,30.7
+0500000US41051,41051,"Multnomah County, Oregon",1,Total population,776712,91.1,41.6
+0500000US41067,41067,"Washington County, Oregon",1,Total population,562998,90.2,39.7
+0500000US42003,42003,"Allegheny County, Pennsylvania",1,Total population,1231255,93.9,37.7
+0500000US42017,42017,"Bucks County, Pennsylvania",1,Total population,626685,93.9,37.7
+0500000US42029,42029,"Chester County, Pennsylvania",1,Total population,512784,92.3,49.3
+0500000US42045,42045,"Delaware County, Pennsylvania",1,Total population,562960,91.5,36.3
+0500000US42071,42071,"Lancaster County, Pennsylvania",1,Total population,533320,84.9,26
+0500000US42091,42091,"Montgomery County, Pennsylvania",1,Total population,816857,93.7,47.3
+0500000US42101,42101,"Philadelphia County, Pennsylvania",1,Total population,1560297,82.6,26
+0500000US44007,44007,"Providence County, Rhode Island",1,Total population,631974,82,25.2
+0500000US47037,47037,"Davidson County, Tennessee",1,Total population,668347,86.7,37.3
+0500000US47157,47157,"Shelby County, Tennessee",1,Total population,938803,87.4,29.9
+0500000US48029,48029,"Bexar County, Texas",1,Total population,1855866,83,26.3
+0500000US48085,48085,"Collin County, Texas",1,Total population,885241,93.7,50
+0500000US48113,48113,"Dallas County, Texas",1,Total population,2518638,77.6,29.1
+0500000US48121,48121,"Denton County, Texas",1,Total population,753363,91.9,41.5
+0500000US48141,48141,"El Paso County, Texas",1,Total population,833487,75.8,21.1
+0500000US48157,48157,"Fort Bend County, Texas",1,Total population,685345,88.6,44.1
+0500000US48201,48201,"Harris County, Texas",1,Total population,4441370,79.8,29.7
+0500000US48215,48215,"Hidalgo County, Texas",1,Total population,831073,62.2,17.9
+0500000US48339,48339,"Montgomery County, Texas",1,Total population,518947,85.9,34.1
+0500000US48439,48439,"Tarrant County, Texas",1,Total population,1945360,84.9,30
+0500000US48453,48453,"Travis County, Texas",1,Total population,1151145,88.6,45.6
+0500000US49035,49035,"Salt Lake County, Utah",1,Total population,1091742,89.5,31.9
+0500000US49049,49049,"Utah County, Utah",1,Total population,560974,93.7,37.5
+0500000US51059,51059,"Fairfax County, Virginia",1,Total population,1137538,91.5,60.3
+0500000US53033,53033,"King County, Washington",1,Total population,2079967,92.3,48.6
+0500000US53053,53053,"Pierce County, Washington",1,Total population,831928,90.3,24.6
+0500000US53061,53061,"Snohomish County, Washington",1,Total population,759583,92,29.1
+0500000US55025,55025,"Dane County, Wisconsin",1,Total population,516284,94.9,49.8
+0500000US55079,55079,"Milwaukee County, Wisconsin",1,Total population,956406,86.9,29.5

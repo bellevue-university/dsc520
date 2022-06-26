@@ -1,0 +1,64 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Assignment 3.2
+
+## American Community Survey Exercise
+
+### Gabriel Avinaz
+
+```{r}
+library(tidyverse)
+setwd("C:\\Users\\desaTuration\\OneDrive - Bellevue University\\DSC520-T301 Statistics for Data Science\\Week 3\\Week03ACS")
+community_df <- read_csv("acs-14-1yr-s0201.csv")
+glimpse(community_df)
+```
+
+```{r}
+str(community_df)
+nrow(community_df)
+ncol(community_df)
+```
+
+```{r}
+library(ggplot2)
+ggplot(community_df, aes(HSDegree)) + geom_histogram(bins = 12) + ggtitle("High School Completion") + ylab("Number of Communities") + xlab("Percentage of Completion")
+```
+
+**1. Based on what you see in this histogram, is the data distribution unimodal?**\
+Yes, there is a clear singular peak around the 90% mark of the distribution.\
+**2. Is it approximately symmetrical?**\
+No, the distribution isn't similar on both sides of the\
+**3. Is it approximately bell-shaped?**\
+No, since it isn't symmetrical it can't be a bell curve, even if it has one peak.\
+**4. Is it approximately normal?**\
+No, the tails at the end of curve are not even.\
+**5. If not normal, is the distribution skewed? If so, in which direction?**\
+It is skewed Negatively, the distribution's tail on the left is longer.\
+**6. Include a normal curve to the Histogram that you plotted.**\
+
+```{r}
+ggplot(community_df, aes(HSDegree)) + geom_histogram(bins = 12, aes(y = ..density..)) + stat_function(fun = dnorm, args = list(mean = mean(community_df$HSDegree), sd = sd(community_df$HSDegree)), col = "red", size = 1) + ggtitle("High School Completion") + ylab("Number of Communities") + xlab("Percentage of Completion")
+```
+
+**7. Explain whether a normal distribution can accurately be used as a model for this data.**\
+A normal distribution cannot be used as a modal for this data because of it's negative skew.
+
+```{r}
+ggplot(community_df, aes(sample=HSDegree)) + geom_qq() + geom_qq_line()
+```
+
+**1. Based on what you see in this probability plot, is the distribution approximately normal? Explain how you know.**\
+It would appear to not be a normal distribution. There is an apparent curve in the plot\
+**2. If not normal, is the distribution skewed? If so, in which direction? Explain how you know.**\
+It is skewed in a negative direction, this is represented by the downward curve as we move away from the median.
+
+```{r}
+library(pastecs)
+stat.desc(community_df['HSDegree'], norm = TRUE)
+```
+
+Skew and Kurtosis can be determined by the values generated for "Kurtosis" and "Skewness." For kurtosis, a positive number indicates a larger than normal collection of data near the peak. When examining skew, the farther the number deviates from zero, the more skewed the distribution will be. In this case, a negative skew number indicates a larger left tail. We can use the mean and standard deviation to calculate for z-score, which is a measure of the number of standard deviations away from the mean a data point would be. for example the HSDegree z-score for "Jefferson County, Alabama" would be `r (89.1-87.63)/5.117941`. Population size can have a significant impact on the standard error of the mean, since we do not know the population's standard deviation, the larger our sample, the closer our sample std.dev will be to a population.
