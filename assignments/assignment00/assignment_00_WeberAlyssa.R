@@ -5,10 +5,10 @@
 # Basics
 
 ## Add 8 and 5
-___
+8 + 5
 
 ## Subtract 6 from 22
-___
+22 - 6
 
 ## Multiply 6 by 7
 ___
