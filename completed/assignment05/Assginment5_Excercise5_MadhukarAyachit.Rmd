@@ -1,0 +1,163 @@
+---
+title: "RMarkdown Assignment - Exercise 9"
+author: "Madhukar Ayachit"
+date: "Oct 4th 2020"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(global.par=TRUE , echo = TRUE)
+```
+
+## R Markdown
+
+### Reading the csv into data frame 
+
+```{r }
+student_survey_df=read.csv("../data/student-survey.csv")
+```
+
+### a. Covariance Calculations 
+
+
+```{r }
+library(pander)
+pander(cov(student_survey_df), caption = "Covariance Calculations - Raw Data")
+#cor.plot(student_survey_df)
+
+```
+
+```{r}
+#library("psych")
+#cor.plot(student_survey_df)
+```
+
+
+### Answer a. 
+
+* Result shows TimeREading/TimeRV is -20.36 which indicates the two variabls change in opposite direction
+* Another observatio between TimeTV / Happiness shows 114.37 have covariance oof 114.37 which is positive direction
+
+### b. Measurements being used for the variables and effect of change in measurements 
+
+```{r }
+## converting Time Reading to minutes, assuming it is mentioned in hours
+student_survey_df$TimeReading <- student_survey_df$TimeReading * 60
+# covariance calculation for all the variables
+pander(cov(student_survey_df), 
+       caption = "Covariance Calculations - Formatted data")
+```
+
+### Answer b. 
+
+> In the provided data, the measurement scale have not been mentioned. But, looking at the numbers, assuming that TimeReading is in hours, TimeTV is minutes, Happiness is percentages (pure number on scale of 100) and Gender is categorical variable (0 or 1). So, looking at above calculations, we can see the formatting of data (conversion to same scale), has big effect on Covariance values.
+> e.g. TimeReading / TimeTV covariance value increased to -1222, from previously being -20.36. Thus, Covariance may not be very reliable indicator of the size of the effect / relation between the two variables, as it can reasily get affected by measurement scale used. 
+> Better alternative for this would be using Correlation values - using cor() function and methods associated. Correlation coeficients are standardizations of Covariance and they use respective Standard deviations as well for calculations. The values vary between +1 (positive correlation - both variables change in same direction) and -1 (negative correlation - two variables in review change in opposite directions). Correlation coeeficient value of 0 indicates there is no relation between the two variables.
+
+### C. Type of Correlation test to use and reasoning 
+
+### Answer c. 
+
+
+
+```{r }
+pander(cor(student_survey_df, method = "pearson"), 
+       caption = "Student Survey Pearson Correlation")
+pander(cor(student_survey_df, method = "spearman"), 
+       caption = "Student Survey Spearman Correlation")
+pander(cor(student_survey_df, method = "kendall"), 
+       caption = "Student Survey Kendall Correlation")
+```
+
+### Answer c. 
+
+> As per the result, directions of relations between the possible combinations of the two variables are remaining the same and values vary between +1 and -1. 
+> Pearson :  TimeReading an TimeTV correlation value for "Pearson" method shows approx. -0.88 value further indicates  these variables are negatively correlated to each other. 
+> And with TimeTV and Happiness variables - correlation coefficient value for "Pearson" method is approx. +0.64, which confirms the Positive relation between these two variables.
+> I would prefer to use "Pearson method" since our data is interval data and later on we have to calculate correlation matrix for the variables with rcorr() function, for which Kendall method is not supported. And, Spearman method needs data variables being compared to be ordinal data, which can be categorized into finite number of categories. But our data being compared e.g. Time Reading / Time TV can take on many different values and there can not be categories.
+
+
+### d. Correlation Analysis 
+
+    1. All Variables  
+    
+  > Used pander for correlation matrix display in table format
+  > It can also be done using ggpairs() - GGally package [@lander2014r].
+  
+```{r echo=FALSE}
+library(pander)
+pander(cor(student_survey_df, method = "pearson"), 
+       caption = "Correlation table using Pearson method")
+#library(Hmisc)
+#rcorr(as.matrix(student_survey_df))
+#install.packages("ggplot2")
+library(ggplot2)
+library(GGally)
+GGally::ggpairs(student_survey_df)
+```
+
+
+    2. Single correlation between two pairs of variables
+
+```{r}
+cor.test(student_survey_df$TimeReading, student_survey_df$TimeTV, method = "pearson")
+cor.test(student_survey_df$TimeTV, student_survey_df$Happiness, method = "pearson")
+```
+
+
+    3. Single correlation between two pairs of variables
+
+```{r}
+cor.test(student_survey_df$TimeReading, student_survey_df$TimeTV, method = "pearson", conf.level = 0.99)
+cor.test(student_survey_df$TimeTV, student_survey_df$Happiness, method = "pearson", conf.level = 0.99)
+```
+
+    4. Explanation of the two correlation tests above
+   > correlation tests in Step 2 and 3 for **TimeReading / TimeTV** : In Step both 2 and 3, the p value of this relation is 0.0003153, which much lower than 0.05, indicating the relation between these two variables is significant i.e. chances of coefficient value being -0.88 when there is no relationship between these two variables in the given dataset are 0.0003153 or 0.03%, which indicates Null Hypothesis is NOT true.
+   For the confidence interval (CI) for 95% case is between (-0.9694145 to -0.6021920) and CI for 99% case is between (-0.9801052 to -0.4453124). This confirms that the Negative correlation between TimeReading / TimeTV holds good almost all of the times.
+> correlation tests in Step 2 and 3 for **TimeTV / Happiness** : In Step both 2 and 3, the p value of this relation is 0.03521, which is lower than 0.05, indicating the relation between these two variables is significant i.e. chances of coefficient value being approx +0.64 when there is no relationship between these two variables in the given dataset are 0.03521 or 3.5%, which indicates Null Hypothesis is NOT true.
+   For the confidence interval (CI) for 95% case is between (0.05934031 0.89476238) and CI for 99% case is between (-0.1570212  0.9306275). This indicates that the Positive correlation between TimeTV / Happiness holds good most of the times, but in some cases, the correlation may turn negative i.e. TimeTV and Happiness may change in opposite directions as we move away from the mean value of the observations.
+
+
+### e. correlation coefficient and coefficient of determination 
+
+```{r }
+pander(cor(student_survey_df), 
+       caption = "Correlation Coefficients table")
+pander(cor(student_survey_df)^2,
+       caption = "Coefficient of Determination R^2 table")
+```
+
+
+### Answer e. 
+> We have earlier reviewed the Correlation Coefficients values previously. So, we will review the Coefficient of Determination values.
+Coefficient of Determination value between TimeReading and TimeTV is approx 0.78 or 78%, which is very significant. It means TimeTV may share 78% of the TimeReading variations, but we may not necessarily be able to say that it is the cause behind the changing TimeReading, because the relation can also be interpreted the other way round i.e. TimeReading can cause the changes in TimeTV.
+Coefficient of Determination value between Happiness and TimeTV is approx 0.405 or 40.5%, which is very significant. It means TimeTV may share 40.5% of the Happiness variations, but it may not necessarily mean that it is the cause behind this. One can also suggest that being more Happy may make someone watch more TV.
+
+### f. watching more TV causing students to read less 
+
+### Answer f.
+> As we discussed in the explanation of Answer e, below is the highlight
+Coefficient of Determination value between TimeReading and TimeTV is approx 0.78 or 78%, which is very significant. It means TimeTV may share 78% of the TimeReading variations, but we may not necessarily be able to say that it is the cause behind the changing TimeReading, because the relation can also be interpreted the other way round i.e. TimeReading can cause the changes in TimeTV. 
+Same explanation can be provided using correlation value of -0.88 that we can see negative correlation between TimeReading and TimeTV. But we may not be able to definitely say that whether TimeReading causes changes in TimeTV or vice-a-versa. That is we may not be able to clearly conclude which variable is independent variable and which one is the dependent variable, just by looking at the values.
+
+### g. Partial correlation 
+
+```{r}
+library(ggm)
+pcor(c("TimeReading", "TimeTV", "Happiness"), var(student_survey_df))
+```
+
+### g. Answer 
+> The above value of correlation coefficient : -0.872945, indicates that even if we keep the effects of Happiness variable constant, is fairly close match to the pairwise correlation coefficient value of -0.88. So, the relationship between TimeReading and TimeTV, which was determined earlier, still holds true.
+
+
+## References
+
+
+

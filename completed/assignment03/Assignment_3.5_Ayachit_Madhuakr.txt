@@ -1,0 +1,256 @@
+> # Assignment: Excercise 3.5 
+> # Name: Ayachit, Madhukar
+> # Date: 2020-09-15
+> 
+> acs_df=read.csv("data/acs-14-1yr-s0201.csv")
+> 
+> #1. What are the elements in your data (including the categories and data types)?
+> str(acs_df)
+'data.frame':	136 obs. of  8 variables:
+ $ Id                    : chr  "0500000US01073" "0500000US04013" "0500000US04019" "0500000US06001" ...
+ $ Id2                   : int  1073 4013 4019 6001 6013 6019 6029 6037 6059 6065 ...
+ $ Geography             : chr  "Jefferson County, Alabama" "Maricopa County, Arizona" "Pima County, Arizona" "Alameda County, California" ...
+ $ PopGroupID            : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ POPGROUP.display.label: chr  "Total population" "Total population" "Total population" "Total population" ...
+ $ RacesReported         : int  660793 4087191 1004516 1610921 1111339 965974 874589 10116705 3145515 2329271 ...
+ $ HSDegree              : num  89.1 86.8 88 86.9 88.8 73.6 74.5 77.5 84.6 80.6 ...
+ $ BachDegree            : num  30.5 30.2 30.8 42.8 39.7 19.7 15.4 30.3 38 20.7 ...
+> 
+> #2. Please provide the output from the following functions: str(); nrow(); ncol()
+> nrow(acs_df)
+[1] 136
+> ncol(acs_df)
+[1] 8
+> 
+> head(acs_df)
+              Id  Id2                       Geography PopGroupID POPGROUP.display.label RacesReported HSDegree BachDegree
+1 0500000US01073 1073       Jefferson County, Alabama          1       Total population        660793     89.1       30.5
+2 0500000US04013 4013        Maricopa County, Arizona          1       Total population       4087191     86.8       30.2
+3 0500000US04019 4019            Pima County, Arizona          1       Total population       1004516     88.0       30.8
+4 0500000US06001 6001      Alameda County, California          1       Total population       1610921     86.9       42.8
+5 0500000US06013 6013 Contra Costa County, California          1       Total population       1111339     88.8       39.7
+6 0500000US06019 6019       Fresno County, California          1       Total population        965974     73.6       19.7
+> names(acs_df)=c("ID1","ID2","Geography","PopGroupId","DisplayLabel","RacesReported","HSDegree","BatchDegree")
+> 
+> #3. Create a Histogram of the HSDegree variable using the ggplot2 package.
+> library("ggplot2")
+> 
+> #a. Set a bin size for the Histogram.
+> #b. Include a Title and appropriate X/Y axis labels on your Histogram Plot.
+> 
+> 
+> 
+> gg<-ggplot(acs_df,aes(HSDegree) )+ 
++   geom_histogram(bins=10,binwidth = 5 ,fill="grey",col="black") +
++   labs(title="ACS HS Degree Graph",x="HS Degree",y="Count")
+> gg
+> 
+> 
+> ggplot(diamonds, aes(carat, price)) + stat_bin2d() +
++   scale_fill_gradient(trans="log10")
+> 
+> #4. Answer the following questions based on the Histogram produced:
+> 
+> gg +   geom_density(col="red" ,aes(y=5*..count..))
+> 
+> #  a. Based on what you see in this histogram, is the data distribution unimodal?
+> # Ans is "yes"
+> #  b. Is it approximately symmetrical?
+> #  ans is "No"  
+> #  c. Is it approximately bell-shaped?
+> # ans is "no"  
+> #  d. Is it approximately normal?
+> # ans is "No"  
+> #  e. If not normal, is the distribution skewed? If so, in which direction?
+> #   data is negatively screwed 
+> #  f. Include a normal curve to the Histogram that you plotted.
+> gg +   geom_density(col="red" ,aes(y=5*..count..))
+> #  g. Explain whether a normal distribution can accurately be used as a model for this data.
+> 
+> #5. Create a Probability Plot of the HSDegree variable.
+> qqnorm(acs_df$HSDegree,col="grey")
+> qqline(acs_df$HSDegree,col="blue")
+> 
+> 
+> #6. Answer the following questions based on the Probability Plot:
+>   
+> #  a. Based on what you see in this probability plot, is the distribution approximately normal? Explain how you know.
+> # distribution is not nornal which is shown in the plot as one outlier goes below 65 and uptill 70 to 85 trials below the line 
+> # and after 90 also few goes away from lone.
+> 
+> #b. If not normal, is the distribution skewed? If so, in which direction? Explain how you know.
+> #   mostly negative screw and majority distribution under 80 lags  behind  the center line 
+> 
+> 
+> #7. Now that you have looked at this data visually for normality, you will now quantify normality with numbers using the 
+> #   stat.desc() function. Include a screen capture of the results produced.
+> 
+> library(pastecs)
+> stat.desc(acs_df, basic=TRUE, desc=TRUE, norm=FALSE, p=0.95)
+         ID1          ID2 Geography PopGroupId DisplayLabel RacesReported     HSDegree  BatchDegree
+nbr.val   NA 1.360000e+02        NA        136           NA  1.360000e+02 1.360000e+02  136.0000000
+nbr.null  NA 0.000000e+00        NA          0           NA  0.000000e+00 0.000000e+00    0.0000000
+nbr.na    NA 0.000000e+00        NA          0           NA  0.000000e+00 0.000000e+00    0.0000000
+min       NA 1.073000e+03        NA          1           NA  5.002920e+05 6.220000e+01   15.4000000
+max       NA 5.507900e+04        NA          1           NA  1.011670e+07 9.550000e+01   60.3000000
+range     NA 5.400600e+04        NA          0           NA  9.616413e+06 3.330000e+01   44.9000000
+sum       NA 3.649306e+06        NA        136           NA  1.556385e+08 1.191800e+04 4822.7000000
+median    NA 2.611200e+04        NA          1           NA  8.327075e+05 8.870000e+01   34.1000000
+mean      NA 2.683313e+04        NA          1           NA  1.144401e+06 8.763235e+01   35.4610294
+SE.mean   NA 1.323036e+03        NA          0           NA  9.351028e+04 4.388598e-01    0.8154527
+CI.mean   NA 2.616557e+03        NA          0           NA  1.849346e+05 8.679296e-01    1.6127146
+var       NA 2.380576e+08        NA          0           NA  1.189207e+12 2.619332e+01   90.4349886
+std.dev   NA 1.542911e+04        NA          0           NA  1.090508e+06 5.117941e+00    9.5097313
+coef.var  NA 5.750024e-01        NA          0           NA  9.529072e-01 5.840241e-02    0.2681741
+> 
+> #8. In several sentences provide an explanation of the result produced for skew, kurtosis, and z-scores. 
+> #   In addition, explain how a change in the sample size may change your explanation?
+>   
+> library(e1071)  
+> skewness(acs_df$HSDegree)
+[1] -1.674767
+> kurtosis(acs_df$HSDegree) 
+[1] 4.352856
+> 
+> scale(acs_df$HSDegree,center = TRUE,scale = TRUE)
+               [,1]
+  [1,]  0.286765161
+  [2,] -0.162634350
+  [3,]  0.071834960
+  [4,] -0.143095241
+  [5,]  0.228147834
+  [6,] -2.741796762
+  [7,] -2.565944779
+  [8,] -1.979771504
+  [9,] -0.592494752
+ [10,] -1.374059119
+ [11,] -0.162634350
+ [12,] -1.764841303
+ [13,] -0.201712568
+ [14,]  0.091374069
+ [15,] -1.960232394
+ [16,]  0.091374069
+ [17,] -0.045399695
+ [18,] -0.006321476
+ [19,] -1.803919521
+ [20,] -0.787885844
+ [21,]  0.833860218
+ [22,] -0.416642769
+ [23,]  1.009712201
+ [24,]  1.263720620
+ [25,]  0.423538925
+ [26,]  0.325843380
+ [27,]  0.364921598
+ [28,]  0.482156253
+ [29,]  0.501695362
+ [30,]  0.775242891
+ [31,]  0.149991397
+ [32,]  0.267226052
+ [33,] -0.064938804
+ [34,] -0.260329896
+ [35,] -1.315441791
+ [36,]  0.052295851
+ [37,]  0.013217633
+ [38,]  0.482156253
+ [39,] -0.533877424
+ [40,]  0.247686943
+ [41,]  0.521234471
+ [42,]  0.149991397
+ [43,]  0.716625563
+ [44,]  0.071834960
+ [45,]  0.814321109
+ [46,] -0.416642769
+ [47,]  0.912016655
+ [48,] -0.924659608
+ [49,]  0.521234471
+ [50,]  0.599390908
+ [51,] -0.514338315
+ [52,]  1.537268149
+ [53,]  0.228147834
+ [54,]  0.169530506
+ [55,]  0.833860218
+ [56,]  0.540773581
+ [57,]  0.638469126
+ [58,] -0.416642769
+ [59,] -0.631572970
+ [60,] -1.002816045
+ [61,]  0.286765161
+ [62,]  0.912016655
+ [63,]  1.263720620
+ [64,]  0.892477546
+ [65,] -0.729268516
+ [66,]  0.482156253
+ [67,]  0.286765161
+ [68,]  0.325843380
+ [69,]  1.166025074
+ [70,] -0.533877424
+ [71,]  1.087868638
+ [72,]  0.443078035
+ [73,]  0.462617144
+ [74,]  1.087868638
+ [75,]  0.110913179
+ [76,] -0.612033861
+ [77,]  0.755703781
+ [78,]  0.130452288
+ [79,] -0.416642769
+ [80,] -0.826964062
+ [81,]  0.286765161
+ [82,]  1.068329528
+ [83,]  0.794782000
+ [84,] -0.748807625
+ [85,] -0.279869005
+ [86,]  0.071834960
+ [87,] -3.347509146
+ [88,]  0.579851799
+ [89,] -1.491293774
+ [90,]  0.521234471
+ [91,]  0.599390908
+ [92,] -0.162634350
+ [93,] -1.413137337
+ [94,]  0.423538925
+ [95,] -0.045399695
+ [96,]  0.267226052
+ [97,]  0.364921598
+ [98,]  0.931555764
+ [99,]  0.091374069
+[100,]  0.462617144
+[101,]  0.560312690
+[102,]  0.403999816
+[103,]  0.677547345
+[104,] -0.162634350
+[105,]  0.189069615
+[106,]  0.677547345
+[107,]  0.501695362
+[108,]  1.224642402
+[109,]  1.224642402
+[110,]  0.912016655
+[111,]  0.755703781
+[112,] -0.533877424
+[113,]  1.185564183
+[114,] -0.983276935
+[115,] -1.100511591
+[116,] -0.182173459
+[117,] -0.045399695
+[118,] -0.905120499
+[119,]  1.185564183
+[120,] -1.960232394
+[121,]  0.833860218
+[122,] -2.311936360
+[123,]  0.189069615
+[124,] -1.530371992
+[125,] -4.969255208
+[126,] -0.338486333
+[127,] -0.533877424
+[128,]  0.189069615
+[129,]  0.364921598
+[130,]  1.185564183
+[131,]  0.755703781
+[132,]  0.912016655
+[133,]  0.521234471
+[134,]  0.853399327
+[135,]  1.420033494
+[136,] -0.143095241
+attr(,"scaled:center")
+[1] 87.63235
+attr(,"scaled:scale")
+[1] 5.117941
