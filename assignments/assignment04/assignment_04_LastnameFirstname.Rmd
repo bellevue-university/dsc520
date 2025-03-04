@@ -3,30 +3,37 @@ title: "ASSIGNMENT 4"
 author: "Firstname Lastname"
 date: '2010-02-14'
 output:
-  word_document: default
-  html_document: default
   pdf_document: default
+  html_document: default
+  word_document: default
 bibliography: bibliography.bib
 ---
 
 # Markdown Basics
 
 ## Favorite Foods
+1. SeaFood (Shrimp/Crab)
+2. Sushi (pickled or cooked)
+3. Pasta 
 
 ## Images
 
+![All Cases (Log Plot)](10-all-cases-log.png)
+
 ## Add a Quote
+
+>Hello my name is Inigo Montoya, you killed my father prepare to die.
 
 ## Add an Equation
 
 ## Add a Footnote
 
-This is a footnote
+No six fingered men were injured during the making of this footnote.^[This is a footnote]
 
 ## Add Citations
 
-* R for Everyone
-* Discovering Statistics Using R
+* R for Everyone @lander2014r
+* Discovering Statistics Using R @field2012discovering
 
 # Inline Code
 
