@@ -1,0 +1,66 @@
+---
+title: "Student Survey"
+author: "Brett Sutow "
+date: October 1st 2020
+output:
+  
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+setwd("/Users/Brett/Desktop/dsc520-master")
+studentsurvey <- read.csv("/Users/Brett/Desktop/dsc520-master/data/student-survey.csv")
+head(studentsurvey)
+timereading<-studentsurvey[,c(1)]
+timetv<-studentsurvey[,c(2)]
+happiness<-studentsurvey[,c(3)]
+gender<-studentsurvey[,c(4)]
+```
+
+
+```{r studentsurvey}
+summary(studentsurvey)
+```
+
+#Covariance of Time Reading and Time TV
+1.The covariance between Time Reading and Time Watching TV is -20.35364. Covariance is a tool that is used to show a relationship between two variables. In this case it is showing a negative or inverse relationship between the two variables being looked at. 
+```{r , echo=FALSE}
+cov(timereading,timetv)
+```
+2. The variables are using various different measurements to describe the information. For example the they are describing the Time Reading in single integer variables like: 1,2,3,4,5,6 to describe hours. Whereas Time TV is being described in minutes varying from 50 to 95. This simple miscalculation for variables is throwing off the description. Happiness is also being described as a percentage with no true description of what it is representing and gender is described as 0 and 1 with no showing of interpretation of what that represents. Changing the variables to would create a very different representation whether that is a positive or negative correlation. When changing the Time Reading to represent hourly times it creates a covariance of -1221.818, which is very different than our -20.35364. Through the process of converting the Time Watching TV to single digit integers makes the covariance process more understandable because it creates a -.33939 covariance. Which is much better than the other two presented from the variable changes. 
+
+#Correlation Test
+
+```{r , echo=FALSE}
+cor(studentsurvey, use= "everything", method= "pearson")
+```
+3.	To observe correlation I decided to run the cor.test for Pearson. I believe Pearson works best for this because the variables are normally distributed. It utilizes information that I believe shows the proper correlation for the test shown. This was chosen because I believe the Pearson works best for this simple data frame. It would create the best distribution for the outcomes given. 
+
+4. Between the variables time spent reading and time watching tv a negative almost linear correlation between the two variables. This shows as time reading increases the time watching tv would decrease or vice versa. This tells me that the two variables have an adverse effect on one another. Looking more in depth at the actual matrix we can see there is a positive correlation between happiness and time watching tv, and a negative correlation between happiness and time reading. The p-value shows a highly confidence significance level. That the data will fall in the specific range that is given. 
+#Full Correlation Test 
+```{r , echo=FALSE}
+cor.test(timereading, timetv, use= "everything", method= "pearson", level= 0.95)
+```
+```{r , echo=FALSE}
+cor.test(timereading, timetv, use= "everything", method= "pearson", conf.level= 0.99)
+```
+
+5. Part1- The Coefficient of Determination presents a .7798085 or almost 78%
+Part2- This information presents us with showing that there is a negative relationship between time spent reading and time spent watching tv. It also tells us that almost 78% of the data points fall on or close to the regression model line. 
+
+#Coefficient of Determination
+```{r , echo=FALSE}
+timereading.lm = lm(timereading ~ timetv, data= studentsurvey)
+summary(timereading.lm)$r.squared
+timetv.lm = lm(timetv ~ timereading, data = studentsurvey)
+summary(timetv.lm)$r.squared
+```
+6.	Based off the information provided I can determine that there was a negative impact of watching tv on reading. Students who watched tv more seemed to read less. This information can be see in the corr value of -.88, the coefficient of determination of 78%, and the low pvalue of .0003. Thus, causing us to reject the null hypothesis 
+
+#Partial Correlation
+```{r , echo=FALSE}
+library("ppcor")
+data=studentsurvey
+pcor.test(timereading, timetv, happiness)
+```
+7.	I utilized the two variables as time spent reading and tv spent watching tv, with the control being happiness. The estimate still shows a similar strong correlation. The p-value for this is slightly larger than the original correlation that was created, however it still validates the hypothesis of there being a negative almost linear relationship between time reading and time watching in regards to happiness. 

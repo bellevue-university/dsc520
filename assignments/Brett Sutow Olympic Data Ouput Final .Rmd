@@ -1,0 +1,203 @@
+---
+title: "Olympics Data"
+author: "Brett Sutow"
+date: "11/16/2020"
+output: word_document
+---
+# Problem Statement and Question
+
+Summer Olympics: We are going to look at this data to determine if individual country or person has a larger impact on Olympic victories. It will go into detail to look at winners of the Summer Olympics who have won multiple Olympic medals, from their various countries. It will also look at the detailed information about where the events took place. It will also go into detail about the specific sports. People will be interested in this because it allows people to understand when and where medals were won, and if country has an impact. 
+
+How has the Olympic games changed over the years?
+Are there countries that have a better chance at winning games?
+Do we see specific sports that are dominated by countries or areas?
+Are we more likely to see repeat winners if they participate multiple times?
+Does winning one medal type lead to winning a different one?
+
+
+
+## Setup and Data Overview
+```{r setup, include=FALSE}
+library(tm)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library("devtools")
+setwd("/Users/Brett/Desktop/dsc520-master")
+olympics_df<-read.csv("/Users/Brett/Desktop/dsc520-master/summer.csv")
+
+Year<- olympics_df[,c(1)]
+City<- olympics_df[,c(2)]
+Sport<- olympics_df[,c(3)]
+Discipline<- olympics_df[,c(4)]
+Athlete<- olympics_df[,c(5)]
+Country<- olympics_df[,c(6)]
+Gender<- olympics_df[,c(7)]
+Event<- olympics_df[,c(8)]
+Medal<- olympics_df[,c(9)]
+
+summary(olympics_df)
+
+head(olympics_df)
+
+nrow(olympics_df)
+```
+
+## How the Olympics have changed over the years? The below shows the changes in sports and athlete winners over time
+```{r, include=FALSE}
+Ycounts <- olympics_df %>% group_by(Year) %>%
+  summarize( Athletes = length(unique(Athlete)), Disciplines = length(unique(Discipline)),
+  )
+Ycounts
+
+
+GenderChanges<- olympics_df %>% group_by(Year, Gender) %>%
+  summarize(AthleteGenderGrowth = length(unique(Athlete)))
+
+GenderChanges
+
+
+GenderChangesTable<- table(Year, Gender)
+
+GenderChangesTable
+
+```
+
+```{r, echo=FALSE}
+Number_of_Athletes <- ggplot(Ycounts, aes(x= Year, y= Athletes)) + geom_line(color= "blue") +
+  labs(title= "Number of Athlete Changes")
+
+Number_of_Athletes 
+
+Number_of_SportDisciplines <- ggplot(Ycounts, aes(x= Year, y= Disciplines)) + geom_line(color= "red") +
+  labs(title= "Number of Sport Discipline Changes")
+
+Number_of_SportDisciplines
+
+GenderChangesGraph <- ggplot(GenderChanges, aes(x= Year, y= AthleteGenderGrowth, color= Gender)) +
+  geom_line()+ labs(title = "Gender Changes Over Time")
+
+GenderChangesGraph
+
+```
+
+
+
+## Shows the countries that have had the most winners: Gold, Silver, and Bronze totaled 
+
+```{r, include=FALSE}
+CountryWincounts <- olympics_df %>% group_by(Country) %>%
+  summarize( Athletes = length(unique(Athlete)))
+
+CountryWincounts
+```
+
+```{r, echo=FALSE}
+
+Top_Winners <- top_n(CountryWincounts, n=10, Athletes) %>% 
+  ggplot(aes(x= Country, y= Athletes))+ geom_bar(stat= "identity", fill = rainbow(n=10)) +
+  labs(title = "Top 10 Winning Countries By Athletes")
+
+Top_Winners
+```
+
+```{r, include=FALSE}
+
+MedalCount_Table <- table(Country, Medal)
+MedalCount_Table
+
+AMTable<- table(Athlete, Medal)
+AMTable
+
+```
+
+
+```{r, echo=FALSE}
+Winners_By_Country <- ggplot(CountryWincounts, aes(x= Country, y= Athletes)) + geom_bar(stat='identity') +
+  theme(text = element_text(size=3), axis.text.x = element_text(angle=90, hjust=1))+labs(title= "Number of Winners By Country")
+
+Winners_By_Country
+
+
+```
+
+## Country winners by specific sport type
+
+```{r , include=FALSE}
+WinnersSport <- olympics_df %>% group_by(Country, Sport) %>%
+  summarize( Athletes = length(unique(Athlete)))
+
+WinnersSport
+```
+
+```{r, echo=FALSE}
+
+WinnersSportGraph <- top_n(ungroup(WinnersSport), n=10, Athletes) %>%
+  ggplot(aes(x= Country, y= Athletes, fill= Sport ))+ geom_bar(stat= "identity") +
+  labs(title = "Top Winning Countries by Sports")
+
+WinnersSportGraph
+
+```
+
+```{r, include=FALSE}
+
+CountryWinnersSport <- table(Country, Sport)
+CountryWinnersSport
+```
+
+## Athlete winners and outcomes
+```{r , include=FALSE}
+OlympicWinnersAthletes <- olympics_df %>% group_by(Athlete, Country) %>%
+  summarize( SportWins = length(unique(Event)))
+
+OlympicWinnersAthletes
+```
+
+```{r, echo=FALSE}
+OlympicWinnersAthletesGraph <- top_n(ungroup(OlympicWinnersAthletes), n=5, SportWins) %>%
+  ggplot(aes(x= Athlete, y= SportWins))+ geom_bar(stat= "identity")+ theme(text = element_text(size=7),axis.text.x = element_text(angle=90, hjust=1))+
+  labs(title = "Top Olympic Winners")
+
+OlympicWinnersAthletesGraph
+```
+
+```{r, include=FALSE}
+
+RepeatWins <- olympics_df %>% group_by(Athlete) %>%
+  summarize( RepeatWins = length(unique(Medal)))
+
+RepeatWins
+```
+
+## Overall, write a coherent narrative that tells a story with the data as you complete this section.
+
+The data provides several insights on the various different aspects of the Olympic games from 1896 to 2012. The data provides valuable information that can create correlation and relationships between the data points. Due to the fact that most of the points are categorical, the data set was looked at in mainly graph formats. Through this clear graphical observations were able to be made. The data tells a story about how over the years the Olympic games have grown significantly. It also presents clear information that ties with historical events why there are dips in various data points. The Olympics have grown in participation, sports, and countries over the past 100 years. Through this output the information could be clearly analyzed. 
+
+## Summarize the problem statement you addressed. 
+
+The problem statement was to see visually if there is a relationship between athletes, sports and countries over the past 100 years of the Olympics. The goal was to see if there is a better chance for a specific country or athlete to win the games. It was also to look at which countries have dominated the games, and if the athletes have something to do with that. Rather than looking at gold medal wins, we looked at all medals wins, because these are considered to be winners as well. Gender was also a key data point that was looked at to gain a better understanding of correlations. Looking at the various medal totals and athlete wins, we were able to properly conclude various relationships between the data points. 
+
+## Summarize how you addressed this problem statement (the data used and the methodology employed). 
+
+The problem statement was addressed through the process of combining various data points in tables and graphs, through this process it was more easily analyzed. The first step in the process was to group the Olympic games by year. From there I analyzed the changes in athletes over that time period. Which showed a clear increase over the past 100 years in athlete participation, it also showed the various dips that can be attributed to historical events i.e. WWI and WWII. Still utilizing the year group I then analyzed the increase in sport discipline over time. Which showed the increase in sports as time has gone on. Then year was utilized to see the various changes in gender over time as well. Showing the clear increase in women since the beginning of the Olympic games. 
+
+The next point that was analyzed was the winners over time via both countries and athletes. Through looking at the data points it showed the top winning countries per athlete wins. As well as showing just overall the various winning countries. When analyzing the breakdown of top winners it shows clearly that the USA has historically been the top winner. The top winning countries were then broken down by sports to see if there have been countries that have historically dominated sports, which showed that the USA has dominated several sports. Proving that the USA is the top performing country in the Olympics. 
+
+The final subject that was analyzed was the top performing athletes. This was looked at through the particular athlete and sporting events they participated with. The important thing to note about this data outlook is that it provides you with an idea of who are repeat winners in various different events. The data shows the connection of top winning athletes in particular sports, and the table gives an outlook of their relationship with various countries.    
+
+## Summarize the interesting insights that your analysis provided. 
+
+o	Through the vast history of the Olympics, of over 100 years. The United States one of the still relatively young countries around the world has dominated. 
+o	Michael Phelps is the top performing Olympic athlete of all-time 
+o	Large name 1st world countries are typically the top performers
+o	Gender has increased significantly over the years. There is still a gap with women, but they have caught up. 
+o	Through the plots you can see the significance of historical events impact on Olympic events. This can be seen with years like: Great Depression, WWI, WWII. This seemed to send women on an increased trajectory. 
+
+## Summarize the implications to the consumer (target audience) of your analysis. 
+
+This is shows various sports data points for Olympic fans. It allows fans to gain a better understanding of how their country has performed, as well as changes over time in the Olympic games. It also provides a great understanding of the various athletes and their performances in specific sports. Overall it shows fans that the top performing country has been the USA, and that their swimmer Michael Phelps has been the top athlete. This information is based off medal wins. Many fans or data scientists would be able to utilize a data set like this to predict various future winners. 
+
+# Discuss the limitations of your analysis and how you, or someone else, could improve or build on it.
+
+The data utilized mainly categorical information. Which made analysis much more difficult. If someone was more experienced, they would’ve had an easier time analyzing the information. Going off of that information having more data would’ve made the analysis much easier as well. Not specifically number of athletes but, other information like weight, height, or athletic numbers/ performance. These data points would’ve made it easier to predict potential winners and outcomes. I would’ve been able to go further into depth about the specifics of various athletes and teams, and why they were successful. 
