@@ -1,0 +1,73 @@
+
+---
+title: 'ASSIGNMENT 8 Exercise 13: Fit a Logistic Regression Model to the Thoracic Surgery Binary Dataset'
+author: "Abhijit Mandal"
+date: '2020-10-25'
+output:
+  word_document: default
+---
+
+## Assignment
+**For this problem, you will be working with the thoracic surgery data set from the University of California Irvine machine learning repository. This dataset contains information on life expectancy in lung cancer patients after surgery.
+The underlying thoracic surgery data is in ARFF format. This is a text-based format with information on each of the attributes. You can load this data using a package such as foreign or by cutting and pasting the data section into a CSV file.**
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question A:
+**Fit a binary logistic regression model to the data set that predicts whether or not the patient survived for one year (the Risk1Y variable) after the surgery. Use the glm() function to perform the logistic regression.**
+
+## Answer for A
+
+## Code
+
+```{r echo=TRUE, include=TRUE} 
+setwd("~/Documents/GitHub/dsc520")
+library('foreign')
+
+thoracicSurgery_df <- read.arff("data/ThoraricSurgery.arff")
+
+#logistic regression model
+thoracicSurgery_glm <- glm(Risk1Yr ~ DGN + PRE4 + PRE5 + PRE6 + PRE7 + PRE8 + PRE9 + PRE10 + PRE11 + PRE14 + PRE17 + PRE19 + PRE25 + PRE30 + PRE32 + AGE, data=thoracicSurgery_df, family = binomial)
+
+summary(thoracicSurgery_glm)
+
+```
+
+
+## Question B. 
+**According to the summary, which variables had the greatest effect on the survival rate?**
+
+## Answer for B:
+```
+The following variables had the greatest effect on the survival rate (based on P value): 
+1. PRE9T - Indicates whether the patient had Dyspnoea before surgery.
+2. PRE14OC14 - The largest size of the original tumor.
+3. PRE17T - This variable indicates whether the patient had Type 2 Diabetes.
+4. PRE30T - Indicates that patient is a smoker. 
+5. PRE14OC13 - The second largest size of the tumor.
+6. PRE5 - Volume that has been exhaled at the end of the first second of forced expiration 
+```
+
+
+## Question C:
+**To compute the accuracy of your model, use the dataset to predict the outcome variable. The percent of correct predictions is the accuracy of your model. What is the accuracy of your model?**
+
+## Answer For C
+```
+The accuracy of the model is 83.61%, so we can conclude that our model is correct in predicting the ourcome.
+```
+
+
+```{r echo=TRUE, include=TRUE} 
+res_val <- predict(thoracicSurgery_glm, type="response")
+
+surgPredictionData <- table(Actual_Value = thoracicSurgery_df$Risk1Yr, Predicted_Value = res_val > 0.5)
+
+surgPredictionData
+
+modelAccuracy <- (surgPredictionData[[1,1]] + surgPredictionData[[2,2]]) / sum(surgPredictionData)
+
+modelAccuracy
+```
