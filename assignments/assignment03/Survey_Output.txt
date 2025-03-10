@@ -1,0 +1,51 @@
+> # Assignment: ASSIGNMENT 3 - Excersise 5
+> # Name: Mandal, Abhijit
+> # Date: 2020-09-20
+> 
+> theme_set(theme_minimal())
+> 
+> ## Set the working directory to the root of your DSC 520 directory
+> 
+> ## Load the 'data/acs-14-1yr-s0201.csv' to
+> survey_df <- read.csv("data/acs-14-1yr-s0201.csv")
+> 
+> ## output from the following functions: str(); nrow(); ncol()
+> str(survey_df)
+'data.frame':	136 obs. of  8 variables:
+ $ Id                    : chr  "0500000US01073" "0500000US04013" "0500000US04019" "0500000US06001" ...
+ $ Id2                   : int  1073 4013 4019 6001 6013 6019 6029 6037 6059 6065 ...
+ $ Geography             : chr  "Jefferson County, Alabama" "Maricopa County, Arizona" "Pima County, Arizona" "Alameda County, California" ...
+ $ PopGroupID            : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ POPGROUP.display.label: chr  "Total population" "Total population" "Total population" "Total population" ...
+ $ RacesReported         : int  660793 4087191 1004516 1610921 1111339 965974 874589 10116705 3145515 2329271 ...
+ $ HSDegree              : num  89.1 86.8 88 86.9 88.8 73.6 74.5 77.5 84.6 80.6 ...
+ $ BachDegree            : num  30.5 30.2 30.8 42.8 39.7 19.7 15.4 30.3 38 20.7 ...
+> nrow(survey_df)
+[1] 136
+> ncol(survey_df)
+[1] 8
+> 
+> ##Create a Histogram of the HSDegree variable using the ggplot2 package.
+> ## Load the ggplot2 package
+> library(ggplot2)
+> ## Create a histogram of the `HSDegree` variable using `geom_histogram()`
+> ggplot(survey_df, aes(HSDegree))+ geom_histogram(fill="steelblue", colour="black", binwidth = 1,bins = 50) +  ggtitle("HSDegree distribution") + ylab("Count") + xlab("% of people having High School Degree")
+> 
+> ##Include a normal curve to the Histogram that you plotted.
+> 
+> ggplot(data = survey_df) + 
++   geom_histogram(mapping = aes(x = HSDegree, y=..density..), fill="steelblue", colour="black", binwidth = 1,bins = 50) +
++   ggtitle("HSDegree distribution") + ylab("Relative Frequency") + xlab("% of people having High School Degree") +
++   stat_function(fun = dnorm, colour = "red", args = list(mean = mean(survey_df$HSDegree), sd = sd(survey_df$HSDegree)))
+> 
+> ##Create a Probability Plot of the HSDegree variable.
+> ggplot(survey_df, aes(sample=HSDegree)) + stat_qq(col="blue") + stat_qq_line(col="red", lty=2)
+> 
+> 
+> ##Now that you have looked at this data visually for normality, you will now quantify normality with numbers using the stat.desc() function. Include a screen capture of the results produced.
+> library(pastecs)
+> stat.desc(survey_df$HSDegree, basic = FALSE, norm = TRUE)
+       median          mean       SE.mean  CI.mean.0.95           var       std.dev      coef.var      skewness      skew.2SE      kurtosis 
+ 8.870000e+01  8.763235e+01  4.388598e-01  8.679296e-01  2.619332e+01  5.117941e+00  5.840241e-02 -1.674767e+00 -4.030254e+00  4.352856e+00 
+     kurt.2SE    normtest.W    normtest.p 
+ 5.273885e+00  8.773635e-01  3.193634e-09 
