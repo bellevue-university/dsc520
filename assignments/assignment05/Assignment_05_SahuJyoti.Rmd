@@ -1,0 +1,169 @@
+---
+title: "Exercise 9"
+author: "Jyoti Sahu"
+date: Jan 15th 2021
+output: 
+  pdf_document: default
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Student Survey
+
+Problem Statement : As a data science intern with newly learned knowledge in skills in statistical correlation and R programming, you will analyze the results of a survey recently given to college students. You learn that the research question being investigated is: “Is there a significant relationship between the amount of time spent reading and the time spent watching television?” You are also interested if there are other significant relationships that can be discovered? The survey data is located in this StudentSurvey.csv file.
+
+```{r echo=FALSE, include=FALSE}
+## Set the working directory to the root of your DSC 520 directory
+setwd("/Users/sahujyot/Documents/DSC520")
+## Load the `completed/Exercise 9/student_survey.csv` to
+students_df <- read.csv("data/student-survey.csv")
+```
+
+## a. Covariance of Survey Variables
+
+```{r echo=TRUE, include=TRUE}
+## Use R to calculate the covariance of the Survey variables and provide an 
+## explanation of why you would use this calculation and what the results 
+## indicate.
+cov(students_df)
+```
+
+Covariance is that the easiest method to seem or compare the 2 variables. It helps in understanding whether the 2 variables in question "Co-vary" with one another.
+It is an honest thanks to assess, if the 2 variables are associated with one another.
+A Positive covariance implies that if one among the variables deviates in some direction from the mean then the opposite variable also deviates within the same direction. While if they deviate in other way from the mean then the worth is Negetive.
+
+Based on the table above, we can say
+ 
+1. TimeReading and TimeTV vary in opposite ways as the value is approximately -20.
+2. TimeReading and Happiness also vary negatively as value is approximately -10.
+3. TimeReading and Gender also shows Negative relation
+4. TimeTV and Happiness are varying Positive as values is approximately 114. 
+5. TimeTV and Gender also shows positive relation
+6. Happiness and Gender also shows Positive relation
+
+
+## b. Examine the Survey data variables. What measurement is being used for the variables? Explain what effect changing the measurement being used for the variables would have on the covariance calculation. Would this be a problem? Explain and provide a better alternative if needed.
+
+It seems, we are having following measurements for each of the survey variables
+
+1. TimeReading: This seems to be in hours
+2. TimeTV: This seems to be in minutes
+3. Happiness: This seems either percentage or some cumulative score
+4. Gender: Two values 0 and 1. Each number might represent either Male or Female
+
+Covariance is a measure of relationship. So if we change the measurement the covariance will change. Covariance is a non standardized measurement.
+
+This dependency on scale of measurement could be a problem because we cannot compare covariances in an objective way then we cannot say whether to the covariance is large or small. We may say it objectively, if both datasets have same units(for eg. TimeTV and TimeReading if converted to same unit). However which will not be possible with all variables, as you'll be able to see for Happiness and TimeReading or Happiness and TimeTV.
+
+Better alternative method is to standardize this, which is finished by using Pearson correlation. This standardized covariance is thought as Pearson Coefficient and calculated as below.
+
+r =  cov ~xy~ / s~x~  s~y~ 
+
+Here,
+cov ~xy~  : Covariance of X and Y,
+s~x~ : Standard Deviation of X,
+s~y~ : Standard Deviation of Y
+
+## c. Choose the type of correlation test to perform, explain why you chose this test, and make a prediction if the test yields a positive or negative correlation?
+
+We will use the Pearson correlation test to predict. the explanation for selecting can be that every one variables are intervals except the gender.And also we may use it, if one in all the variables is categorical with two categories, as for our gender variable.
+
+## d. Perform a correlation analysis of:
+If you look at the Pearson Coefficient  or Correlation values. Following could be deduced.
+
+### 1. All variables
+```{r echo=TRUE, include=TRUE}
+# default method is Pearson
+cor(students_df)
+#cor(students_df, method = "spearman")
+#cor(students_df, method = "kendall")
+```
+
+### 2. A single correlation between two a pair of the variables
+```{r echo=TRUE, include=TRUE}
+# default is Pearson
+cor(students_df$TimeReading, students_df$TimeTV)
+# This provides more details
+cor.test(students_df$TimeReading, students_df$TimeTV)
+```
+
+### 3. Repeat your correlation test in step 2 but set the confidence interval at 99%
+
+```{r}
+# This provides more details
+cor.test(students_df$TimeReading, students_df$TimeTV, conf.level = 0.99)
+```
+
+
+### 4. Describe what the calculations in the correlation matrix suggest about the relationship between the variables. Be specific with your explanation.
+
+```{r}
+# Calculating Correlation Coefficient
+cor(students_df)
+```
+Based on the matrix for correlation in the book Discovering Statistics^[Based on Sams Tips(Discovering Statistics Using R)1. +- 0.1  - means small effect 2. +- 0.3 tp 0.5 - medium effect 3. over +- 0.5 large effect]
+for the full dataframe, we can say the following
+
+1. TimeReading and TimeTV have a large -ve correlation.
+2. TimeReading and Happiness have a medium -ve correlation
+3. TimeReading and Gender have negligible -ve correlation
+4. TimeTV and Happiness have large +ve correlation
+5. TimeTV and Gender have negligible + correlation
+6. Gender and Happiness have negligible +ve correlation
+
+
+## e. Calculate the correlation coefficient and the coefficient of determination, describe what you conclude about the results.
+```{r}
+# Calculating Correlation Coefficient
+cor(students_df)
+```
+
+```{r}
+# Calculating coefficent of determination - R^2
+cor(students_df)^2
+```
+
+Based on Correlation Coefficient, I already explained the relation between different variables. Putting the same details again in this section
+
+1. TimeReading and TimeTV have a large -ve correlation.
+2. TimeReading and Happiness have a medium -ve correlation
+3. TimeReading and Gender have negligible -ve correlation
+4. TimeTV and Happiness have large +ve correlation
+5. TimeTV and Gender have negligible + correlation
+6. Gender and Happiness have negligible +ve correlation
+
+However with Coefficient of Determination or the $R^2$
+
+We can say that 
+
+1. TimeReading and TimeTV have approximately covariability of 77.98%
+2. TimeReading and Happiness have approximately covariability of 18.91%
+3. TimeReading and Gender have negligible covariability
+4. TimeTV and Happiness have covariability of 40.52% 
+5. TimeTV and Gender have negligible covariability
+6. Happiness and Gender have covariability of 2.46%
+
+
+## f. Based on your analysis can you say that watching more TV caused students to read less? Explain.
+
+Yes, Watching TV causes Students to read less. the identical reflects with the big Negetive correlation(-0.883) coefficient between the 2 and also has co variability of 77.98%. Further, we may additionally understand from this that we've got a set time during the day i.e. 24hrs, which an individual could be using for reading or watching tv as a leisure activity. So if one spends longer on one activity the opposite activity will surely be having less time spent, unless one takes time from other activities like job, sleep not mentioned within the dataframe.
+
+## g. Pick three variables and perform a partial correlation, documenting which variable you are “controlling”. Explain how this changes your interpretation and explanation of the results.
+
+Lets do the partial correlation by controlling the gender variable.
+
+```{r}
+library(ggm)
+# Partial Correlation, controlling variable is Gender
+pcor(c("TimeReading","TimeTV", "Gender"), var(students_df))
+# coefficient of determination - R^2
+pcor(c("TimeReading","TimeTV", "Gender"), var(students_df))^2
+```
+So here we see correlation coefficient is -0.886, a really minimal difference from the data without controlling the gender. So seems this third variable gender has negligible effect on the correlation of those two variables.
+
+Further the coefficient of determination has also changed from 77.98% to 78.5%, which also seems minimal.
+
+Hence we will conclude that the gender variable has least effect on the co-variability of the variables TimeReading and TimeTV
