@@ -1,0 +1,77 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+```yaml
+---
+title: "WK9_Exercise16_Clustering"
+author: "SumbarajuAditya"
+date: "2/11/2021"
+output: word_document
+---
+````
+**Dataset**
+In this problem, you will use the k-means clustering algorithm to look for patterns in an unlabeled dataset. The dataset for this problem is found at C:/BU/DSC520/assignment_repo/dsc520/data/clustering-data.csv
+
+## Q-a: Plot the dataset using a scatter plot
+
+```{r}
+library(ggplot2)
+ds_clustering_df <- read.csv("C:/BU/DSC520/assignment_repo/dsc520/data/clustering-data.csv")
+str(ds_clustering_df)
+ggplot(ds_clustering_df, aes(x=x, y=y)) + geom_point() + theme_bw()
+
+```
+
+## Q-b. Fit the dataset using the k-means algorithm from k=2 to k=12. Create a scatter plot of the resultant clusters for each value of k.
+
+```{r}
+k_values <- c(2:12)
+
+#loop to pass K- Values from 2 to 12 and print the plots
+for (i in 1:length(k_values))
+{
+  ds_clustering_df2 <- ds_clustering_df
+  k_clusters <- kmeans(ds_clustering_df2, k_values[i])
+  ds_clustering_df2$cluster <- as.factor(k_clusters$cluster)
+  plots = ggplot(data = ds_clustering_df2, aes(x=x, y=y, color = cluster)) + geom_point() + theme_bw() + geom_point(data = as.data.frame(k_clusters$centers), color = "black", size = 2) + ggtitle(paste("K-Means clusters Plot for k =", k_values[i]))
+  print(plots)
+
+}
+```
+
+## Q-c
+
+**As k-means is an unsupervised algorithm, you cannot compute the accuracy as there are no correct values to compare the output to. Instead, you will use the average distance from the center of each cluster as a measure of how well the model fits the data. To calculate this metric, simply compute the distance of each data point to the center of the cluster it is assigned to and take the average value of all of those distances.**
+
+**Calculate this average distance from the center of each cluster for each value of k and plot it as a line chart where k is the x-axis and the average distance is the y-axis.**
+
+**One way of determining the “right” number of clusters is to look at the graph of k versus average distance and finding the “elbow point”. Looking at the graph you generated in the previous example, what is the elbow point for this dataset?**
+
+```{r}
+k_values <- c(2:12)
+tot_withinss <- NULL
+avg_distance <- NULL
+
+#loop to pass K- Values from 2 to 12 and print the plots
+for (i in 1:length(k_values))
+{
+  ds_clustering_df3 <- ds_clustering_df
+  k_clusters <- kmeans(ds_clustering_df3, k_values[i])
+  ds_clustering_df3$cluster <- as.factor(k_clusters$cluster)
+
+  x_dist <- k_clusters$centers[ds_clustering_df3$cluster] - ds_clustering_df3$x
+  y_dist <- k_clusters$centers[ds_clustering_df3$cluster] - ds_clustering_df3$y
+  tot_dist <- sqrt((x_dist ** 2) + (y_dist ** 2))
+  avg_distance <- c(avg_distance, mean(tot_dist))
+  tot_withinss <- c(tot_withinss, k_clusters$tot.withinss)
+}
+# get the average distance and find the elbow point
+distance_elbow_df <- data.frame(k_values, avg_distance)
+ggplot(data = distance_elbow_df, aes(x=k_values, y=avg_distance)) + xlab("Number of clusters K") + ylab("Average Distance") +  geom_point() + geom_line(color = "dark red")
+withinss_elbow_df <- data.frame(k_values, tot_withinss)
+ggplot(data = withinss_elbow_df, aes(x=k_values, y=tot_withinss)) + xlab("Number of clusters K") + ylab("SoS- Total within-clusters")  + geom_point() + geom_line(color = "dark green")
+```
+
+From the above plots at the graph of k versus average distance and the graph of k versus total sum of squares of within-clusters; The elbow point equates to 5

@@ -1,0 +1,100 @@
+---
+title: "wk7_TechSupportDiscussion7_Galton"
+author: "SumbarajuAditya"
+date: "1/31/2021"
+output: word_document
+---
+
+Use the  Galton.txt data and answer the following two questions ( question#1 and question #2)
+You don't need to provide a separate R file. Please copy paste the code and the output in the word file, add your interpretation and upload a single word file.
+
+**Question1 :  Use the data ‘Galton.txt’ and perform the followings: **
+
+
+```{r}
+setwd("C:/BU/DSC520/assignment_repo/dsc520/")
+getwd()
+Galton_df <- read.delim("data/Galton.txt")
+head (Galton_df)
+```
+
+1. Replace column names; y <- data$Height, X1 <- data$Father, X2<- Mother, X3 <- data$Gender ( convert to numeric 0 and 1)
+
+```{r}
+Galton_df1 <- Galton_df
+y <- Galton_df1$Height
+X1 <- Galton_df1$Father
+X2<- Galton_df1$Mother 
+Galton_df1$Gender[Galton_df1$Gender == "M"] <- 0
+Galton_df1$Gender[Galton_df1$Gender == "F"] <- 1
+X3 <- as.numeric(Galton_df1$Gender)
+head(Galton_df1)
+class(X3)
+
+```
+
+2. Perform multiple regression using lm() function. Use y as dependent variable and all other three variable as independent variables.
+Hint:  mod<- lm(y ~ x1+x2+x3)
+      summary(mod)
+      
+```{r}
+mod<- lm(y ~ X1+X2+X3, data=Galton_df1)
+summary(mod)
+
+```
+
+3. Obtain the confidence intervals ( 95%)for model parameters
+```{r}
+confint(mod)
+```
+
+4. Check model goodness of fit.
+
+From the output of the model summary information for the Residual standard error,Multiple R-squared, p values, and F-statistics; indicates that model is goodness-of-fit.
+Key Pointers:
+if we observe the values of Multiple R-squared and Adjusted R-squared the difference between the values is insignificant.
+P-Value: The p-values is 0.00000000000000022 for independent variables which is almost "0", This proves a significant relationship to the dependent variable.
+In my assumption this model is goodness-of-fit.
+
+** Using General linear model ( glm() function) **
+We can use glm() as well- this is convenient when we have categorical variables in our data et. Instead of creating dummy variables by ourselves, R can directly work with the categorical variables. 
+
+5. Create a model named mod1 <- glm(y ~  x1+x2+X3 ) Note: X3 is data $ Gender, and it should be converted to factor.
+```{r}
+glm_galton_df <- Galton_df
+y <- glm_galton_df$Height
+X1 <- glm_galton_df$Father
+X2<- glm_galton_df$Mother 
+X3 <- as.factor(glm_galton_df$Gender)
+mod1 <- glm(y ~ X1+X2+X3, data=glm_galton_df)
+summary(mod1)
+head(glm_galton_df)
+```
+
+6. R uses “F” as X3’s reference level because F comes before M in the alphabetical order.Now, change the order and observe the summary of the model1.
+
+```{r}
+
+glm_galton_df$Gender[glm_galton_df$Gender == "M"] <- 1
+glm_galton_df$Gender[glm_galton_df$Gender == "F"] <- 0
+X3 <- glm_galton_df$Gender
+mod2 <- glm(y ~ X1+X2+X3, data=glm_galton_df)
+summary(mod2)
+head(glm_galton_df)
+```
+
+
+In contrast with model "mod" in Q2 vs "mod2" in Q6; I have interchanged the values between male and Female. Assigned 1 to male and ) to Female.  After the Model execution the results depicts that almost all the values in comparision with previous model remains same except for the coefficient values for X3, which is now measuring males rather than females since we have now assigned the 1 to Male.
+
+**Question 2: Multiple regression model can be developed to fit almost any data set if the level of measurement is adequate and enough data points are available. Once a model has been constructed, it is important to test the model to determine whether it fits the data well and whether the assumptions underlying regression analysis are met. Assessing the model can be done in several ways, including testing the overall significance of the model, studying the significance test of the regression coefficients, computing the residuals, examining the stansard error of the estimate, and observing the coefficient of determination. Discuss how can we test the overall significance of the model.**
+
+The null hypothesis, is usually the hypothesis that sample observations result purely from chance.
+
+Alternative hypothesis. The alternative hypothesis, is the hypothesis that sample observations are influenced by some non-random cause.
+
+Below are the factors proves that our model is a goodness of fit and the alternative hypothesis will be accepted.
+1.Multiple R-squared:  0.6397,	Adjusted R-squared:  0.6385. Difference is insignificant.
+2.The P Values is almost close to 0
+3.The coefficient intervals all being close
+4.T-Value is >0 and looks far from 0 and this is an indication lack of null hypothesis
+

@@ -1,0 +1,60 @@
+---
+title: "covariance ratio"
+author: "SumbarajuAditya"
+date: "1/20/2021"
+output: word_document
+bibliography: C:/BU/DSC520/assignment_repo/dsc520/assignments/assignment04/bibliography.bib
+---
+
+# Dataset album2 summary:
+* Adverts: Total amount spent on the Albums
+* Sales: total number of music albums sold
+* Airplay: number of times album was played in radio before Album was released
+* Attract: Rate of Attractivness of Band in a scale of 0-10. 0 stands hideous potato-heads and 10 Stands gorgeous sex objects 
+* each row indicates different albums belong to different bands
+
+```{r}
+album2 <- 
+  read.table("C:/BU/DSC520/assignment_repo/dsc520/data/AlbumSales.csv", 
+             header=TRUE, stringsAsFactors=TRUE, sep=",", na.strings="NA", dec=".", 
+             strip.white=TRUE)
+head(album2,n=5)
+
+```
+
+# Multiple regression:
+* Linear regression Model **albumSales.2** contains response variable as **sales** and **adverts** as the explanatory variable. It is the First stage in hierarchy with Predictor as **adverts**
+* Linear regression Model **albumSales.3** contains response variable as **sales** and **Adverts, Airplay, Attract** as the predictor
+* The main intent of the model to predict album sales by observing Multiple R-squared in each model summary
+
+```{r}
+albumSales.2 <- lm(Sales~Adverts, data=album2)
+summary(albumSales.2)
+albumSales.3 <- lm(Sales~Adverts+Airplay+Attract, data=album2)
+summary(albumSales.3)
+
+```
+>The Multiple R-squared value of albumSales.2 model is .335 it indicates that advertising budget accounts for 33.5% of the variation in album sales.If we observe the summary of model albumSales.3 this includes the other two predictors; the Multiple R-squared value of albumSales.3 model this value increases to .665, or 66.5% of the variance in album sales. Therefore, if advertising accounts for 33.5%, we can determine that attractiveness and radio play account for an additional 33.0% So the inclusion of the two new predictors has explained quite a large amount of the variation in album sales.
+(Ref. - Discovering Statistics Using R  [@field2012discovering page 281] )
+
+```{r}
+album2$residuals<-resid(albumSales.3)
+album2$standardized.residuals<- rstandard(albumSales.3)
+album2$cooks.distance<-cooks.distance(albumSales.3)
+album2$leverage<-hatvalues(albumSales.3)
+album2$covariance.ratios<-covratio(albumSales.3)
+album2$large.residual <- album2$standardized.residuals > 2 | album2$standardized.residuals < -2
+album2[album2$large.residual,c("Sales", "Airplay", "Attract", "Adverts", "standardized.residuals")]
+album2[album2$large.residual , c("cooks.distance", "leverage", "covariance.ratios")]
+```
+
+**Covariance ratio (CVR)**: 
+>A measure of whether a case influences the variance of the parameters in a regression model. When this ratio
+is close to 1 the case is having very little influence on the variances of the model parameters. (Ref. - Discovering Statistics Using R  [@field2012discovering page 915] )
+if the CVR of a case is greater than **1 + [3(k + 1)/n]** then deleting the corresponding case will damage the precision of some of the model’s parameters, but if it is less than **1 - [3(k + 1)/n]** then deleting the case will improve the precision of some of the model’s parameters (k is the number of Predictors and n is the sample size).
+CVR > 1 + [3(k + 1)/n] = 1 + [3(3 + 1)/200] = 1.06;
+CVR < 1 − [3(k + 1)/n] = 1 − [3(3 + 1)/200] = 0.94.
+(Ref. - Discovering Statistics Using R  [@field2012discovering page 291] )
+
+
+#Reference:
