@@ -1,0 +1,153 @@
+---
+title: "Week 12"
+author: "Ashley Simmers"
+date: "11/19/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Population Density
+
+My first goal was to plot otter location and density on a google map. In this dataset I found that both the otter location and prey location are often the same as the observers are watching them out in the ocean foreaging. After I plotted the density to my map I realized that it isn't very informative, this is quite a large area so the plot is small and really doesn't give any insight into the population. When I broke it down to individual locations as there are three distinct locations that have a high density of sightings.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggmap)
+library(ggplot2)
+library(viridis)
+library(tidyverse)
+library(psych)
+library(dplyr)
+library(lubridate)
+library(scales)
+setwd("C:/Users/ashle/OneDrive/Desktop/DSC_520/Final_Week_1")
+otter_df <- read.csv("NearshoreSystemsInGOA_SOP02_SeaOtterForageObservations_2012-2016.csv")
+pop_df <- otter_df[, c("obs_lat", "obs_long", "bout_date", "site_name", "preytype_cd")]
+
+pop_df[pop_df == "uni"] <- ""
+newpop_df <- pop_df %>% 
+    mutate_all(~ifelse(. %in% c("N/A", "null", ""), NA, .)) %>% 
+    na.omit()
+
+newpop_df$preytype_cd <- as.factor(newpop_df$preytype_cd)
+
+register_google(key="AIzaSyD9jsxiwuU3GUZ7NSZXMrRGAARgR8Qzlio")
+alaska_bbox <- c(left = -156, bottom = 56, right = -145, top = 62)
+alaska_map <- get_stamenmap(alaska_bbox, zoom = 7, maptype = "terrain") 
+p_alaska <- ggmap(alaska_map) +
+    labs(title = "Alaska outside Anchorage") +
+    theme(axis.title = element_blank(), 
+          axis.text  = element_blank(),
+          axis.ticks = element_blank())
+
+p_alaska + stat_density2d(
+    data = newpop_df, aes(x = obs_long, y = obs_lat, fill = ..density..), geom = "tile", contour = F, alpha = .5) + scale_fill_viridis(option = "inferno")
+
+```
+
+Looking at sightings of prey without density that there are locations that weren't visible. This map still does not show patterns as there are so many different type of prey.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+alaska_bbox <- c(left = -156, bottom = 56, right = -145, top = 62)
+alaska_map <- get_stamenmap(alaska_bbox, zoom = 7, maptype = "terrain") 
+p_alaska <- ggmap(alaska_map) +
+    labs(title = "Alaska outside Anchorage") +
+    theme(axis.title = element_blank(), 
+          axis.text  = element_blank(),
+          axis.ticks = element_blank())
+
+p_alaska +
+    geom_point(data=newpop_df, aes(x=obs_long, y=obs_lat, color=preytype_cd), size=3, alpha=.5)
+```
+
+
+Breaking down the locations by region and comparing the observed population will give better insight across time. There are four distinct regions with Region 2 being the most population over this four year period accumulating over 5000 sightings. I believe that this location may have more observations due to it being located between sites 1 and 3.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+newpop_df[newpop_df == "Amalik Bay, AKP_B10_RI_04"] <- "Region 1"
+newpop_df[newpop_df == "KATM New Site, will need to be added to LU table"] <- "Region 1"
+newpop_df[newpop_df == "Kukak Bay, AKP_B10_RI_01"] <- "Region 1"
+newpop_df[newpop_df == "Takli Island, AKP_B10_RI_05"] <- "Region 1"
+
+newpop_df[newpop_df == "Aialik Bay, KEP_B05_RI_01"] <- "Region 2"
+newpop_df[newpop_df == "Harris Bay, KEP_B05_RI_05"] <- "Region 2"
+newpop_df[newpop_df == "KEFJ New Site, will need to be added to LU table"] <- "Region 2"
+newpop_df[newpop_df == "McCarty Fjord, KEP_B05_RI_02"] <- "Region 2"
+newpop_df[newpop_df == "Nuka Bay, KEP_B05_RI_03"] <- "Region 2"
+newpop_df[newpop_df == "Nuka Passage, KEP_B05_RI_04"] <- "Region 2"
+
+newpop_df[newpop_df == "Herring Bay, PWS_B08_RI_05"] <- "Region 3"
+newpop_df[newpop_df == "Iktua Bay, PWS_B08_RI_02"] <- "Region 3"
+newpop_df[newpop_df == "Johnson Bay, PWS_B08_RI_04"] <- "Region 3"
+newpop_df[newpop_df == "Whale Bay, PWS_B08_RI_03"] <- "Region 3"
+newpop_df[newpop_df == "WPWS New Site, will need to be added to LU table"] <- "Region 3"
+
+newpop_df[newpop_df == "Bettles Bay, PWS_B07_RE_03"] <- "Region 4"
+newpop_df[newpop_df == "Galena, PWS_B09_RE_01"] <- "Region 4"
+newpop_df[newpop_df == "Olsen Island, PWS_B09_RE_03"] <- "Region 4"
+newpop_df[newpop_df == "Observation Island, PWS_B09_RE_05"] <- "Region 4"
+newpop_df[newpop_df == "Simpson Bay, PWS_B09_RE_04"] <- "Region 4"
+
+newpop_df$bout_date <- mdy(newpop_df$bout_date)
+newpop_df$site_name <- as.factor(newpop_df$site_name)
+region1_df <- newpop_df %>% filter(site_name=="Region 1")
+region2_df <- newpop_df %>% filter(site_name=="Region 2")
+region3_df <- newpop_df %>% filter(site_name=="Region 3")
+region4_df <- newpop_df %>% filter(site_name=="Region 4")
+
+ggplot(data = newpop_df, aes(bout_date, color=site_name)) +
+    geom_bar(width = 5) +
+    scale_x_date(labels = date_format("%m/%Y"), name = "Sightings Location by Date")
+
+##summary(newpop_df$preytype_cd)
+
+##summary(region1_df$preytype_cd)
+##summary(region2_df$preytype_cd)
+##summary(region3_df$preytype_cd)
+##summary(region4_df$preytype_cd)
+
+```
+
+Scientists begun observing otters mainly in region 3 and 4. After the poor otter population in region 4 scientists begun observing other locations. Regions 1, 2, and 3 all have substantial otter populations as well as prey. Top three sources of prey based off of location.
+
+* Region 1 - cla (1183), sag (367), and mtr (141) 
+* Region 2 - mtr (1774), cla (750), and mus (395)
+* Region 3 - cla (923), sag (190), and mtr (184)
+* Region 4 - cla (50), mtr (11), mus (11)
+
+We can clearly see what these areas are rich in the same types of foods and that clams are their main food source. Otters have a very diversified diet but focus on Clams, Washington Butterclams, Pacific Blue Mussels, and Mussles. 
+
+## Prey 
+
+```{r, echo=FALSE}
+
+diversity_df <- otter_df[,c("dive_num", "dive_time", "prey_qty", "preysize_cd", "success_cd", "preytype_cd", "bout_date")]
+diversity_df$success_cd <- as.factor(diversity_df$success_cd)
+
+ndiversity_df <- diversity_df %>% 
+    mutate_all(~ifelse(. %in% c("N/A", "null", ""), NA, .)) %>% 
+    na.omit()
+##summary(newdiversity_df)
+diversity_glm <- glm(formula = ndiversity_df$success_cd ~ ndiversity_df$dive_num + ndiversity_df$dive_time + ndiversity_df$prey_qty + ndiversity_df$preysize_cd + ndiversity_df$preytype_cd)
+##summary(diversity_glm)
+##mean(ndiversity_df$dive_time)
+##mean(ndiversity_df$prey_qty)
+##mean(ndiversity_df$dive_num)
+
+ggplot(ndiversity_df, aes(y = dive_num, x = dive_time, color = preysize_cd)) +
+    geom_point()
+
+
+
+```
+
+Looking at logistic regression we can see that otter success at catching prey sized 2b, 2c, 3c were the most significant. Average otter dive time was 70 seconds, otters who dove more frequently spent less time under water and were catching really small prey. The longer dives are where the otters are making really big catches like Mottled Sea Stars, Smooth Lumpsuckers, and Giant Pacific Octopus. 
+
+
+## Limitations
+
+I had some higher hopes for this data set that I was unable to achieve. But sadly there was a lot of inconsistency with the information collected. I wanted to be able to determine regions and what food sources they were rich in. This was achievable but I could not compare sights against each other well as the scientists changed locations over the years. Futher improvement on this project would be to evaluate maybe their prey types as in dive time per food type. I think much more information would able to be derrived from this with more time at these current locations to see if there is real change in the otter and prey population. 
