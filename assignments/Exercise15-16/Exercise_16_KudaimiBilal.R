@@ -1,0 +1,126 @@
+#Set working directory and imported data and libraries
+setwd('C:/Users/PS3ma/Documents/GitHub/dsc520')
+
+library('ggplot2')
+library('factoextra')
+
+clustering_df <- read.csv('data/clustering-data.csv')
+
+#A: Plotting a scatter plot of the data
+ggplot(clustering_df, aes(x, y)) + geom_point()
+
+#B: Fitting the dataset using the k-means algorithm from k=2 to k=12
+
+
+#Computed the clustering model, starting with k=2 and 50 iterations
+km2 <- kmeans(clustering_df, 2, nstart = 50)
+
+#Converted the cluster integer vector to a factor
+clustering_df$groups2 <- as.factor(km2$cluster)
+
+#Computed the squared residuals of the x and y values on the plot
+#The residuals here are the distance from each point to its cluster center
+x_distance2 <- km2$centers[clustering_df$groups2, "x"] - clustering_df$x
+y_distance2 <- km2$centers[clustering_df$groups2, "y"] - clustering_df$y
+
+#Used the squared residuals of distance in the Euclidean distance formula to 
+#find the distance from each point to its cluster center
+total2 <- sqrt((x_distance2)**2 + (y_distance2)**2)
+
+#Found the mean distance
+totals2 <- mean(total2)
+
+#Model and error computed for k=3 up to k=12.
+#The for loop was not working for some reason, so I wrote 
+#out each model computation manually. The code does work.
+km3 <- kmeans(clustering_df, 3, nstart = 50)
+clustering_df$groups3 <- as.factor(km3$cluster)
+x_distance3 <- km3$centers[clustering_df$groups3, "x"] - clustering_df$x
+y_distance3 <- km3$centers[clustering_df$groups3, "y"] - clustering_df$y
+total3 <- sqrt((x_distance3)**2 + (y_distance3)**2)
+totals3 <- mean(total3)
+
+km4 <- kmeans(clustering_df, 4, nstart = 50)
+clustering_df$groups4 <- as.factor(km4$cluster)
+x_distance4 <- km4$centers[clustering_df$groups4, "x"] - clustering_df$x
+y_distance4 <- km4$centers[clustering_df$groups4, "y"] - clustering_df$y
+total4 <- sqrt((x_distance4)**2 + (y_distance4)**2)
+totals4 <- mean(total4)
+
+km5 <- kmeans(clustering_df, 5, nstart = 50)
+clustering_df$groups5 <- as.factor(km5$cluster)
+x_distance5 <- km5$centers[clustering_df$groups5, "x"] - clustering_df$x
+y_distance5 <- km5$centers[clustering_df$groups5, "y"] - clustering_df$y
+total5 <- sqrt((x_distance5)**2 + (y_distance5)**2)
+totals5 <- mean(total5)
+
+km6 <- kmeans(clustering_df, 6, nstart = 50)
+clustering_df$groups6 <- as.factor(km6$cluster)
+x_distance6 <- km6$centers[clustering_df$groups6, "x"] - clustering_df$x
+y_distance6 <- km6$centers[clustering_df$groups6, "y"] - clustering_df$y
+total6 <- sqrt((x_distance6)**2 + (y_distance6)**2)
+totals6 <- mean(total6)
+
+km7 <- kmeans(clustering_df, 7, nstart = 50)
+clustering_df$groups7 <- as.factor(km7$cluster)
+x_distance7 <- km7$centers[clustering_df$groups7, "x"] - clustering_df$x
+y_distance7 <- km7$centers[clustering_df$groups7, "y"] - clustering_df$y
+total7 <- sqrt((x_distance7)**2 + (y_distance7)**2)
+totals7 <- mean(total7)
+
+km8 <- kmeans(clustering_df, 8, nstart = 50)
+clustering_df$groups8 <- as.factor(km8$cluster)
+x_distance8 <- km8$centers[clustering_df$groups8, "x"] - clustering_df$x
+y_distance8 <- km8$centers[clustering_df$groups8, "y"] - clustering_df$y
+total8 <- sqrt((x_distance8)**2 + (y_distance8)**2)
+totals8 <- mean(total8)
+
+km9 <- kmeans(clustering_df, 9, nstart = 50)
+clustering_df$groups9 <- as.factor(km9$cluster)
+x_distance9 <- km9$centers[clustering_df$groups9, "x"] - clustering_df$x
+y_distance9 <- km9$centers[clustering_df$groups9, "y"] - clustering_df$y
+total9 <- sqrt((x_distance9)**2 + (y_distance9)**2)
+totals9 <- mean(total9)
+
+km10 <- kmeans(clustering_df, 10, nstart = 50)
+clustering_df$groups10 <- as.factor(km10$cluster)
+x_distance10 <- km10$centers[clustering_df$groups10, "x"] - clustering_df$x
+y_distance10 <- km10$centers[clustering_df$groups10, "y"] - clustering_df$y
+total10 <- sqrt((x_distance10)**2 + (y_distance10)**2)
+totals10 <- mean(total10)
+
+km11 <- kmeans(clustering_df, 11, nstart = 50)
+clustering_df$groups11 <- as.factor(km11$cluster)
+x_distance11 <- km11$centers[clustering_df$groups11, "x"] - clustering_df$x
+y_distance11 <- km11$centers[clustering_df$groups11, "y"] - clustering_df$y
+total11 <- sqrt((x_distance11)**2 + (y_distance11)**2)
+totals11 <- mean(total11)
+
+km12 <- kmeans(clustering_df, 12, nstart = 50)
+clustering_df$groups12 <- as.factor(km12$cluster)
+x_distance12 <- km12$centers[clustering_df$groups12, "x"] - clustering_df$x
+y_distance12 <- km12$centers[clustering_df$groups12, "y"] - clustering_df$y
+total12 <- sqrt((x_distance12)**2 + (y_distance12)**2)
+totals12 <- mean(total12)
+
+#Made a data frame of K-values and average distances for each K value
+k_vals <- c(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+errors <- c(totals2, totals3, totals4, totals5, totals6, totals7, totals8, totals9, totals10, totals11, totals12)
+A <- data.frame(k_vals, errors)
+
+#Plotted the data on another scatter plot but this time each plot shows one of the amount of clusters
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups2))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 2 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups3))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 3 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups4))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 4 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups5))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 5 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups6))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 6 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups7))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 7 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups8))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 8 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups9))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 9 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups10))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 10 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups11))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 11 clusters')
+ggplot(clustering_df, aes(x, y, colour = as.factor(groups12))) + geom_point() + xlab('X') + ylab('Y') + ggtitle('Scatter plot showing 12 clusters')
+
+#Plotting the above data frame of K-values and average distance to show how
+#average distance changes with K number of clusters
+ggplot(A, aes(k_vals, errors)) + geom_line(color = 'blue') + geom_point() + xlab('K values') + ylab('Average Distance from Cluster Center') + ggtitle('Change in error as K increases')
